@@ -41,7 +41,7 @@ export function NavFooter({
                                             className="h-5 w-5"
                                         />
                                     )}
-                                    <span>{item.title}</span>
+                                    <span className='poppins-semibold text-[12.5px]'>{item.title}</span>
                                 </a>
                             </SidebarMenuButton>
                         </SidebarMenuItem>

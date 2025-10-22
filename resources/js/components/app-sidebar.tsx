@@ -10,43 +10,61 @@ import {
     SidebarMenuButton,
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
-import { dashboard } from '@/routes';
 import { type NavItem } from '@/types';
-import { Link } from '@inertiajs/react';
-import { BookOpen, Folder, LayoutGrid } from 'lucide-react';
+import { BookOpen, Globe, Clapperboard, ImagePlay, Newspaper, MonitorPlay, GalleryHorizontalEnd } from 'lucide-react';
 import AppLogo from './app-logo';
+
 
 const mainNavItems: NavItem[] = [
     {
-        title: 'Dashboard',
-        href: dashboard(),
-        icon: LayoutGrid,
+        title: 'Advertisements',
+        href: '/advertisement',
+        icon: Clapperboard,
+    },
+    {
+        title: 'Banners',
+        href: '/banners',
+        icon: ImagePlay,
+    },
+    {
+        title: 'Categories',
+        href: '/categories',
+        icon: Newspaper,
+    },
+    {
+        title: 'Post',
+        href: '/post',
+        icon: MonitorPlay,
+    },
+    {
+        title: 'Programs',
+        href: '/post',
+        icon: GalleryHorizontalEnd,
     },
 ];
 
 const footerNavItems: NavItem[] = [
     {
-        title: 'Repository',
-        href: 'https://github.com/laravel/react-starter-kit',
-        icon: Folder,
-    },
-    {
-        title: 'Documentation',
-        href: 'https://laravel.com/docs/starter-kits#react',
+        title: 'About',
+        href: 'https://dostv.ph/about/who-we-are',
         icon: BookOpen,
     },
+    {
+        title: 'Website',
+        href: 'https://dostv.ph/',
+        icon: Globe,
+    },
+
 ];
 
 export function AppSidebar() {
     return (
-        <Sidebar collapsible="icon" variant="inset">
-            <SidebarHeader>
+        <Sidebar collapsible="icon" variant="inset"  className=' text-white'>
+            <SidebarHeader className='mt-4 mb-3'>
                 <SidebarMenu>
                     <SidebarMenuItem>
                         <SidebarMenuButton size="lg" asChild>
-                            <Link href={dashboard()} prefetch>
-                                <AppLogo />
-                            </Link>
+                            <AppLogo />
                         </SidebarMenuButton>
                     </SidebarMenuItem>
                 </SidebarMenu>

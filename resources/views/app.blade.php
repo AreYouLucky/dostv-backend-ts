@@ -1,20 +1,20 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" @class(['dark' => ($appearance ?? 'system') == 'dark'])>
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" >
 
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <script>
-        (function() {
-            const appearance = '{{ $appearance ?? 'system' }}';
-
+        -(function() {
+            -
+            const appearance = '{{ $appearance ?? 'system' }}'; -
             if (appearance === 'system') {
-                const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-
+                -
+                const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches; -
                 if (prefersDark) {
-                    document.documentElement.classList.add('dark');
-                }
-            }
+                    -document.documentElement.classList.add('dark'); -
+                } -
+            } -
         })();
     </script>
     <style>
@@ -146,7 +146,7 @@
     @inertiaHead
 </head>
 
-<body class="">
+<body class="poppins-regular">
     <div class="stars"></div>
     @inertia
 </body>

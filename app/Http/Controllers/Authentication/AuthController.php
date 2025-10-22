@@ -11,24 +11,11 @@ use Illuminate\Support\Facades\Auth;
 
 class AuthController extends Controller
 {
-    public function login(LoginRequest $request): RedirectResponse
+    public function login(LoginRequest $request)
     {
         $user = $request->validateCredentials();
-
-        if (Features::enabled(Features::twoFactorAuthentication()) && $user->hasEnabledTwoFactorAuthentication()) {
-            $request->session()->put([
-                'login.id' => $user->getKey(),
-                'login.remember' => $request->boolean('remember'),
-            ]);
-
-            return to_route('two-factor.login');
-        }
-
-        Auth::login($user, $request->boolean('remember'));
-
-        $request->session()->regenerate();
-
-        return redirect()->intended(route('dashboard', absolute: false));
+        Auth::login($user);
+        return $user;
     }
 
     public function logout(Request $request): RedirectResponse

@@ -37,7 +37,7 @@ class LoginRequest extends FormRequest
         $this->ensureIsNotRateLimited();
 
         /** @var User|null $user */
-        $user = Auth::getProvider()->retrieveByCredentials($this->only('username', 'password'));
+        $user = Auth::getProvider()->retrieveByCredentials($this->only('email', 'password'));
 
         if (! $user || ! Auth::getProvider()->validateCredentials($user, $this->only('password'))) {
             RateLimiter::hit($this->throttleKey());
@@ -68,7 +68,7 @@ class LoginRequest extends FormRequest
         $seconds = RateLimiter::availableIn($this->throttleKey());
 
         throw ValidationException::withMessages([
-            'username' => __('auth.throttle', [
+            'email' => __('auth.throttle', [
                 'seconds' => $seconds,
                 'minutes' => ceil($seconds / 60),
             ]),
@@ -80,7 +80,7 @@ class LoginRequest extends FormRequest
      */
     public function throttleKey(): string
     {
-        return $this->string('username')
+        return $this->string('email')
             ->lower()
             ->append('|'.$this->ip())
             ->transliterate()

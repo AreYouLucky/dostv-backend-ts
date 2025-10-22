@@ -4,7 +4,7 @@ export default function AppLogo() {
     return (
         <>
             <div className="flex ">
-                <AppLogoIcon className="w-52" />
+                <AppLogoIcon className="w-52 px-2" />
             </div>
 
         </>
