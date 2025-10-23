@@ -11,7 +11,7 @@ import { ToastContainer } from 'react-toastify';
 import { useFormSubmit } from "@/hooks/auth-form-submission";
 
 function LoginPage() {
-    const { data, errors, handleChange, setErrors } = useHandleChange({
+    const { item, errors, handleChange, setErrors } = useHandleChange({
         email: "",
         password: "",
     });
@@ -23,7 +23,7 @@ function LoginPage() {
 
     return (
         <GuestLayout title="Login">
-            <form onSubmit={(e) => handleSubmit(e, data, setErrors)} className="grid gap-6 ">
+            <form onSubmit={(e) => handleSubmit(e, item, setErrors)} className="grid gap-6 ">
                 <div className="grid gap-2">
                     <Label htmlFor="email" className="text-gray-50">Email Address</Label>
                     <Input
@@ -34,7 +34,7 @@ function LoginPage() {
                         autoComplete="email"
                         placeholder="email@example.com"
                         onChange={handleChange}
-                        value={String(data.email)}
+                        value={String(item.email)}
                         className="text-gray-50"
                     />
                     <InputError message={errors.email} />
@@ -50,7 +50,7 @@ function LoginPage() {
                         autoComplete="current-password"
                         placeholder="Password"
                         onChange={handleChange}
-                        value={String(data.password)}
+                        value={String(item.password)}
                         className="text-gray-50"
 
                     />

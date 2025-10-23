@@ -18,27 +18,27 @@ import AppLogo from './app-logo';
 const mainNavItems: NavItem[] = [
     {
         title: 'Advertisements',
-        href: '/advertisement',
+        href: '/view-advertisement',
         icon: Clapperboard,
     },
     {
         title: 'Banners',
-        href: '/banners',
+        href: '/view-banners',
         icon: ImagePlay,
     },
     {
         title: 'Categories',
-        href: '/categories',
+        href: '/view-categories',
         icon: Newspaper,
     },
     {
         title: 'Post',
-        href: '/post',
+        href: '/view-post',
         icon: MonitorPlay,
     },
     {
         title: 'Programs',
-        href: '/post',
+        href: '/view-post',
         icon: GalleryHorizontalEnd,
     },
 ];
