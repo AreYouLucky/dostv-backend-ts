@@ -17,6 +17,7 @@ class Program extends Model
         'trailer',
         'date_started',
         'is_active',
+        'is_banner',
         'order',
         'program_type'
     ];

@@ -33,12 +33,12 @@ const mainNavItems: NavItem[] = [
     },
     {
         title: 'Post',
-        href: '/view-post',
+        href: '/view-posts',
         icon: MonitorPlay,
     },
     {
         title: 'Programs',
-        href: '/view-post',
+        href: '/view-programs',
         icon: GalleryHorizontalEnd,
     },
 ];

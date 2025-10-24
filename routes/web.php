@@ -15,4 +15,5 @@ Route::middleware(['auth'])->group(function () {
 require __DIR__.'/settings.php';
 require __DIR__.'/authentication/authentication.php';
 require __DIR__.'/backend/categories.php';
+require __DIR__.'/backend/programs.php';
 

@@ -44,7 +44,7 @@ const DataTable = memo(function DataTable({
   children: React.ReactNode;
 }) {
   return (
-    <div className="relative my-2 rounded-lg">
+    <div className="relative my-2 rounded-lg ">
       <div className="flex items-center justify-between flex-column md:flex-row flex-wrap space-y-4 md:space-y-0 rounded-lg">
         <table className="w-full text-sm text-left rtl:text-right text-gray-600 rounded-lg">
           <thead className="text-xs text-gray-50 uppercase bg-teal-600">
@@ -107,36 +107,30 @@ function PaginatedSearchTableInner<T = unknown>({
     [searchBy]
   );
 
-  // Filtered list based on search term
   const filtered = useMemo(() => {
     const q = searchTerm.trim().toLowerCase();
     if (!q) return items;
     return items.filter((it) => getSearchText(it).toLowerCase().includes(q));
   }, [items, searchTerm, getSearchText]);
 
-  // Total pages derived from filtered length
   const totalPages = useMemo(
     () => Math.max(1, Math.ceil(filtered.length / itemsPerPage)),
     [filtered.length, itemsPerPage]
   );
 
-  // CLAMPED page (derived) — no setState here, avoids cascading updates
   const page = useMemo(
     () => Math.min(Math.max(1, currentPage), totalPages),
     [currentPage, totalPages]
   );
 
-  // Pagination math based on clamped page
   const indexOfLast = page * itemsPerPage;
   const indexOfFirst = indexOfLast - itemsPerPage;
 
-  // Current page slice
   const displayData = useMemo(
     () => filtered.slice(indexOfFirst, indexOfLast),
     [filtered, indexOfFirst, indexOfLast]
   );
 
-  // Counts for footer
   const count = useMemo(
     () => ({
       from: filtered.length === 0 ? 0 : indexOfFirst + 1,
@@ -151,10 +145,9 @@ function PaginatedSearchTableInner<T = unknown>({
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(e.target.value);
-    setCurrentPage(1); // reset to first page on new search
+    setCurrentPage(1); 
   };
 
-  // Use clamped page for navigation to avoid out-of-range jumps
   const nextPage = () => {
     if (!isNextDisabled) setCurrentPage(page + 1);
   };
@@ -164,7 +157,6 @@ function PaginatedSearchTableInner<T = unknown>({
 
   return (
     <div className="w-full rounded-lg text-gray-900 m-6">
-      {/* Search + Optional Refresh */}
       <div className="w-full flex items-center mb-3 gap-1 z-50">
         <div className="flex relative items-center">
           <Input

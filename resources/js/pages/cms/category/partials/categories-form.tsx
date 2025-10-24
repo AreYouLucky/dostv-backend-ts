@@ -1,60 +1,36 @@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog"
-import { memo } from "react"
+import { memo, useCallback } from "react"
 import { Input } from "@/components/ui/input";
 import InputError from "@/components/input-error";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/text-area";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner"
-import { useCreateCategory } from "./categories-hooks";
+import { useCreateCategory,useUpdateCategory } from "./categories-hooks";
 import { useHandleChange } from "@/hooks/use-handle-change";
-import { useQueryClient } from '@tanstack/react-query'
-import { useGetCategory } from "./categories-hooks";
 import { useEffect } from "react";
+import { CategoriesModel} from "@/types/models";
+
 
 
 type CategoriesFormProps = {
     show: boolean;
     onClose: () => void;
-    category_id: number;
+    data?: CategoriesModel;
 }
 
 function CategoriesForm(props: CategoriesFormProps) {
-    const { item, errors, setItem, handleChange, setErrors } = useHandleChange({
-        category_id: 0,
-        title: '',
-        description: '',
-    });
-    console.log(props.category_id)
-
-    const { data } = useGetCategory(props.category_id, {
-        enabled: props.category_id !== 0,
-    });
-    useEffect(() => {
-        if (props.category_id === 0) {
-            setItem({ category_id: 0, title: '', description: '' });
-            setErrors({});
-        } else if (data) {
-            console.log(data)
-            setItem({
-                category_id: data.category_id as number,
-                title: data.title,
-                description: data.description,
-            });
-        }
-    }, [props.category_id, data, setItem, setErrors]);
-
+    const { item, errors, setItem, handleChange, setErrors } = useHandleChange({ category_id: 0, title: '', description: '', });
     const createCategory = useCreateCategory();
-    const queryClient = useQueryClient()
-    const saveCategory = () => {
+    const updateCategory = useUpdateCategory();
+
+    const createCategoryFn = () => {
         createCategory.mutate(
             { title: item.title, description: item.description },
             {
                 onSuccess: (res) => {
                     toast.success(res.status);
-                    setItem({ category_id: 0, title: '', description: '' });
-                    setErrors({});
-                    queryClient.invalidateQueries({ queryKey: ["categories"] });
+                    clearFields()
                     props.onClose()
                 },
                 onError: (err) => {
@@ -64,11 +40,53 @@ function CategoriesForm(props: CategoriesFormProps) {
             }
         );
     };
+
+    const updateCategoryFn = () => {
+
+        updateCategory.mutate(
+            {
+                id: props.data?.category_id ?? 0,
+                payload: {
+                    title: item.title,
+                    description: item.description
+                }
+            },
+            {
+                onSuccess: (res) => {
+                    toast.success(res.status);
+                    clearFields()
+                    props.onClose();
+                },
+                onError: (err) => {
+                    setErrors(err.response?.data?.errors ?? {});
+                    toast.error('Check fields for error!');
+                },
+            }
+        );
+    }
+
+    const clearFields = useCallback(() => {
+        setItem({ category_id: 0, title: '', description: '' });
+        setErrors({});
+    }, [setItem, setErrors]);
+
+    useEffect(() => {
+        if (props.data?.category_id === 0) {
+            clearFields();
+        } else if (props.data) {
+            setItem({
+                category_id: props.data.category_id as number,
+                title: props.data.title,
+                description: props.data.description,
+            });
+        }
+    }, [ props.data, setItem, clearFields]);
+
     return (
         <Dialog open={props.show} onOpenChange={props.onClose}>
             <DialogContent className="text-gray-600 p-10 ">
                 <DialogHeader>
-                    <DialogTitle className="text-teal-600 poppins-bold text-center">{props.category_id === 0 ? 'Add' : 'Edit'} Category Form </DialogTitle>
+                    <DialogTitle className="text-teal-600 poppins-bold text-center">{props.data?.category_id === 0 ? 'Add' : 'Edit'} Category Form </DialogTitle>
                     <DialogDescription className="text-xs text-center">
                         Fill all the fields to proceed
                     </DialogDescription>
@@ -81,7 +99,6 @@ function CategoriesForm(props: CategoriesFormProps) {
                             type="title"
                             name="title"
                             required
-                            autoComplete="title"
                             onChange={handleChange}
                             value={String(item.title)}
                             className="text-gray-600 border-teal-600"
@@ -94,7 +111,6 @@ function CategoriesForm(props: CategoriesFormProps) {
                             id="description"
                             name="description"
                             required
-                            autoComplete="description"
                             onChange={handleChange}
                             value={String(item.description)}
                             className="text-gray-600 border-teal-600"
@@ -103,8 +119,8 @@ function CategoriesForm(props: CategoriesFormProps) {
                     </div>
                 </div>
                 <div className="w-full flex justify-start gap-2">
-                    <Button className="bg-teal-600" disabled={createCategory.isPending} onClick={saveCategory} >
-                        {createCategory.isPending ? "Saving..." : props.category_id === 0 ? "Add" : "Update"}
+                    <Button className="bg-teal-600" disabled={createCategory.isPending || updateCategory.isPending} onClick={props.data?.category_id === 0 ? createCategoryFn : updateCategoryFn} >
+                        {(createCategory.isPending || updateCategory.isPending) ? "Saving..." : props.data?.category_id === 0 ? "Add" : "Update"}
                     </Button>
                     <Button className="text-gray-50 bg-gray-700 text-sm" onClick={props.onClose}>Close</Button>
                 </div>
@@ -112,8 +128,4 @@ function CategoriesForm(props: CategoriesFormProps) {
         </Dialog>
     )
 }
-
 export default memo(CategoriesForm)
-
-
-
