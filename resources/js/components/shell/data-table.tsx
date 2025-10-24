@@ -7,7 +7,8 @@ import React, {
 } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "../ui/button";
-import { RefreshCcw, Search, ArrowBigLeft , ArrowBigRight  } from "lucide-react";
+import { RefreshCcw, Search, ArrowBigLeft, ArrowBigRight } from "lucide-react";
+import { Spinner } from "@/components/ui/spinner";
 
 /* -------------------- Types -------------------- */
 type Header = {
@@ -173,7 +174,7 @@ function PaginatedSearchTableInner<T = unknown>({
             className="min-w-[250px] h-10 border-teal-600 shadow-none ps-8"
           />
 
-          <Search className="absolute left-2.5 text-teal-500" size={16}/>
+          <Search className="absolute left-2.5 text-teal-500" size={16} />
 
         </div>
 
@@ -183,8 +184,9 @@ function PaginatedSearchTableInner<T = unknown>({
               onClick={onRefresh}
               className="px-4 bg-teal-600 h-full text-gray-50 poppins-semibold"
               type="button"
+              disabled={isLoading}
             >
-              <RefreshCcw />
+              {isLoading ? <Spinner className="mr-2" /> : <RefreshCcw />}
               Refresh
             </Button>
           </div>
@@ -241,7 +243,7 @@ function PaginatedSearchTableInner<T = unknown>({
               }`}
             type="button"
           >
-            <ArrowBigLeft/>
+            <ArrowBigLeft />
             Prev
           </Button>
           <Button
@@ -253,8 +255,8 @@ function PaginatedSearchTableInner<T = unknown>({
               }`}
             type="button"
           >
-            Next 
-            <ArrowBigRight/>
+            Next
+            <ArrowBigRight />
           </Button>
         </div>
       </div>

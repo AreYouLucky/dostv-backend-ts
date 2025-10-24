@@ -10,5 +10,5 @@ Route::middleware('auth')->group(function () {
         return Inertia::render('cms/categories');
     });
 
-    Route::resource('/categories', CategoriesController::class)->only(['index','store','update', 'destroy' ]);
+    Route::resource('/categories', CategoriesController::class)->only(['index','store','update', 'destroy', 'edit']);
 });

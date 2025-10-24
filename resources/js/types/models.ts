@@ -1,5 +1,5 @@
 export interface CategoriesModel {
-    id?: number;
+    category_id?: number;
     title: string;
     description: string;
     is_banner?: number;
@@ -10,7 +10,7 @@ export interface CategoriesModel {
 }
 
 export const emptyItem: CategoriesModel = {
-  id: 0,
+  category_id: 0,
   title: "",
   description: "",
   is_banner: 0,

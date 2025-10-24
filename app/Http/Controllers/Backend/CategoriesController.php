@@ -19,8 +19,8 @@ class CategoriesController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'title' => 'required' | 'string',
-            'description' => 'required' | 'string'
+            'title' => 'required' , 'string',
+            'description' => 'required' , 'string'
         ]);
         Category::create([
             'title' => $request->title,
@@ -44,7 +44,7 @@ class CategoriesController extends Controller
      */
     public function edit(string $id)
     {
-        //
+        return Category::select('category_id','title','description')->where('category_id', $id)->first();
     }
 
     /**
