@@ -114,6 +114,12 @@
             --toastify-toast-background: #000000;
             --toastify-text-color-light: #f1f1f1;
         }
+
+        .ck-editor__editable {
+            min-height: 200px;
+            padding: 1rem !important;
+            background-color: #ffffff00 !important;
+        }
     </style>
 
 

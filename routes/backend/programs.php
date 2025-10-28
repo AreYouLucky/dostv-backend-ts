@@ -8,4 +8,6 @@ Route::middleware('auth')->group(function () {
     Route::get('/view-programs', function () {
         return Inertia::render('cms/program/program-page');
     });
+
+    Route::resource('/programs', ProgramsController::class)->only(['index','store','update', 'destroy', 'edit']);
 });

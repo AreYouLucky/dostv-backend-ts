@@ -9,11 +9,12 @@ import CategoriesForm from './partials/categories-form';
 import { useFetchCategories } from './partials/categories-hooks';
 import { useState } from 'react';
 import { Tooltip, TooltipContent, TooltipTrigger, } from "@/components/ui/tooltip"
-import { CategoriesModel, emptyItem } from '@/types/models';
+import { CategoriesModel, emptyCategory } from '@/types/models';
 import ConfirmationDialog from '@/components/custom/confirmation-dialog';
 import { useDeleteCategory, useToggleCategory } from './partials/categories-hooks';
 import { toast } from 'sonner';
 import { TiStarFullOutline } from "react-icons/ti";
+import { TbCategoryFilled } from "react-icons/tb";
 const breadcrumbs: BreadcrumbItem[] = [
     { title: 'Dashboard', href: '/dashboard' },
     { title: 'Categories', href: '/view-categories' },
@@ -21,40 +22,39 @@ const breadcrumbs: BreadcrumbItem[] = [
 
 
 function CategoriesPage() {
-    const { data, isLoading, refetch } = useFetchCategories();
+    const { data, isLoading, refetch, error } = useFetchCategories();
     const [showDialog, setShowDialog] = useState<boolean>(false);
     const [showDeleteDialog, setShowDeleteDialog] = useState<boolean>(false);
-    const [category, setCategory] = useState<CategoriesModel>(emptyItem)
+    const [category, setCategory] = useState<CategoriesModel>(emptyCategory)
     const [id, setId] = useState<number>(0);
     const deleteCategory = useDeleteCategory();
     const toggleCategory = useToggleCategory();
-
     const openModal = () => {
         setShowDialog(true)
     }
-
+    
     const closeModal = () => {
-        setCategory(emptyItem)
+        setCategory(emptyCategory)
         setShowDialog(false)
     }
-
+    
     const openEditModal = (item: CategoriesModel) => {
         setCategory(item)
         setShowDialog(true)
     }
-
+    
     const openDeleteDialog = (id: number) => {
         setShowDeleteDialog(true)
         setId(id)
-
+        
     }
-
+    
     const toggleBanner = (id: number) => {
         toggleCategory.mutate({
             payload: { id }  
         });
     }
-
+    
     const confirmCategoryDeletion = () => {
         deleteCategory.mutate(
             { id: id },
@@ -66,21 +66,21 @@ function CategoriesPage() {
             }
         );
     }
-
+    if (error) return alert('An error has occurred: ' + error.message);
     return (
         <>
             <Head title="Categories" />
             <div className="flex flex-col flex-1 min-h-0  ">
                 <div className="flex flex-1 flex-col gap-y-3 gap-x-5 rounded-xl px-6 py-5">
                     <div className='w-full flex justify-between item-center px-6 py-4 shadow-sm border rounded-lg border-gray-400/50 '>
-                        <div className="text-teal-700 poppins-bold md:text-lg text-sm flex items-center">
-                            Categories Management Section
+                        <div className="text-teal-700 poppins-bold md:text-lg text-sm flex items-center gap-2">
+                            <TbCategoryFilled/>Categories Management Section
                         </div>
                         <div className="text-gray-500 poppins-bold text-lg">
                             <Button className='bg-teal-600' onClick={openModal}> <IoAddCircle /> Add Category</Button>
                         </div>
                     </div>
-                    <div className='w-full flex justify-between item-center  shadow-md border rounded-lg border-gray-400/50 overflow-auto p-4'>
+                    <div className='w-full flex justify-between item-center  shadow-md border rounded-lg border-gray-400/50 overflow-auto p-2'>
                         <PaginatedSearchTable<CategoriesModel>
                             items={data ?? []}
                             headers={[

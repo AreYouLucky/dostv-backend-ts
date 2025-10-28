@@ -2,7 +2,6 @@ import { useState, useCallback } from "react";
 
 type FormValues = Record<string, string | number | boolean>;
 
-// 🔑 Strictly define errors as Record of string | undefined/null
 type FormErrors<T> = Partial<Record<keyof T, string>>;
 
 export function useHandleChange<T extends FormValues>(initialValues: T) {
@@ -17,7 +16,7 @@ export function useHandleChange<T extends FormValues>(initialValues: T) {
         : e.target.value;
 
     setItem((prev) => ({ ...prev, [name]: value }));
-    setErrors((prev) => ({ ...prev, [name]: undefined })); // ✅ clear error properly
+    setErrors((prev) => ({ ...prev, [name]: undefined })); 
   }, []);
 
   return { item, errors, setItem, setErrors, handleChange };
