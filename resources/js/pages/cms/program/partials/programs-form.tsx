@@ -112,6 +112,7 @@ function ProgramsForm() {
                                 </div>
                                 <InputError message={errors.description as string} />
                             </div>
+                            <Button className="bg-teal-600 w-fit">Add Program</Button>
                         </div>
                     </div>
                 </div>
