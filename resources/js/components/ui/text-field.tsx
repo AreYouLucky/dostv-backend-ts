@@ -70,7 +70,7 @@ interface TextFieldProps {
 const TextField = ({ value, onChange, className }: TextFieldProps) => {
     return (
         <div className={className}>
-             <CKEditor
+            <CKEditor
                 editor={ClassicEditor}
                 data={value}
                 onChange={(_, editor) => {
@@ -86,13 +86,10 @@ const TextField = ({ value, onChange, className }: TextFieldProps) => {
                         shouldNotGroupWhenFull: true, items: [
                             "undo", "redo", "|", "findAndReplace", "selectAll", "|",
                             "link", "uploadImage", "insertTable", "blockQuote", "mediaEmbed", "codeBlock", "pageBreak", "horizontalLine", "specialCharacters",
-                            "heading",  "|",
+                            "heading", "|",
                             "bold", "italic", "underline", "strikethrough",
-                            {
-                                label: "Basic styles", icon: "text", items: [
-                                    "fontSize", "fontFamily", "fontColor", "fontBackgroundColor", "highlight", "superscript", "subscript", "code", "|", "textPartLanguage", "|",
-                                ]
-                            },
+
+                            "fontSize", "fontFamily", "fontColor", "fontBackgroundColor", "highlight", "superscript", "subscript", "code", "|", "textPartLanguage", "|",
                             "removeFormat", "|",
                             "alignment", "|",
                             "bulletedList", "numberedList", "todoList", "|", "outdent", "indent",

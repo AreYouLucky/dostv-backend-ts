@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import {Link} from '@inertiajs/react';
 import { type BreadcrumbItem } from '@/types';
 import AppLayout from '@/layouts/app-layout';
 import { Head } from '@inertiajs/react';
@@ -6,11 +6,10 @@ import { Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import PaginatedSearchTable from '@/components/custom/data-table';
 import { useFetchPrograms } from './partials/programs-hooks';
-import { ProgramsModel, emptyProgram } from '@/types/models';
+import { ProgramsModel } from '@/types/models';
 import { trimText, convertShortDate } from '@/hooks/use-essential-functions';
 import ImageLoader from '@/components/custom/image-loader';
 import { MdPermMedia } from "react-icons/md";
-import ProgramsForm from './partials/programs-form';
 
 const breadcrumbs: BreadcrumbItem[] = [
     { title: 'Dashboard', href: '/dashboard' },
@@ -18,8 +17,6 @@ const breadcrumbs: BreadcrumbItem[] = [
 ];
 function ProgramPage() {
     const { data, isPending, refetch, error } = useFetchPrograms();
-    const [showDialog, setShowDialog] = useState<boolean>(false);
-    const [program, setProgram] = useState<ProgramsModel>(emptyProgram)
 
     if (error) return alert('An error has occurred: ' + error.message);
 
@@ -33,7 +30,7 @@ function ProgramPage() {
                             <MdPermMedia /> Programs Management Section
                         </div>
                         <div className="text-gray-500 poppins-bold text-lg">
-                            <Button className='bg-teal-600' onClick={() => { setShowDialog(true) }}> <Plus /> Add Program</Button>
+                            <Link className='bg-teal-600 text-gray-50 inline-flex  h-9 px-4 py-2 has-[>svg]:px-3 items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-[color,box-shadow]' href={'/program-form'}> <Plus /> Add Program</Link>
                         </div>
                     </div>
                     <div className='w-full flex justify-between item-center  shadow-md border rounded-lg border-gray-400/50 overflow-auto p-2'>
@@ -80,7 +77,6 @@ function ProgramPage() {
                     </div>
                 </div>
             </div >
-            <ProgramsForm show={showDialog} onClose={() => { setShowDialog(false) }} data={program} />
         </>
     )
 }

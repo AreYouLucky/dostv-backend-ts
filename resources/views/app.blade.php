@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" >
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="dark">
 
 <head>
     <meta charset="utf-8">
@@ -43,7 +43,7 @@
             animation: twinkle 6s infinite linear reverse;
         }
 
-        html.dark body {
+        html body {
             background-image:
                 linear-gradient(to bottom,
                     rgba(0, 0, 0, 0.8),
@@ -116,9 +116,7 @@
         }
 
         .ck-editor__editable {
-            min-height: 200px;
-            padding: 1rem !important;
-            background-color: #ffffff00 !important;
+            min-height: 300px;
         }
     </style>
 
