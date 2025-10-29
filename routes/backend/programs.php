@@ -14,5 +14,6 @@ Route::middleware('auth')->group(function () {
     });
 
 
-    Route::resource('/programs', ProgramsController::class)->only(['index','store','update', 'destroy', 'edit']);
+    Route::resource('/programs', ProgramsController::class)->only(['index','store','destroy', 'edit']);
+    Route::post('/update-program/{id}',[ProgramsController::class,'update']);
 });

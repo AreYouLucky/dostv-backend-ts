@@ -35,7 +35,7 @@ export function useCreateProgram() {
 export const updateProgram = async ({id,payload,}: {
   id: number;
   payload: FormData; }): Promise<ApiOk> => {
-  const { data } = await axios.put<ApiOk>(`/programs/${id}`, payload, {
+  const { data } = await axios.post<ApiOk>(`/update-program/${id}`, payload, {
     headers: { "Content-Type": "multipart/form-data" },
   });
   return data;

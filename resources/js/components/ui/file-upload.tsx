@@ -43,15 +43,15 @@ const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
 
 
   return (
-    <div className={`flex w-full items-center justify-center  border border-dashed  bg-transparent rounded-lg p-4 overflow-hidden ${className}`}>
+    <div className={`flex w-full items-center justify-center  border border-dashed bg-transparent rounded-lg p-2 overflow-hidden ${className}`}>
       <label
         htmlFor={id}
-        className={` flex h-96 w-full cursor-pointer flex-col items-center justify-center  `}
+        className={` flex max-h-96 w-full cursor-pointer flex-col items-center justify-center  `}
       >
         {!fileName ? (
-          <div className="flex flex-col items-center justify-center pb-6 pt-5">
-            {type == 1 ? <AiFillPicture size={70} /> : <FaFileVideo size={70} />}
-            <p className="mb-2 text-lg  font-semibold">
+          <div className="flex flex-col items-center justify-center p-4">
+            {type == 1 ? <AiFillPicture size={50} /> : <FaFileVideo size={50} />}
+            <p className="mb-2 text-sm mt-2 ">
               {text}
             </p>
           </div>

@@ -115,7 +115,7 @@
 
         .ck-editor__editable {
             min-height: 200px;
-            background-color: rgba(218, 238, 255, 0) !important;
+            background-color: rgba(255, 255, 255, 0.836) !important;
         }
     </style>
 

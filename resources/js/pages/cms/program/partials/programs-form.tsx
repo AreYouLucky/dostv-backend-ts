@@ -12,6 +12,8 @@ import { Head } from "@inertiajs/react";
 import { TfiLayoutMediaOverlayAlt2 } from "react-icons/tfi";
 import FileUpload from "@/components/ui/file-upload";
 import { useCreateProgram, useUpdateProgram } from "./programs-hooks";
+import ConfirmationDialog from "@/components/custom/confirmation-dialog";
+import { useState } from "react";
 
 const breadcrumbs = [
     { title: 'Dashboard', href: '/dashboard' },
@@ -32,11 +34,13 @@ function ProgramsForm() {
         program_type: '',
         image_file: '',
         trailer_file: '',
+        code: ''
     });
+    const [message, setMessage] = useState('')
+    const [successDialog, setSuccessDialog] = useState(false)
+
     const createProgram = useCreateProgram();
     const updateProgram = useUpdateProgram();
-
-
 
     const saveProgram = () => {
         const formData = new FormData(); 
@@ -46,15 +50,14 @@ function ProgramsForm() {
         formData.append("date_started", item.date_started); 
         formData.append("program_type", item.program_type); 
         if (item.image_file) { 
-            console.log('iamges here', item.image_file) 
             formData.append("image", item.image_file); 
         } 
         if (item.trailer_file) { 
-            console.log('video here', item.trailer_file) 
             formData.append("trailer", item.trailer_file); 
         }
         createProgram.mutate(formData, {
             onSuccess: ({ status, program }) => {
+                console.log(program)
                 setItem({
                     program_id: program?.program_id || 0,
                     title: program?.title || "",
@@ -66,9 +69,10 @@ function ProgramsForm() {
                     program_type: program?.program_type || "",
                     image_file: '',
                     trailer_file: '',
+                    code: program?.code || ""
                 });
-
-                toast.success(status);
+                setMessage(status)
+                setSuccessDialog(true)
             },
             onError: err => {
                 setErrors(err.response?.data?.errors ?? {});
@@ -78,6 +82,8 @@ function ProgramsForm() {
     };
 
     const editProgram = () =>{
+        console.log('test')
+        console.log('this asdasdas',item)
         const formData = new FormData(); 
         formData.append("title", item.title); 
         formData.append("description", item.description); 
@@ -103,9 +109,10 @@ function ProgramsForm() {
                     program_type: program?.program_type || "",
                     image_file: '',
                     trailer_file: '',
+                    code: program?.code || ""
                 });
-
-                toast.success(status);
+                setMessage(status)
+                setSuccessDialog(true)
             },
             onError: err => {
                 setErrors(err.response?.data?.errors ?? {});
@@ -121,9 +128,9 @@ function ProgramsForm() {
             <Head title="Categories" />
             <div className="flex flex-col flex-1 min-h-0  ">
                 <div className="flex flex-1 flex-col gap-y-3 gap-x-5 rounded-xl px-6 py-5">
-                    <div className='w-full flex justify-between item-center  shadow-md border rounded-lg border-gray-400/50 overflow-auto p-10 '>
-                        <div className="w-full grid md:grid-cols-3 gap-6 mt-2 ">
-                            <div className="text-teal-700 poppins-bold md:text-xl text-sm flex items-center justify-center gap-5 md:col-span-3 mb-1 pb-4 ">
+                    <div className='w-full flex justify-between item-center  shadow-md border rounded-lg border-gray-400/50 overflow-auto p-8'>
+                        <div className="w-full grid md:grid-cols-3 gap-4 mt-2 ">
+                            <div className="text-teal-700 poppins-bold md:text-xl text-sm flex items-center justify-start gap-5 md:col-span-3 mb-1 pb-4  border-b">
                                 <TfiLayoutMediaOverlayAlt2 /> Programs Management Form
                             </div>
                             <div className="grid gap-2">
@@ -184,8 +191,8 @@ function ProgramsForm() {
                             <div className="md:col-span-2">
 
                             </div>
-                            <div className="grid gap-2">
-                                <Label htmlFor="image_file" className="text-gray-700 poppins-semibold mb-2">Banner Image <span className="poppins-regular text-gray-600">(Aspect-Ratio 4:5)</span> </Label>
+                            <div className=" gap-2 h-full flex flex-col justify-start transition-all duration-300 ease-in-out mt-2">
+                                <Label htmlFor="image_file" className="text-gray-700 poppins-semibold">Banner Image <span className="poppins-regular text-gray-600">(Aspect-Ratio 4:5)</span> </Label>
                                 <FileUpload
                                     type={1}
                                     id="image_file"
@@ -193,11 +200,11 @@ function ProgramsForm() {
                                     accept="image/png,image/jpeg"
                                     text="Click to upload image"
                                     onChange={handleChange}
-                                    className="text-gray-600 border-teal-600 border-2 shadow"
+                                    className="text-gray-600 border-teal-600 shadow p-4"
                                 />
-                                <InputError message={errors.image_file as string} />
+                                <InputError message={errors.image as string} />
                             </div>
-                            <div className="md:col-span-2 grid gap-2">
+                            <div className="md:col-span-2 gap-2 h-full flex flex-col justify-start transition-all duration-300 ease-in-out mt-2">
                                 <Label htmlFor="image_file" className="text-gray-700 poppins-semibold">Program Trailer</Label>
                                 <FileUpload
                                     type={2}
@@ -206,11 +213,11 @@ function ProgramsForm() {
                                     accept="video/mp4,video/x-msvideo"
                                     text="Click to upload video"
                                     onChange={handleChange}
-                                    className="text-gray-600 border-teal-600 border-2 shadow"
+                                    className="text-gray-600 border-teal-600 shadow p-4"
                                 />
-                                <InputError message={errors.image_file as string} />
+                                <InputError message={errors.trailer as string} />
                             </div>
-                            <div className="md:col-span-3 grid gap-2">
+                            <div className="md:col-span-3 grid gap-2 mt-2">
                                 <Label htmlFor="description" className="text-gray-700 poppins-semibold">Program Description</Label>
                                 <div className="max-h-screen  overflow-auto border border-teal-600 rounded-lg">
                                     <TextField
@@ -224,13 +231,13 @@ function ProgramsForm() {
                                 </div>
                                 <InputError message={errors.description as string} />
                             </div>
-                            <Button className="bg-teal-600 w-fit poppins-bold" onClick={item.program_id == 0 ? saveProgram : editProgram}>{item.program_id == 0 ? 'Add' : 'Update' } Program</Button>
+                            <Button className="bg-teal-600 w-fit poppins-bold" onClick={item.program_id == 0 ? saveProgram : editProgram}
+                            disabled={createProgram.isPending || updateProgram.isPending}>{item.program_id == 0 ? 'Add' : 'Update' } Program</Button>
                         </div>
                     </div>
                 </div>
             </div>
-
-
+            <ConfirmationDialog show={successDialog} onClose={() => setSuccessDialog(false)} type={1} message={message} />
         </>
 
 

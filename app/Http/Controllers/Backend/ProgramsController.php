@@ -95,10 +95,11 @@ class ProgramsController extends Controller
         }
     }
 
-    public function update(Request $request, string $id, ContentFunctions $content)
+    public function update(Request $request, string $id,  ContentFunctions $content)
     {
+
         $request->validate([
-            'title'         => 'required|string|max:255|unique:programs,title',
+            'title'         => ['required', 'string', 'unique:programs,title,'. $id. ',program_id'],
             'program_type'  => 'required|string|max:100',
             'date_started'  => 'required|string',
             'agency'        => 'required|string|max:255',

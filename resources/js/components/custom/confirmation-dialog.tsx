@@ -7,7 +7,7 @@ import { Button } from '../ui/button';
 type ConfirmationDialogProp = {
     show: boolean;
     onClose: () => void;
-    onConfirm: () => void;
+    onConfirm?: () => void;
     message?: string
     type: 1 | 2;
 }
