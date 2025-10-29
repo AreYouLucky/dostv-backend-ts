@@ -20,7 +20,7 @@ export const emptyCategory: CategoriesModel = {
 
 export interface ProgramsModel {
   program_id?: number;
-  code: string;
+  code?: string;
   title: string;
   description: string;
   agency: string;
@@ -28,7 +28,9 @@ export interface ProgramsModel {
   trailer: string;
   date_started: string;
   program_type: string;
-  order: number;
+  trailer_file?: File;
+  image_file?:File;
+  order?: number;
   is_banner?: number;
   is_active?: number;
   created_at?: string;

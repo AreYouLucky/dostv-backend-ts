@@ -10,18 +10,19 @@ import TextField from "@/components/ui/text-field"
 import AppLayout from "@/layouts/app-layout"
 import { Head } from "@inertiajs/react";
 import { TfiLayoutMediaOverlayAlt2 } from "react-icons/tfi";
+import FileUpload from "@/components/ui/file-upload";
+import { useCreateProgram, useUpdateProgram } from "./programs-hooks";
 
 const breadcrumbs = [
     { title: 'Dashboard', href: '/dashboard' },
     { title: 'Programs', href: '/view-programs' },
-    { title: 'Form', href: '/program-form' },
+    { title:  'Form', href: '/program-form' },
 ];
 
 
 function ProgramsForm() {
     const { item, errors, setItem, handleChange, setErrors } = useHandleChange({
         program_id: 0,
-        code: '',
         title: '',
         description: '',
         agency: '',
@@ -29,22 +30,104 @@ function ProgramsForm() {
         trailer: '',
         date_started: '',
         program_type: '',
+        image_file: '',
+        trailer_file: '',
     });
+    const createProgram = useCreateProgram();
+    const updateProgram = useUpdateProgram();
+
+
+
+    const saveProgram = () => {
+        const formData = new FormData(); 
+        formData.append("title", item.title); 
+        formData.append("description", item.description); 
+        formData.append("agency", item.agency); 
+        formData.append("date_started", item.date_started); 
+        formData.append("program_type", item.program_type); 
+        if (item.image_file) { 
+            console.log('iamges here', item.image_file) 
+            formData.append("image", item.image_file); 
+        } 
+        if (item.trailer_file) { 
+            console.log('video here', item.trailer_file) 
+            formData.append("trailer", item.trailer_file); 
+        }
+        createProgram.mutate(formData, {
+            onSuccess: ({ status, program }) => {
+                setItem({
+                    program_id: program?.program_id || 0,
+                    title: program?.title || "",
+                    description: program?.description || "",
+                    agency: program?.agency || "",
+                    image: program?.image || "",
+                    trailer: program?.trailer || "",
+                    date_started: program?.date_started || "",
+                    program_type: program?.program_type || "",
+                    image_file: '',
+                    trailer_file: '',
+                });
+
+                toast.success(status);
+            },
+            onError: err => {
+                setErrors(err.response?.data?.errors ?? {});
+                toast.error("Check fields for errors!");
+            },
+        });
+    };
+
+    const editProgram = () =>{
+        const formData = new FormData(); 
+        formData.append("title", item.title); 
+        formData.append("description", item.description); 
+        formData.append("agency", item.agency); 
+        formData.append("date_started", item.date_started); 
+        formData.append("program_type", item.program_type); 
+        if (item.image_file) { 
+            formData.append("image", item.image_file); 
+        } 
+        if (item.trailer_file) { 
+            formData.append("trailer", item.trailer_file); 
+        }
+        updateProgram.mutate({id:item.program_id, payload:formData}, {
+            onSuccess: ({ status, program }) => {
+                setItem({
+                    program_id: program?.program_id || 0,
+                    title: program?.title || "",
+                    description: program?.description || "",
+                    agency: program?.agency || "",
+                    image: program?.image || "",
+                    trailer: program?.trailer || "",
+                    date_started: program?.date_started || "",
+                    program_type: program?.program_type || "",
+                    image_file: '',
+                    trailer_file: '',
+                });
+
+                toast.success(status);
+            },
+            onError: err => {
+                setErrors(err.response?.data?.errors ?? {});
+                toast.error("Check fields for errors!");
+            },
+        });
+    }
+
+
 
     return (
         <>
             <Head title="Categories" />
             <div className="flex flex-col flex-1 min-h-0  ">
                 <div className="flex flex-1 flex-col gap-y-3 gap-x-5 rounded-xl px-6 py-5">
-                    <div className='w-full flex justify-between item-center px-6 py-4 shadow-sm border rounded-lg border-gray-400/50 '>
-                        <div className="text-teal-700 poppins-bold md:text-lg text-sm flex items-center gap-5">
-                            <TfiLayoutMediaOverlayAlt2 /> Programs Management Form
-                        </div>
-                    </div>
-                    <div className='w-full flex justify-between item-center  shadow-md border rounded-lg border-gray-400/50 overflow-auto px-8 py-8 '>
-                        <div className="w-full grid md:grid-cols-3 gap-3 mt-2 ">
+                    <div className='w-full flex justify-between item-center  shadow-md border rounded-lg border-gray-400/50 overflow-auto p-10 '>
+                        <div className="w-full grid md:grid-cols-3 gap-6 mt-2 ">
+                            <div className="text-teal-700 poppins-bold md:text-xl text-sm flex items-center justify-center gap-5 md:col-span-3 mb-1 pb-4 ">
+                                <TfiLayoutMediaOverlayAlt2 /> Programs Management Form
+                            </div>
                             <div className="grid gap-2">
-                                <Label htmlFor="title" className="text-gray-600 poppins-regular">Program Title</Label>
+                                <Label htmlFor="title" className="text-gray-700 poppins-semibold">Program Title</Label>
                                 <Input
                                     id="title"
                                     type="text"
@@ -52,12 +135,12 @@ function ProgramsForm() {
                                     required
                                     onChange={handleChange}
                                     value={String(item.title)}
-                                    className="text-gray-600 border-teal-600"
+                                    className="text-gray-700 border-teal-600"
                                 />
                                 <InputError message={errors.title as string} />
                             </div>
                             <div className="grid gap-2">
-                                <Label htmlFor="program_type" className="text-gray-600 poppins-regular">Program Type</Label>
+                                <Label htmlFor="program_type" className="text-gray-700 poppins-semibold">Program Type</Label>
                                 <SelectInput
                                     id="program_type"
                                     name="program_type"
@@ -67,13 +150,13 @@ function ProgramsForm() {
                                     value={item.program_type}
                                     onChange={handleChange}
                                     defaultValue="Select program type"
-                                    className="text-gray-600 border-teal-600"
+                                    className="text-gray-700 border-teal-600"
                                 />
 
                                 <InputError message={errors.program_type as string} />
                             </div>
                             <div className="grid gap-2">
-                                <Label htmlFor="agency" className="text-gray-600 poppins-regular"> Program Agency</Label>
+                                <Label htmlFor="agency" className="text-gray-700 poppins-semibold"> Program Agency</Label>
                                 <Input
                                     id="agency"
                                     type="text"
@@ -81,12 +164,12 @@ function ProgramsForm() {
                                     required
                                     onChange={handleChange}
                                     value={String(item.agency)}
-                                    className="text-gray-600 border-teal-600"
+                                    className="text-gray-700 border-teal-600"
                                 />
                                 <InputError message={errors.agency as string} />
                             </div>
                             <div className="grid gap-2">
-                                <Label htmlFor="date_started" className="text-gray-600 poppins-regular">Date Started</Label>
+                                <Label htmlFor="date_started" className="text-gray-700 poppins-semibold">Date Started</Label>
                                 <Input
                                     id="date_started"
                                     type="date"
@@ -94,25 +177,54 @@ function ProgramsForm() {
                                     required
                                     onChange={handleChange}
                                     value={String(item.date_started)}
-                                    className="text-gray-600 border-teal-600"
+                                    className="text-gray-700 border-teal-600"
                                 />
                                 <InputError message={errors.date_started as string} />
                             </div>
-                            <div className="md:col-span-3">
-                                <Label htmlFor="description" className="text-gray-600 poppins-regular">Description</Label>
-                                <div className="max-h-[450px]  overflow-auto border border-teal-600 rounded-lg">
+                            <div className="md:col-span-2">
+
+                            </div>
+                            <div className="grid gap-2">
+                                <Label htmlFor="image_file" className="text-gray-700 poppins-semibold mb-2">Banner Image <span className="poppins-regular text-gray-600">(Aspect-Ratio 4:5)</span> </Label>
+                                <FileUpload
+                                    type={1}
+                                    id="image_file"
+                                    name="image_file"
+                                    accept="image/png,image/jpeg"
+                                    text="Click to upload image"
+                                    onChange={handleChange}
+                                    className="text-gray-600 border-teal-600 border-2 shadow"
+                                />
+                                <InputError message={errors.image_file as string} />
+                            </div>
+                            <div className="md:col-span-2 grid gap-2">
+                                <Label htmlFor="image_file" className="text-gray-700 poppins-semibold">Program Trailer</Label>
+                                <FileUpload
+                                    type={2}
+                                    id="trailer_file"
+                                    name="trailer_file"
+                                    accept="video/mp4,video/x-msvideo"
+                                    text="Click to upload video"
+                                    onChange={handleChange}
+                                    className="text-gray-600 border-teal-600 border-2 shadow"
+                                />
+                                <InputError message={errors.image_file as string} />
+                            </div>
+                            <div className="md:col-span-3 grid gap-2">
+                                <Label htmlFor="description" className="text-gray-700 poppins-semibold">Program Description</Label>
+                                <div className="max-h-screen  overflow-auto border border-teal-600 rounded-lg">
                                     <TextField
                                         id="description"
                                         name="description"
                                         label="description"
                                         value={String(item.description)}
                                         onChange={handleChange}
-                                        className="text-gray-600"
+                                        className="text-gray-700"
                                     />
                                 </div>
                                 <InputError message={errors.description as string} />
                             </div>
-                            <Button className="bg-teal-600 w-fit">Add Program</Button>
+                            <Button className="bg-teal-600 w-fit poppins-bold" onClick={item.program_id == 0 ? saveProgram : editProgram}>{item.program_id == 0 ? 'Add' : 'Update' } Program</Button>
                         </div>
                     </div>
                 </div>

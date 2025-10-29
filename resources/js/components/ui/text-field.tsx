@@ -67,7 +67,7 @@ interface TextFieldProps {
     onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
-const TextField = ({ value, onChange, className }: TextFieldProps) => {
+const TextField = ({ value, onChange, className, name }: TextFieldProps) => {
     return (
         <div className={className}>
             <CKEditor
@@ -85,14 +85,13 @@ const TextField = ({ value, onChange, className }: TextFieldProps) => {
                     toolbar: {
                         shouldNotGroupWhenFull: true, items: [
                             "undo", "redo", "|", "findAndReplace", "selectAll", "|",
-                            "link", "uploadImage", "insertTable", "blockQuote", "mediaEmbed", "codeBlock", "pageBreak", "horizontalLine", "specialCharacters",
                             "heading", "|",
                             "bold", "italic", "underline", "strikethrough",
-
-                            "fontSize", "fontFamily", "fontColor", "fontBackgroundColor", "highlight", "superscript", "subscript", "code", "|", "textPartLanguage", "|",
+                            "fontSize", "fontFamily", "fontColor", "fontBackgroundColor", "highlight", "superscript", "subscript", "code", "|",
                             "removeFormat", "|",
                             "alignment", "|",
                             "bulletedList", "numberedList", "todoList", "|", "outdent", "indent",
+                            "link", "uploadImage", "insertTable", "blockQuote", "mediaEmbed", "codeBlock", "pageBreak", "horizontalLine", "specialCharacters",
                         ]
                     },
                     heading: {

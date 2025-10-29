@@ -102,21 +102,20 @@
         }
 
         :root {
-            /* optional global fallback */
             --toastify-icon-color-success: #0ccfbf;
         }
 
         .Toastify__toast-theme--dark {
             --toastify-color-progress-dark: #0ccfbf;
             --toastify-color-success: #000000;
-            /* success border color */
             --toastify-icon-color-success: #0ccfbf;
             --toastify-toast-background: #000000;
-            --toastify-text-color-light: #f1f1f1;
+            --toastify-text-color-light: #f1f1f1 ;
         }
 
         .ck-editor__editable {
-            min-height: 300px;
+            min-height: 200px;
+            background-color: rgba(218, 238, 255, 0) !important;
         }
     </style>
 
