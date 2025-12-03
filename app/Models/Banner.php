@@ -14,6 +14,8 @@ class Banner extends Model
         'code',
         'highlight_text',
         'url',
-        'type'
+        'type',
+        'is_banner',
+        'is_active'
     ];
 }

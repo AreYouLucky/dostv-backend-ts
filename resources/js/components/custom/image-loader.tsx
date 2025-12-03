@@ -16,7 +16,7 @@ type Props = Omit<React.ImgHTMLAttributes<HTMLImageElement>, "onError" | "onLoad
 export function ImageLoader({
   src,
   alt = "",
-  fallback = "/storage/images/logos/dostv.png",
+  fallback = "/storage/images/logos/empty.png",
   lazy = true,
   rootMargin = "200px",
   showSkeleton = true,
@@ -79,7 +79,7 @@ type InnerProps = Omit<Props, "lazy" | "rootMargin" | "wrapperClassName"> & {
 
 function InnerImg({
   src,
-  fallback = "/storage/images/logos/download.jpg",
+  fallback,
   alt,
   className,
   fadeDurationMs,

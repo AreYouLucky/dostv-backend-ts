@@ -78,11 +78,11 @@ class CategoriesController extends Controller
 
     public function toggleCategory(Request $request)
     {
-        $category = Category::where('category_id', $request->id)->first();
-        $category->is_banner = $category->is_banner == 1 ? 0 :1;
-        $category->save();
-        return response()->json([
-            'status' => 'Category Successfully Toggled!'
-        ]);
+            $category = Category::where('category_id', $request->id)->first();
+            $category->is_banner = $category->is_banner == 1 ? 0 :1;
+            $category->save();
+            return response()->json([
+                'status' => 'Category Successfully Toggled!'
+            ]);
     }
 }

@@ -1,14 +1,12 @@
 <?php
 
 namespace App\Http\Controllers\Backend;
-
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Program;
-use Illuminate\Support\Str;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
 use App\Services\ContentFunctions;
+use Inertia\Inertia;
 
 class ProgramsController extends Controller
 {
@@ -16,21 +14,19 @@ class ProgramsController extends Controller
 
     public function index()
     {
-        return Program::where('is_active', 1)->orderBy('title', 'asc')->get();
+        return Program::where('is_active', 1)->orderBy('order', 'desc')->get();
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+    public function editProgram(String $code)
     {
-        //
+        $program = Program::where('code', $code)->first();
+        return Inertia::render('cms/program/partials/programs-form', [
+            'program' => $program
+        ]);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request,  ContentFunctions $content)
+
+    public function store(Request $request, ContentFunctions $content)
     {
 
         $request->validate([
@@ -40,7 +36,7 @@ class ProgramsController extends Controller
             'agency'        => 'required|string|max:255',
             'description'   => 'required|string',
             'image'         => 'required|image|mimes:png,jpg,jpeg|max:2048',
-            'trailer'       => 'nullable|mimes:mp4,avi|max:102400',
+            'trailer'       => 'nullable|mimes:mp4,avi|max:30400',
         ]);
         try {
             DB::beginTransaction();
@@ -99,13 +95,13 @@ class ProgramsController extends Controller
     {
 
         $request->validate([
-            'title'         => ['required', 'string', 'unique:programs,title,'. $id. ',program_id'],
+            'title'         => ['required', 'string', 'unique:programs,title,' . $id . ',program_id'],
             'program_type'  => 'required|string|max:100',
             'date_started'  => 'required|string',
             'agency'        => 'required|string|max:255',
             'description'   => 'required|string',
             'image'         => 'nullable|image|mimes:png,jpg,jpeg|max:5048',
-            'trailer'       => 'nullable|mimes:mp4,avi|max:102400',
+            'trailer'       => 'nullable|mimes:mp4,avi|max:30400',
         ]);
         try {
             DB::beginTransaction();
@@ -155,8 +151,45 @@ class ProgramsController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(String $id)
     {
-        //
+        $program = Program::where('program_id', $id)->first();
+        $program->is_active = $program->is_active == 1 ? 0 : 1;
+        $program->save();
+        return response()->json([
+            'status' => 'Program Successfully Deleted!'
+        ]);
+    }
+
+    public function moveProgram(Request $req){
+        $req->validate([
+            'id' => 'required|string',
+            'type' => 'required|string'
+        ]);
+
+        $first = Program::where('program_id', $req->id)->first();
+        if($req->type == 1){
+            $second =  Program::where('order', '>', $first->order)->orderBy('order','asc')->first();
+        }
+        else{
+            $second = Program::where('order', '<', $first->order)->orderBy('order','desc')->first();
+        }
+        if(!isset($second)){
+            return response()->json([
+                'status', 'Undefined Order'
+            ]);
+        }
+
+
+        $f_order = $second->order;
+        $s_order = $first->order;
+
+        $first->order = $f_order;
+        $first->save();
+        $second->order = $s_order;
+        $second->save();
+        return response()->json([
+            'status' => 'Order Successfully Toggled'
+        ]);
     }
 }

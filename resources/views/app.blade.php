@@ -20,39 +20,6 @@
             overflow: hidden;
         }
 
-        .stars {
-            position: fixed;
-            inset: 0;
-            pointer-events: none;
-            z-index: 0;
-        }
-
-        .stars::after {
-            content: "";
-            position: absolute;
-            width: 1px;
-            height: 2px;
-            background: white;
-            box-shadow: 8vw 12vh 2px white, 16vw 18vh 1px white, 24vw 25vh 2px white,
-                33vw 15vh 1px white, 41vw 28vh 2px white, 49vw 35vh 1px white,
-                57vw 22vh 2px white, 65vw 42vh 1px white, 73vw 28vh 2px white,
-                81vw 48vh 1px white, 89vw 32vh 2px white, 97vw 45vh 1px white,
-                3vw 68vh 2px white, 11vw 75vh 1px white, 19vw 82vh 2px white,
-                27vw 88vh 1px white, 35vw 72vh 2px white, 43vw 85vh 1px white,
-                51vw 92vh 2px white, 59vw 78vh 1px white;
-            animation: twinkle 6s infinite linear reverse;
-        }
-
-        html body {
-            background-image:
-                linear-gradient(to bottom,
-                    rgba(0, 0, 0, 0.8),
-                    rgba(10, 25, 23, 0.8) 60%,
-                    rgba(20, 50, 46, 0.8)),
-                url('/storage/images/backgrounds/background.jpg');
-            );
-        }
-
         .poppins-thin {
             font-family: "Montserrat", sans-serif;
             font-weight: 100;
@@ -115,7 +82,7 @@
 
         .ck-editor__editable {
             min-height: 200px;
-            background-color: rgba(255, 255, 255, 0.836) !important;
+            background-color: rgba(255, 255, 255, 0.486) !important;
         }
     </style>
 
@@ -134,6 +101,7 @@
     @viteReactRefresh
     @vite(['resources/js/app.tsx', "resources/js/pages/{$page['component']}.tsx"])
     @inertiaHead
+
 </head>
 
 <body class="poppins-regular">

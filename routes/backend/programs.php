@@ -6,13 +6,15 @@ use App\Http\Controllers\Backend\ProgramsController;
 
 Route::middleware('auth')->group(function () {
     Route::get('/view-programs', function () {
-        return Inertia::render('cms/program/program-page');
+        return Inertia::render('cms/program/programs-page');
     });
 
     Route::get('/program-form', function () {
         return Inertia::render('cms/program/partials/programs-form');
     });
 
+    Route::get('/program-form/{code}',[ProgramsController::class,'editProgram']);
+    Route::post('/move-program',[ProgramsController::class,'moveProgram']);
 
     Route::resource('/programs', ProgramsController::class)->only(['index','store','destroy', 'edit']);
     Route::post('/update-program/{id}',[ProgramsController::class,'update']);

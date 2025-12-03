@@ -15,6 +15,7 @@ export function useFetchCategories() {
       return res.data;
     },
     staleTime: 1000 * 60,
+    refetchOnWindowFocus: false
   });
 }
 
@@ -76,14 +77,14 @@ export function useDeleteCategory() {
   });
 }
 
-export const toggleCategory = async ({ payload }: { payload:{id: number} }): Promise<ApiOk> => {
-  const { data } = await axios.post<ApiOk>('/toggle-category',payload as object);
+export const toggleCategory = async ({ payload }: { payload: { id: number } }): Promise<ApiOk> => {
+  const { data } = await axios.post<ApiOk>('/toggle-category', payload as object);
   return data;
 };
 
 export function useToggleCategory() {
   const queryClient = useQueryClient();
-  return useMutation<ApiOk, AxiosError<ApiOk>, { payload:{id: number} }>({
+  return useMutation<ApiOk, AxiosError<ApiOk>, { payload: { id: number } }>({
     mutationFn: toggleCategory,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["categories"] });

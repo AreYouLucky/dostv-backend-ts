@@ -24,9 +24,9 @@ export interface ProgramsModel {
   title: string;
   description: string;
   agency: string;
-  image: string;
-  trailer: string;
-  date_started: string;
+  image: string | null;
+  trailer: string | null;
+  date_started: string | null;
   program_type: string;
   trailer_file?: File;
   image_file?:File;
@@ -52,3 +52,60 @@ export const emptyProgram: ProgramsModel = {
   is_banner: 0,
   is_active: 0,
 } as const;
+
+
+export interface BannersModel {
+  banner_id?: number | null;
+  title: string | null;
+  img?: string | null;
+  highlight_text: string | null;
+  url?: string | null;
+  type: number | null; 
+  [key: string | number ]: unknown;
+}
+
+
+
+export interface PostsModel {
+  data?: object | null;
+  post_id?: number | null;
+  slug?: string | null;
+  title?: string | null;
+  type?: string | null;
+  program?: string | null;
+  description?:string | null;
+  excerpt?: string | null;
+  platform?: string | null;
+  url?: string |null;
+  trailer?:string | null;
+  banner?: string | null;
+  thumbnail?: string | null;
+  guest?: string | null;
+  agency?: string | null;
+  date_published?: string | null;
+  is_featured?: number | null;
+  status?: string | null;
+  tags?: string | null;
+  [key: string | number ]: unknown;
+}
+
+export const emptyPosts:PostsModel = {
+  post_id:0,
+  slug:"",
+  title:"",
+  type:"",
+  program:"",
+  description:"",
+  excerpt: "",
+  platform:"",
+  url: "",
+  trailer:"",
+  banner:"",
+  thumbnail:"",
+  guest:"",
+  agency:"",
+  date_published:"",
+  is_featured:0,
+  status:"",
+  tags:"",
+}
