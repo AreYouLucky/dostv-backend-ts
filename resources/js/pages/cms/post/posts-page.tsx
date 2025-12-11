@@ -8,7 +8,11 @@ import { useFetchPosts, useSearchPosts } from "./partials/post-hooks";
 import ImageLoader from "@/components/custom/image-loader";
 import { Input } from "@/components/ui/input";
 import { Search } from "lucide-react";
+import { postStatus } from "@/types/default";
 import { useState } from "react";
+import { Tooltip, TooltipContent, TooltipTrigger, } from "@/components/ui/tooltip"
+import { FaTrash, FaEdit, FaEye } from "react-icons/fa";
+import { Button } from '@/components/ui/button';
 import {
     Select,
     SelectTrigger,
@@ -67,6 +71,10 @@ function Posts() {
         }
     };
 
+    const updatePostStatus = () => {
+
+    }
+
     if (error) return alert('An error has occurred: ' + error.message);
 
     return (
@@ -82,8 +90,9 @@ function Posts() {
                             <Link className='bg-teal-600 text-gray-50 inline-flex  h-9 px-4 py-2 has-[>svg]:px-3 items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-[color,box-shadow]' href={'/program-form'}> <IoAddCircle /> Add Posts</Link>
                         </div>
                     </div>
-                    <div className='w-full flex justify-between item-center  shadow-md border rounded-lg border-gray-400/50 overflow-auto p-2 bg-white/50 flex-col'>
-                        <div className="flex w-full px-5 pt-5 relative">
+                    <div className='w-full flex justify-between item-center shadow-md border rounded-lg border-gray-400/50 overflow-x-hidden overflow-y-auto bg-white/50 flex-col p-6'>
+
+                        <div className="flex w-full relative">
                             <div className=" relative items-center">
                                 <Search className="absolute left-2.5 top-3 text-teal-500" size={16} />
                                 <Input
@@ -103,27 +112,77 @@ function Posts() {
                                     { name: "Description", position: "center" },
                                     { name: "Type", position: "center" },
                                     { name: "Agency", position: "center" },
+                                    { name: "Status", position: "center" },
                                     { name: "Actions", position: "center" },
                                 ]}
                                 renderRow={(post) => (
-                                    <tr key={post.post_id} className="text-gray-800">
-                                        <td className="px-6 py-1.5 text-start poppins-semibold text-teal-800 text-[11.4px]">{post.title}</td>
+                                    <tr key={post.post_id} className="text-gray-800 hover:scale-102 duration-300 border-b p-2 ">
+                                        <td className="px-6 py-3 text-start poppins-semibold text-teal-800 text-[11.4px]">{post.title}</td>
                                         <td >
                                             <div className='flex justify-center items-center relative h-full hover:scale-110 duration-300'>
                                                 <ImageLoader
-                                                    src={`/storage/images/program_images/thumbnails/${post.thumbnail}`}
+                                                    src={`/storage/images/post_images/thumbnails/${post.thumbnail}`}
                                                     alt="Program Banner"
                                                     className="h-12 w-auto my-1 rounded"
                                                 />
 
                                             </div>
                                         </td>
-                                        <td className="px-6 py-1.5 text-[11.2px] text-justify">{post.description !== '' ? trimText(String(post.description), 255) : 'Not Set'}</td>
-                                        <td className="px-6 py-1.5 text-center">
+                                        <td className="px-6 py-3 text-[11.2px] text-justify wrap-break-words">{post.description !== '' ? trimText(String(post.description), 180) : 'Not Set'}</td>
+                                        <td className="px-6 py-3 text-center">
                                             {post.type}
                                         </td>
-                                        <td className="px-6 py-1.5 text-center">
+                                        <td className="px-6 py-3 text-center">
                                             {post.agency}
+                                        </td>
+                                        <td className="px-6 py-3 text-center text-xs">
+                                            <Select
+                                                value={post.status as string}
+                                                onValueChange={updatePostStatus}
+                                            >
+                                                <SelectTrigger className="px-2 py-0 text-xs border-gray-100 shadow-2xs">
+                                                    <SelectValue placeholder="Select Post Status" />
+                                                </SelectTrigger>
+                                                <SelectContent>
+                                                    {postStatus.map((type) => (
+                                                        <SelectItem key={type.value} value={type.value}>
+                                                            {type.value}
+                                                        </SelectItem>
+                                                    ))}
+                                                </SelectContent>
+                                            </Select>
+                                        </td>
+                                        <td className="px-6 py-3 text-center poppins-bold text-xl text-teal-800 gap-1 flex relative">
+                                            <Tooltip>
+                                                <TooltipTrigger asChild>
+                                                    <Link className='bg-transparent shadow-none hover:bg-teal-100 px-2 rounded-lg py-2 text-lg' >
+                                                        <FaEye className='text-[#0096cc] ' />
+                                                    </Link>
+                                                </TooltipTrigger>
+                                                <TooltipContent>
+                                                    <p>View Post</p>
+                                                </TooltipContent>
+                                            </Tooltip>
+                                            <Tooltip>
+                                                <TooltipTrigger asChild>
+                                                    <Link className='bg-transparent shadow-none hover:bg-teal-100 px-2 rounded-lg py-2 text-lg' >
+                                                        <FaEdit className='text-teal-600 ' />
+                                                    </Link>
+                                                </TooltipTrigger>
+                                                <TooltipContent>
+                                                    <p>Edit Program</p>
+                                                </TooltipContent>
+                                            </Tooltip>
+                                            <Tooltip>
+                                                <TooltipTrigger asChild>
+                                                    <Button className='bg-transparent shadow-none hover:bg-teal-100 px-0'>
+                                                        <FaTrash className='text-red-500' />
+                                                    </Button>
+                                                </TooltipTrigger>
+                                                <TooltipContent>
+                                                    <p>Delete Program</p>
+                                                </TooltipContent>
+                                            </Tooltip>
                                         </td>
                                     </tr>
                                 )}

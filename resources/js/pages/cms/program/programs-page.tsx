@@ -111,7 +111,7 @@ function ProgramsPage() {
                             ]}
                             searchBy={(item) => `${item.title} ${item.description} ${item.agency}`}
                             renderRow={(r) => (
-                                <tr key={r.program_id} className="border-b  duration-300 hover:scale-101 cursor-pointer">
+                                <tr key={r.program_id} className="border-b  duration-300 hover:scale-102">
                                     <td className="px-6 py-1.5 text-start poppins-semibold text-teal-800 text-[11.2px]">{r.title}</td>
                                     <td >
                                         <div className='flex justify-center items-center relative h-full hover:scale-110 duration-300'>

@@ -52,7 +52,6 @@ function LoginPage() {
                         onChange={handleChange}
                         value={String(item.password)}
                         className="text-gray-500 bg-gray-50"
-
                     />
                     <InputError message={errors.password} />
                 </div>

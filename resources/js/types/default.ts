@@ -1,7 +1,7 @@
 export type programTypeProps = {
-    code:  string,
+    code: string,
     value: string
-} 
+}
 
 export const programType = [
     {
@@ -13,3 +13,24 @@ export const programType = [
         value: 'Blogs'
     }
 ];
+
+export type postStatusProps = {
+    code: string,
+    value: string
+}
+
+
+export const postStatus = [
+    {
+        code: 1,
+        value: 'published',
+    },
+    {
+        code: 2,
+        value: 'draft',
+    },
+    {
+        code: 3,
+        value: 'trash',
+    }
+]

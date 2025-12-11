@@ -1,4 +1,8 @@
 import React, { useEffect, useRef, useState, memo } from "react";
+import Lightbox from "yet-another-react-lightbox";
+import "yet-another-react-lightbox/styles.css";
+import type { SlideImage } from "yet-another-react-lightbox";
+
 
 type Props = Omit<React.ImgHTMLAttributes<HTMLImageElement>, "onError" | "onLoad"> & {
   src: string;
@@ -50,11 +54,13 @@ export function ImageLoader({
     return () => io.disconnect();
   }, [lazy, isInView, rootMargin]);
 
+
+
   return (
     <div ref={wrapRef} className={`relative inline-block ${wrapperClassName}`}>
       {isInView && (
         <InnerImg
-          key={src} 
+          key={src}
           src={src}
           fallback={fallback}
           alt={alt}
@@ -93,7 +99,7 @@ function InnerImg({
   const [failed, setFailed] = useState(false);
 
   const effectiveSrc = failed ? fallback : src;
-
+  const [open, setOpen] = useState(false);
   return (
     <>
       {showSkeleton && isLoading && (
@@ -108,29 +114,39 @@ function InnerImg({
           </svg>
         </div>
       )}
+      <button type="button" onClick={() => setOpen(true)}>
+        <img
+          {...imgProps}
+          src={effectiveSrc}
+          alt={alt}
+          style={{
+            transition: `opacity ${fadeDurationMs}ms ease`,
+            opacity: isLoading ? 0 : 1,
+            ...(imgProps.style ?? {}),
+          }}
+          className={className + ' shadow-lg cursor-pointer'}
+          onLoad={() => {
+            setIsLoading(false);
+            onLoaded?.(failed);
+          }}
+          onError={() => {
+            if (!failed) {
+              setFailed(true);
+              setIsLoading(true);
+            } else {
+              setIsLoading(false);
+            }
+          }}
+        />
+      </button>
 
-      <img
-        {...imgProps}
-        src={effectiveSrc}
-        alt={alt}
-        style={{
-          transition: `opacity ${fadeDurationMs}ms ease`,
-          opacity: isLoading ? 0 : 1,
-          ...(imgProps.style ?? {}),
-        }}
-        className={className}
-        onLoad={() => {
-          setIsLoading(false);
-          onLoaded?.(failed);
-        }}
-        onError={() => {
-          if (!failed) {
-            setFailed(true);  
-            setIsLoading(true);   
-          } else {
-            setIsLoading(false);  
-          }
-        }}
+      <Lightbox
+        open={open}
+        close={() => setOpen(false)}
+        slides={[{ src: effectiveSrc, alt } as SlideImage]}
+        carousel={{ finite: true }}      
+        controller={{ closeOnBackdropClick: true }}
+        render={{ buttonPrev: () => null, buttonNext: () => null }}
       />
     </>
   );

@@ -13,7 +13,7 @@ class PostController extends Controller
      */
     public function index()
     {
-        return Post::paginate(10);
+        return Post::orderBy('date_published','asc')->paginate(10);
     }
 
     public function searchPosts(Request $req){

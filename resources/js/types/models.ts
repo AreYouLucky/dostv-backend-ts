@@ -109,3 +109,17 @@ export const emptyPosts:PostsModel = {
   status:"",
   tags:"",
 }
+
+
+
+export interface advertisementsModel {
+    advertisement_id : number|null;
+    title: string|null;
+    thumbnail: string|null;
+    url: string|null;
+    slug: string|null;
+    description: string|null;
+    excerpt:  string|null;
+    is_redirect: number|null;
+    is_active: string|null;
+}

@@ -11,4 +11,8 @@ Route::middleware('auth')->group(function () {
 
     Route::resource('/posts', PostController::class)->only(['index', 'store', 'destroy', 'edit']);
     Route::get('/search/posts',[PostController::class, 'searchPost']);
+
+    Route::get('/post-form', function () {
+        return Inertia::render('cms/post/partials/post-form');
+    });
 });

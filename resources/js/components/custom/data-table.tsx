@@ -156,7 +156,7 @@ function PaginatedSearchTableInner<T = unknown>({
   };
 
   return (
-    <div className="w-full rounded-lg text-gray-900 m-6">
+    <div className="w-full rounded-lg text-gray-900 p-6">
       <div className="w-full flex items-center mb-3 gap-1 z-50">
         <div className="flex relative items-center">
           <Input
