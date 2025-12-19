@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Backend;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Post;
-
+use Inertia\Inertia;
 class PostController extends Controller
 {
     /**
@@ -13,17 +13,16 @@ class PostController extends Controller
      */
     public function index()
     {
-        return Post::orderBy('date_published','asc')->paginate(10);
+        return Post::orderBy('date_published', 'asc')->paginate(10);
     }
 
-    public function searchPosts(Request $req){
-        if($req->title !== "" && $req->program !== ""){
+    public function searchPosts(Request $req)
+    {
+        if ($req->title !== "" && $req->program !== "") {
             Post::where('title', $req->title)->where('program', $req->program)->paginate(10);
-        }
-        else if($req->title !== ""){
+        } else if ($req->title !== "") {
             Post::where('title', $req->title)->paginate(10);
-        }
-        else{
+        } else {
             Post::where('program', $req->program)->paginate(10);
         }
     }
@@ -54,9 +53,12 @@ class PostController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function editPost(string $code)
     {
-        //
+        $post  =  Post::where('slug', $code)->with('categories')->first();
+        return Inertia::render('cms/program/partials/programs-form', [
+            'post' => $post
+        ]);
     }
 
     /**

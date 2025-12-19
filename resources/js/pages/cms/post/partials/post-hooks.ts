@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation } from "@tanstack/react-query";
 import axios from "axios";
 import { PostsModel } from "@/types/models";
 // import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -29,16 +29,16 @@ export function useFetchPosts(page: number) {
   });
 }
 
-export function useSearchPosts(title: string, program: string ) {
-  return useQuery<PaginatedResponse<PostsModel>>({
-    queryKey: ["posts", {title, program}],
-    queryFn: async () => {
-      const res = await axios.get('/search/post',{ params :{
-        title, program
-      }});
+export function useSearchPosts() {
+  return useMutation<PaginatedResponse<PostsModel>, Error, {
+    title: string;
+    program: string;
+  }>({
+    mutationFn: async ({ title, program }) => {
+      const res = await axios.get('/search/post', {
+        params: { title, program },
+      });
       return res.data;
     },
-    staleTime: 1000 * 60,
-    refetchOnWindowFocus: false,
   });
 }

@@ -30,4 +30,8 @@ class Post extends Model
         'slug',
         'is_converted'
     ];
+
+    public function categories() {
+        $this->hasMany(PostCategory::class, 'post_id', 'post_id');
+    }
 }

@@ -39,37 +39,48 @@ function Posts() {
         data: postsData,
         isLoading: isPostsLoading,
         isFetching: isPostsFetching,
-        error: postsError,
+        error,
     } = useFetchPosts(page);
 
-    const {
-        data: searchData,
-        isLoading: isSearchLoading,
-        isFetching: isSearchFetching,
-        error: searchError,
-    } = useSearchPosts(item.title, item.program);
+    const searchPosts = useSearchPosts();
 
-    const hasSearch = !!item.title || !!item.program;
+    const handleSearch = () => {
+        setPage(1);
+        searchPosts.mutate({
+            title: item.title ?? '',
+            program: item.program ?? '',
+        });
+    };
+
+
+    const hasSearch = searchPosts.isSuccess;
 
     const posts = hasSearch
-        ? searchData?.data ?? []
+        ? searchPosts.data?.data ?? []
         : postsData?.data ?? [];
-    const data = hasSearch ? searchData : postsData;
 
-    const isLoading = hasSearch ? isSearchLoading : isPostsLoading;
-    const isFetching = hasSearch ? isSearchFetching : isPostsFetching;
-    const error = hasSearch ? searchError : postsError;
+    const data = hasSearch ? searchPosts.data : postsData;
+
+    const isLoading =
+        isPostsLoading ||
+        isPostsFetching ||
+        searchPosts.isPending;
 
 
     const handlePageChange = (url: string | null) => {
         if (!url) return;
+
         const parsed = new URL(url, window.location.origin);
         const pageParam = parsed.searchParams.get("page");
         const newPage = Number(pageParam || 1);
+
         if (!Number.isNaN(newPage)) {
             setPage(newPage);
         }
     };
+
+
+
 
     const updatePostStatus = () => {
 
@@ -79,7 +90,7 @@ function Posts() {
 
     return (
         <>
-            <Head title="Categories" />
+            <Head title="Posts" />
             <div className="flex flex-col flex-1 min-h-0  ">
                 <div className="flex flex-1 flex-col gap-y-3 gap-x-5 rounded-xl px-6 py-5">
                     <div className='w-full flex justify-between item-center px-6 py-4 shadow-sm border rounded-lg border-gray-400/50 bg-white/50'>
@@ -87,7 +98,7 @@ function Posts() {
                             Posts Management Section
                         </div>
                         <div className="text-gray-500 poppins-bold text-lg">
-                            <Link className='bg-teal-600 text-gray-50 inline-flex  h-9 px-4 py-2 has-[>svg]:px-3 items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-[color,box-shadow]' href={'/program-form'}> <IoAddCircle /> Add Posts</Link>
+                            <Link className='bg-teal-600 text-gray-50 inline-flex  h-9 px-4 py-2 has-[>svg]:px-3 items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-[color,box-shadow]' href={'/post-form'}> <IoAddCircle /> Add Post</Link>
                         </div>
                     </div>
                     <div className='w-full flex justify-between item-center shadow-md border rounded-lg border-gray-400/50 overflow-x-hidden overflow-y-auto bg-white/50 flex-col p-6'>
@@ -101,6 +112,7 @@ function Posts() {
                                     onChange={handleChange}
                                     className="min-w-[250px] h-10 border-teal-600 shadow-none ps-8"
                                 />
+                                <button onClick={handleSearch}></button>
                             </div>
                         </div>
                         <div>
@@ -193,7 +205,7 @@ function Posts() {
                                 prevPageUrl={data?.prev_page_url ?? null}
                                 total={data?.total ?? 0}
                                 onPageChange={handlePageChange}
-                                isLoading={isLoading || isFetching}
+                                isLoading={isLoading}
                                 searchPlaceholder="Search posts..."
                             />
                         </div>
