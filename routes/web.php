@@ -7,7 +7,7 @@ use Laravel\Fortify\Features;
 
 
 Route::middleware(['auth'])->group(function () {
-    Route::get('dashboard', function () {
+    Route::get('/dashboard', function () {
         return Inertia::render('dashboard');
     })->name('dashboard');
 });

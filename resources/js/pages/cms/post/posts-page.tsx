@@ -102,7 +102,6 @@ function Posts() {
                         </div>
                     </div>
                     <div className='w-full flex justify-between item-center shadow-md border rounded-lg border-gray-400/50 overflow-x-hidden overflow-y-auto bg-white/50 flex-col p-6'>
-
                         <div className="flex w-full relative">
                             <div className=" relative items-center">
                                 <Search className="absolute left-2.5 top-3 text-teal-500" size={16} />
@@ -198,7 +197,6 @@ function Posts() {
                                         </td>
                                     </tr>
                                 )}
-                                // Important: use server-side pagination props from Laravel
                                 itemsPerPage={data?.per_page ?? 10}
                                 currentPage={data?.current_page}
                                 nextPageUrl={data?.next_page_url ?? null}

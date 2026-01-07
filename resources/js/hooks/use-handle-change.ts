@@ -8,20 +8,34 @@ export function useHandleChange<T extends FormValues>(initialValues: T) {
   const [item, setItem] = useState<T>(initialValues);
   const [errors, setErrors] = useState<FormErrors<T>>({});
 
-  const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-    const { name, type, files } = e.target as HTMLInputElement;
-    const value =
-      type === "checkbox"
-        ? (e.target as HTMLInputElement).checked
-        : type === "file"
-        ? files?.[0] || null 
-        : e.target.value;
+  const handleChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+      const target = e.target as HTMLInputElement;
+      const { name, type, files } = target;
 
-    setItem((prev) => ({ ...prev, [name]: value }));
-    setErrors((prev) => ({ ...prev, [name]: undefined })); 
-  }, []);
+      let value: unknown;
 
-  return { item, errors, setItem, setErrors, handleChange };
+      if (type === "checkbox") {
+        value = target.checked;
+      } else if (type === "file") {
+        value = files?.[0] ?? null;
+      } else {
+        value = target.value;
+      }
+
+      setItem((prev) => ({ ...prev, [name]: value }));
+      setErrors((prev) => ({ ...prev, [name]: undefined }));
+    },
+    []
+  );
+
+  const handleArrayChange = useCallback(
+    <K extends keyof T>(key: K, value: T[K]) => {
+      setItem((prev) => ({ ...prev, [key]: value }));
+      setErrors((prev) => ({ ...prev, [key]: undefined }));
+    },
+    []
+  );
+
+  return { item, errors, setItem, setErrors, handleChange, handleArrayChange };
 }
-
-

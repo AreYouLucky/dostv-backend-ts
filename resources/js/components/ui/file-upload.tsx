@@ -1,5 +1,4 @@
 import { memo, useRef, useState, ChangeEvent } from "react";
-import { FaFileAlt } from "react-icons/fa";
 import { FaFileVideo } from "react-icons/fa";
 import { AiFillPicture } from "react-icons/ai";
 
@@ -51,31 +50,24 @@ const FileUpload = ({
         className={` flex max-h-1/2 w-full cursor-pointer flex-col items-center justify-center  `}
       >
         {
-          ((previewUrl && type === 1) || (url !== "")) ? (
+          ((previewUrl) || (url !== "")) ? (
             <div className="flex flex-col items-center justify-center gap-2 w-full relative">
-              {fileName.endsWith(".mp4") || fileName.endsWith(".webm") || (url !== "" && type === 2) ? (
+              {fileName.endsWith(".mp4") || fileName.endsWith(".webm") || (url !== "" && type === 1) ? (
                 <video src={previewUrl ?? ""} controls className={`rounded-lg max-h-92 ${className}`} />
-              ) : fileName.endsWith(".jpg") || fileName.endsWith(".png") || (url !== "" && type === 1) ? (
+              ) : fileName.endsWith(".jpg") || fileName.endsWith(".png") || (url !== "" && type === 2) ? (
                 <img src={previewUrl ?? ""} alt="preview" className={`rounded-lg max-h-1/2 ${className}`}  />
               ) : null}
               <p className="text-xs font-semibold text-center">{fileName??''}</p>
             </div>
-          ) : (type === 2) ? (
-            <div className="flex flex-col items-center justify-center w-full relative">
-              <FaFileAlt size={50} />
-              <p className="mb-2 text-sm mt-2">{text}</p>
-            </div>
-          ) : !fileName ? (
+          ) :  (
             <div className="flex flex-col items-center justify-center p-4">
-              {type === 1 ? <AiFillPicture size={50} /> : <FaFileVideo size={50} />}
+              {type !== 1 ? <AiFillPicture size={50} /> : <FaFileVideo size={50} />}
               <p className="mb-2 text-sm mt-2">
                 {text}
               </p>
             </div>
-          ) : null
+          )
         }
-
-
         <input
           id={id}
           type="file"

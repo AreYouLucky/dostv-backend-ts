@@ -29,7 +29,7 @@ export interface ProgramsModel {
   date_started: string | null;
   program_type: string;
   trailer_file?: File;
-  image_file?:File;
+  image_file?: File;
   order?: number;
   is_banner?: number;
   is_active?: number;
@@ -60,66 +60,45 @@ export interface BannersModel {
   img?: string | null;
   highlight_text: string | null;
   url?: string | null;
-  type: number | null; 
-  [key: string | number ]: unknown;
+  type: number | null;
+  [key: string | number]: unknown;
 }
 
 
 
-export interface PostsModel {
-  data?: object | null;
-  post_id?: number | null;
-  slug?: string | null;
-  title?: string | null;
-  type?: string | null;
-  program?: string | null;
-  description?:string | null;
-  excerpt?: string | null;
-  platform?: string | null;
-  url?: string |null;
-  trailer?:string | null;
-  banner?: string | null;
-  thumbnail?: string | null;
-  guest?: string | null;
-  agency?: string | null;
-  date_published?: string | null;
-  is_featured?: number | null;
-  status?: string | null;
-  tags?: string | null;
-  [key: string | number ]: unknown;
+export interface PostModel {
+  post_id: number | null;
+  slug: string | null;
+  title: string | null;
+  type: string | null;
+  program: string | null;
+  description: string | null;
+  excerpt: string | null;
+  episode: string | null;
+  content: string | null;
+  platform: string | null;
+  url: string | null;
+  trailer: string | null;
+  banner: string | null;
+  thumbnail: string | null;
+  guest: string | null;
+  agency: string | null;
+  date_published: string | null;
+  is_featured: number | null;
+  status: string | null;
+  tags: string | null;
+  categories: number[];
 }
-
-export const emptyPosts:PostsModel = {
-  post_id:0,
-  slug:"",
-  title:"",
-  type:"",
-  program:"",
-  description:"",
-  excerpt: "",
-  platform:"",
-  url: "",
-  trailer:"",
-  banner:"",
-  thumbnail:"",
-  guest:"",
-  agency:"",
-  date_published:"",
-  is_featured:0,
-  status:"",
-  tags:"",
-}
-
 
 
 export interface advertisementsModel {
-    advertisement_id : number|null;
-    title: string|null;
-    thumbnail: string|null;
-    url: string|null;
-    slug: string|null;
-    description: string|null;
-    excerpt:  string|null;
-    is_redirect: number|null;
-    is_active: string|null;
+  advertisement_id: number | null;
+  title: string | null;
+  thumbnail: string | null;
+  url: string | null;
+  slug: string | null;
+  description: string | null;
+  excerpt: string | null;
+  is_redirect: number | null;
+  is_active: string | null;
 }

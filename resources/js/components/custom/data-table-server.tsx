@@ -1,14 +1,13 @@
 import React, {
   memo,
-  useCallback,
   useMemo,
   useState,
   type ReactElement,
 } from "react";
-import { Input } from "@/components/ui/input";
+
 import { Button } from "../ui/button";
-import { RefreshCcw, Search, ArrowBigLeft, ArrowBigRight } from "lucide-react";
-import { Spinner } from "@/components/ui/spinner";
+import { ArrowBigLeft, ArrowBigRight } from "lucide-react";
+
 
 /* -------------------- Types -------------------- */
 type Header = {
@@ -35,14 +34,6 @@ export interface PaginatedSearchTableProps<T = unknown> {
   onPageChange?: (url: string | null) => void; // where you call router.visit(url)
 }
 
-/* -------------------- Type Guards -------------------- */
-const isRecord = (v: unknown): v is Record<string, unknown> =>
-  typeof v === "object" && v !== null;
-
-const hasStringTitle = (v: unknown): v is { title: string } =>
-  isRecord(v) && typeof v.title === "string";
-
-/* -------------------- Table Shell -------------------- */
 const DataTable = memo(function DataTable({
   headers,
   children,
@@ -51,7 +42,7 @@ const DataTable = memo(function DataTable({
   children: React.ReactNode;
 }) {
   return (
-    <div className="relative my-2 rounded-lg ">
+    <div className="relative rounded-lg ">
       <div className="flex items-center justify-between flex-column md:flex-row flex-wrap space-y-4 md:space-y-0 rounded-lg">
         <table className="w-full text-sm text-left rtl:text-right text-gray-600 rounded-lg">
           <thead className="text-xs text-gray-50 uppercase bg-teal-600">
@@ -79,7 +70,7 @@ const DataTable = memo(function DataTable({
               ))}
             </tr>
           </thead>
-          <tbody className="[&_*]:whitespace-normal [&_*]:break-words">{children}</tbody>
+          <tbody className="**:whitespace-normal **:break-word">{children}</tbody>
         </table>
       </div>
     </div>
@@ -91,91 +82,34 @@ function PaginatedSearchTableInner<T = unknown>({
   items,
   headers,
   renderRow,
-  searchPlaceholder = "Search...",
   itemsPerPage = 10,
-  searchBy,
-  onRefresh,
   isLoading = false,
   emptyText = "No Available Data",
-
-  // server-side pagination props
   currentPage,
   nextPageUrl,
   prevPageUrl,
-  total,
+  total=0,
   onPageChange,
 }: PaginatedSearchTableProps<T>) {
-  const [searchTerm, setSearchTerm] = useState<string>("");
   const [localPage, setLocalPage] = useState<number>(1);
 
-  /** Are we in server-side mode? */
   const isServerPaginated =
     typeof currentPage === "number" && typeof total === "number";
-
-  const getSearchText = useCallback(
-    (item: T) => {
-      if (searchBy) return searchBy(item);
-      if (typeof item === "string") return item;
-      if (hasStringTitle(item)) return item.title;
-
-      try {
-        return isRecord(item) ? JSON.stringify(item) : String(item);
-      } catch {
-        return String(item);
-      }
-    },
-    [searchBy]
-  );
-
-  /** Filter items (search applies to current page's items only in server mode) */
-  const filtered = useMemo(() => {
-    const q = searchTerm.trim().toLowerCase();
-    if (!q) return items;
-    return items.filter((it) => getSearchText(it).toLowerCase().includes(q));
-  }, [items, searchTerm, getSearchText]);
-
-  /** Page value:
-   * - server mode: use `currentPage` from Laravel
-   * - client mode: use internal state
-   */
   const page = isServerPaginated ? currentPage! : localPage;
-
-  /** Total items:
-   * - server mode: use `total` from Laravel
-   * - client mode: use filtered length
-   */
-  const totalItems = isServerPaginated ? total! : filtered.length;
-
   const totalPages = useMemo(
-    () => Math.max(1, Math.ceil(totalItems / itemsPerPage)),
-    [totalItems, itemsPerPage]
+    () => Math.max(1, Math.ceil(total / itemsPerPage)),
+    [total, itemsPerPage]
   );
-
-  /** Data to display:
-   * - server mode: Laravel already paginated, so just use `filtered`
-   * - client mode: slice locally
-   */
-  const displayData = useMemo(() => {
-    if (isServerPaginated) {
-      return filtered;
-    }
-
-    const indexOfLast = page * itemsPerPage;
-    const indexOfFirst = indexOfLast - itemsPerPage;
-    return filtered.slice(indexOfFirst, indexOfLast);
-  }, [filtered, isServerPaginated, page, itemsPerPage]);
-
-  /** "Showing X to Y of Z" */
   const count = useMemo(() => {
-    if (totalItems === 0) {
+    if (total === 0) {
       return { from: 0, to: 0, total: 0 };
     }
 
     const from = (page - 1) * itemsPerPage + 1;
-    const to = Math.min(page * itemsPerPage, totalItems);
+    const to = Math.min(page * itemsPerPage, total);
 
-    return { from, to, total: totalItems };
-  }, [page, itemsPerPage, totalItems]);
+    return { from, to, total: total };
+  }, [page, itemsPerPage, total]);
 
   /** Prev/Next disabled */
   const isPrevDisabled = isServerPaginated
@@ -185,15 +119,6 @@ function PaginatedSearchTableInner<T = unknown>({
   const isNextDisabled = isServerPaginated
     ? !nextPageUrl
     : page >= totalPages;
-
-  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchTerm(e.target.value);
-
-    // Only reset page in client mode; server mode relies on backend pagination
-    if (!isServerPaginated) {
-      setLocalPage(1);
-    }
-  };
 
   const nextPage = () => {
     if (isNextDisabled) return;
@@ -221,33 +146,6 @@ function PaginatedSearchTableInner<T = unknown>({
 
   return (
     <div className="w-full rounded-lg text-gray-900">
-      <div className="w-full flex items-center mb-3 gap-1 z-50">
-        <div className=" relative items-center hidden">
-          <Input
-            placeholder={searchPlaceholder}
-            value={searchTerm}
-            onChange={handleSearch}
-            className="min-w-[250px] h-10 border-teal-600 shadow-none ps-8"
-          />
-          <Search className="absolute left-2.5 text-teal-500" size={16} />
-        </div>
-
-        {onRefresh && (
-          <div>
-            <Button
-              onClick={onRefresh}
-              className="px-4 bg-teal-600 h-full text-gray-50 poppins-semibold"
-              type="button"
-              disabled={isLoading}
-            >
-              {isLoading ? <Spinner className="mr-2" /> : <RefreshCcw />}
-              Refresh
-            </Button>
-          </div>
-        )}
-      </div>
-
-      {/* Table */}
       <DataTable headers={headers}>
         {isLoading ? (
           <tr>
@@ -258,8 +156,8 @@ function PaginatedSearchTableInner<T = unknown>({
               </div>
             </td>
           </tr>
-        ) : displayData.length > 0 ? (
-          displayData.map((item, index) => (
+        ) : items.length > 0 ? (
+          items.map((item, index) => (
             <React.Fragment key={index}>
               {renderRow(item, index)}
             </React.Fragment>

@@ -12,6 +12,8 @@ use Illuminate\Support\Str;
 use Inertia\Inertia;
 use Laravel\Fortify\Features;
 use Laravel\Fortify\Fortify;
+use Laravel\Fortify\Contracts\LoginViewResponse;
+use Illuminate\Http\Response;
 
 class FortifyServiceProvider extends ServiceProvider
 {
@@ -28,9 +30,14 @@ class FortifyServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        // $this->configureActions();
-        // $this->configureViews();
-        // $this->configureRateLimiting();
+        $this->app->bind(LoginViewResponse::class, function () {
+            return new class implements LoginViewResponse {
+                public function toResponse($request)
+                {
+                      return redirect()->route('login');
+                }
+            };
+        });
     }
 
     /**
@@ -43,8 +50,8 @@ class FortifyServiceProvider extends ServiceProvider
     // }
 
     /**
-     * Configure Fortify views.
-     */
+ * Configure Fortify views.
+ */
     // private function configureViews(): void
     // {
     //     Fortify::loginView(fn (Request $request) => Inertia::render('auth/login', [
@@ -74,8 +81,8 @@ class FortifyServiceProvider extends ServiceProvider
     // }
 
     /**
-     * Configure rate limiting.
-     */
+ * Configure rate limiting.
+ */
     // private function configureRateLimiting(): void
     // {
     //     RateLimiter::for('two-factor', function (Request $request) {

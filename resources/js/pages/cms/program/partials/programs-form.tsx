@@ -139,24 +139,6 @@ function ProgramsForm() {
         });
     }
 
-    // useEffect(() => {
-    //     setItem({
-    //         program_id: program?.program_id || 0,
-    //         title: program?.title || "",
-    //         description: program?.description || "",
-    //         agency: program?.agency || "",
-    //         image: program?.image || "",
-    //         trailer: program?.trailer || "",
-    //         date_started: program?.date_started || "",
-    //         program_type: program?.program_type || "",
-    //         image_file: '',
-    //         trailer_file: '',
-    //         code: program?.code || ""
-    //     });
-    // }, [program, setItem]);
-
-
-
     return (
         <>
             <Head title="Program Form" />
@@ -172,7 +154,7 @@ function ProgramsForm() {
                                     <Label htmlFor="image_file" className="text-gray-700 poppins-semibold">Program Trailer</Label>
                                     <FileUpload
                                         url={item?.trailer ? `/storage/videos/program_videos/trailer/${item.trailer}` : ''}
-                                        type={2}
+                                        type={1}
                                         id="trailer_file"
                                         name="trailer_file"
                                         accept="video/mp4,video/x-msvideo"
@@ -249,7 +231,7 @@ function ProgramsForm() {
                                 <div className=" gap-2 h-full flex flex-col justify-start transition-all duration-300 ease-in-out mt-2">
                                     <Label htmlFor="image_file" className="text-gray-700 poppins-semibold">Banner Image <span className="poppins-regular text-gray-600">(Aspect-Ratio 4:5)</span> </Label>
                                     <FileUpload
-                                        type={1}
+                                        type={2}
                                         url={item?.image ? `/storage/images/program_images/thumbnails/${item.image}` : ''}
                                         id="image_file"
                                         name="image_file"
