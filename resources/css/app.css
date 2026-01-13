@@ -5,8 +5,6 @@
 @source '../views';
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 
-@custom-variant dark (&:is(.dark *));
-
 @theme {
     --font-sans:
         'Instrument Sans', ui-sans-serif, system-ui, sans-serif,
@@ -62,41 +60,33 @@
 }
 
 :root {
-    --background: oklch(0% 0 0);
-    --foreground: oklch(100% 0.00011 271.152);;
-    --card: oklch(1 0 0);
-    --card-foreground: oklch(0.145 0 0);
-    --popover: oklch(1 0 0);
-    --popover-foreground: oklch(0.145 0 0);
-    --primary: oklch(0.205 0 0);
-    --primary-foreground: oklch(0.985 0 0);
-    --secondary: oklch(0.97 0 0);
-    --secondary-foreground: oklch(0.205 0 0);
-    --muted: oklch(0% 0 0);
-    --muted-foreground: oklch(0.556 0 0);
-    --accent: oklch(0.97 0 0);
-    --accent-foreground: oklch(0.205 0 0);
-    --destructive: oklch(0.577 0.245 27.325);
-    --destructive-foreground: oklch(0.577 0.245 27.325);
-    --border: oklch(0.922 0 0);
-    --input: oklch(0.922 0 0);
-    --ring: oklch(0.87 0 0);
-    --chart-1: oklch(0.646 0.222 41.116);
-    --chart-2: oklch(0.6 0.118 184.704);
-    --chart-3: oklch(0.398 0.07 227.392);
-    --chart-4: oklch(0.828 0.189 84.429);
-    --chart-5: oklch(0.769 0.188 70.08);
-    --radius: 0.625rem;
-    --sidebar: oklch(27.994% 0.04779 194.807 / 0.692);
-    --sidebar-foreground: oklch(100% 0.00011 271.152);
-    --sidebar-primary: oklch(0.205 0 0);
-    --sidebar-primary-foreground: oklch(0.985 0 0);
-    --sidebar-accent: oklch(100% 0.00011 271.152);
-    --sidebar-accent-foreground: oklch(43.284% 0.07642 179.917);
-    --sidebar-border: oklch(0.922 0 0);
-    --sidebar-ring: oklch(0.87 0 0);
-}
+    --background: oklch(100% 0 0);
+    --foreground: oklch(14.5% 0 0);
 
+    --card: oklch(100% 0 0);
+    --card-foreground: oklch(14.5% 0 0);
+
+    --popover: oklch(100% 0.00011 271.152);
+    --popover-foreground: oklch(37.638% 0.06867 173.235);
+
+    --primary: oklch(20.5% 0 0);
+    --primary-foreground: oklch(98.5% 0 0);
+
+    --secondary: oklch(97% 0 0);
+    --secondary-foreground: oklch(20.5% 0 0);
+
+    --muted: oklch(96% 0 0);
+    --muted-foreground: oklch(55.6% 0 0);
+
+    --accent: oklch(96% 0 0);
+    --accent-foreground: oklch(20.5% 0 0);
+
+    --border: oklch(92.2% 0 0);
+    --input: oklch(92.2% 0 0);
+    --ring: oklch(87% 0 0);
+
+    --radius: 0.625rem;
+}
 
 
 @layer base {
@@ -110,39 +100,40 @@
 }
 
 .glass-morph {
-backdrop-filter: blur(25px) saturate(100%);
--webkit-backdrop-filter: blur(25px) saturate(100%);
-background: rgba(23, 23, 23, 0.05);
-border-radius: 8px;
-border: 1px solid rgba(82, 82, 82, 0.2);
-box-shadow: 0px 16px 60px 0 rgba(0, 0, 0, 0.4),
-            inset 0 0 0px rgba(255, 255, 255, 0),
-            inset 0px 0px 4px 2px rgba(255, 255, 255, 0.1);
-/* Reflection overlay for realism using pseudo-elements */
+    backdrop-filter: blur(25px) saturate(100%);
+    -webkit-backdrop-filter: blur(25px) saturate(100%);
+    background: rgba(23, 23, 23, 0.05);
+    border-radius: 8px;
+    border: 1px solid rgba(82, 82, 82, 0.2);
+    box-shadow: 0px 16px 60px 0 rgba(0, 0, 0, 0.4),
+        inset 0 0 0px rgba(255, 255, 255, 0),
+        inset 0px 0px 4px 2px rgba(255, 255, 255, 0.1);
+    /* Reflection overlay for realism using pseudo-elements */
 
 }
+
 .glass-morph ::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-  border-radius: inherit;
-  background: linear-gradient(to left top, rgba(255,255,255,0.5) 0%, rgba(255,255,255,0) 50%);
-  z-index: 1;
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    border-radius: inherit;
+    background: linear-gradient(to left top, rgba(255, 255, 255, 0.5) 0%, rgba(255, 255, 255, 0) 50%);
+    z-index: 1;
 }
 
 .glass-morph ::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-  border-radius: inherit;
-  background: linear-gradient(to bottom, rgba(255,255,255,0.3) 0%, rgba(255,255,255,0) 100%);
-  z-index: 1;
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    border-radius: inherit;
+    background: linear-gradient(to bottom, rgba(255, 255, 255, 0.3) 0%, rgba(255, 255, 255, 0) 100%);
+    z-index: 1;
 }

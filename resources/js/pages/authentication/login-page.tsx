@@ -35,7 +35,7 @@ function LoginPage() {
                         placeholder="email@example.com"
                         onChange={handleChange}
                         value={String(item.email)}
-                        className="text-gray-500 bg-gray-50/80 text-[11px]"
+                        className="text-gray-500 bg-gray-50"
                     />
                     <InputError message={errors.email} />
                 </div>
@@ -51,7 +51,7 @@ function LoginPage() {
                         placeholder="Password"
                         onChange={handleChange}
                         value={String(item.password)}
-                        className="text-gray-500 bg-gray-50/80 text-[11px]"
+                        className="text-gray-500 bg-gray-50"
                     />
                     <InputError message={errors.password} />
                 </div>

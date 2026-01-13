@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Post;
 use Inertia\Inertia;
+use App\Models\Program;
+use App\Models\Category;
 class PostController extends Controller
 {
     /**
@@ -31,7 +33,12 @@ class PostController extends Controller
      */
     public function create()
     {
-        //
+        $categories  =  Category::select('category_id', 'title', 'description')->where('is_active',1)->orderBy('title','asc')->get();
+        $programs = Program::select('program_id','code','program_type','title', 'description','agency','image')->where('is_active',1)->orderBy('title','asc')->get();
+        return Inertia::render('cms/post/partials/post-form', [
+            'categories' => $categories,
+            'programs' => $programs,
+        ]);
     }
 
     /**

@@ -11,7 +11,7 @@ import { Search } from "lucide-react";
 import { postStatus } from "@/types/default";
 import { useState } from "react";
 import { Tooltip, TooltipContent, TooltipTrigger, } from "@/components/ui/tooltip"
-import { FaTrash, FaEdit, FaEye } from "react-icons/fa";
+import { FaTrash, FaEdit, FaEye,FaPhotoVideo  } from "react-icons/fa";
 import { Button } from '@/components/ui/button';
 import {
     Select,
@@ -22,7 +22,7 @@ import {
 } from "@/components/ui/select";
 import { trimText } from "@/hooks/use-essential-functions";
 import { useHandleChange } from "@/hooks/use-handle-change";
-import { PostsModel } from "@/types/models";
+import { PostModel } from "@/types/models";
 
 
 
@@ -94,11 +94,11 @@ function Posts() {
             <div className="flex flex-col flex-1 min-h-0  ">
                 <div className="flex flex-1 flex-col gap-y-3 gap-x-5 rounded-xl px-6 py-5">
                     <div className='w-full flex justify-between item-center px-6 py-4 shadow-sm border rounded-lg border-gray-400/50 bg-white/50'>
-                        <div className="text-teal-700 poppins-bold md:text-lg text-sm flex items-center gap-2">
-                            Posts Management Section
+                        <div className="text-teal-600 poppins-bold md:text-base text-sm flex items-center gap-2">
+                            <FaPhotoVideo/>Posts Management Section
                         </div>
                         <div className="text-gray-500 poppins-bold text-lg">
-                            <Link className='bg-teal-600 text-gray-50 inline-flex  h-9 px-4 py-2 has-[>svg]:px-3 items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-[color,box-shadow]' href={'/post-form'}> <IoAddCircle /> Add Post</Link>
+                            <Link className='bg-teal-600 text-gray-50 inline-flex  h-9 px-4 py-2 has-[>svg]:px-3 items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-[color,box-shadow]' href={'/posts/create'}> <IoAddCircle /> Add Post</Link>
                         </div>
                     </div>
                     <div className='w-full flex justify-between item-center shadow-md border rounded-lg border-gray-400/50 overflow-x-hidden overflow-y-auto bg-white/50 flex-col p-6'>
@@ -115,7 +115,7 @@ function Posts() {
                             </div>
                         </div>
                         <div>
-                            <PaginatedSearchTable<PostsModel>
+                            <PaginatedSearchTable<PostModel>
                                 items={posts}
                                 headers={[
                                     { name: "Title", position: "center" },

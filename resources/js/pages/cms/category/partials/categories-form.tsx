@@ -101,7 +101,7 @@ function CategoriesForm(props: CategoriesFormProps) {
                             required
                             onChange={handleChange}
                             value={String(item.title)}
-                            className="text-gray-600 border-teal-600"
+                            className="text-gray-600 border-gray-300"
                         />
                         <InputError message={errors.title as string} />
                     </div>
@@ -113,7 +113,7 @@ function CategoriesForm(props: CategoriesFormProps) {
                             required
                             onChange={handleChange}
                             value={String(item.description)}
-                            className="text-gray-600 border-teal-600"
+                            className="text-gray-600 border-gray-300"
                         />
                         <InputError message={errors.description as string} />
                     </div>

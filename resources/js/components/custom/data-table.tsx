@@ -163,10 +163,10 @@ function PaginatedSearchTableInner<T = unknown>({
             placeholder={searchPlaceholder}
             value={searchTerm}
             onChange={handleSearch}
-            className="min-w-[250px] h-10 border-teal-600 shadow-none ps-8"
+            className="min-w-[250px] h-10 border-gray-500 shadow-none ps-8"
           />
 
-          <Search className="absolute left-2.5 text-teal-500" size={16} />
+          <Search className="absolute left-2.5 text-gray-500" size={16} />
 
         </div>
 
@@ -214,15 +214,15 @@ function PaginatedSearchTableInner<T = unknown>({
       {/* Pagination */}
       <div className="w-full flex justify-between pt-5 px-2 poppins-semibold">
         <div>
-          <span className="text-sm text-teal-600">
-            Showing <span className="text-teal-700">{count.from}</span> to{" "}
-            <span className="text-teal-700">{count.to}</span> of{" "}
-            <span className="text-teal-700">{count.total}</span> Entries
+          <span className="text-sm text-gray-600">
+            Showing <span className="text-gray-700">{count.from}</span> to{" "}
+            <span className="text-gray-700">{count.to}</span> of{" "}
+            <span className="text-gray-700">{count.total}</span> Entries
           </span>
         </div>
         <div className="flex items-center gap-2">
           {/* Optional: show current page / total */}
-          <span className="text-sm text-teal-600">
+          <span className="text-sm text-gray-600">
             Page {page} / {totalPages}
           </span>
 
@@ -230,7 +230,7 @@ function PaginatedSearchTableInner<T = unknown>({
             onClick={prevPage}
             disabled={isPrevDisabled}
             className={`flex items-center justify-center px-3 h-8 text-sm font-medium border rounded-lg hover:bg-teal-800 ${isPrevDisabled
-              ? "text-teal-600 bg-gray-200 cursor-not-allowed border-gray-50"
+              ? "text-gray-600 bg-gray-200 cursor-not-allowed border-gray-50"
               : "text-gray-50 bg-teal-600 hover:bg-gray-100 hover:text-gray-700 border-gray-50"
               }`}
             type="button"
@@ -242,7 +242,7 @@ function PaginatedSearchTableInner<T = unknown>({
             onClick={nextPage}
             disabled={isNextDisabled}
             className={`flex items-center justify-center px-3 h-8 text-sm font-medium border rounded-lg hover:bg-teal-800 ${isNextDisabled
-              ? "text-teal-600 bg-gray-200 cursor-not-allowed border-gray-50"
+              ? "text-gray-600 bg-gray-200 cursor-not-allowed border-gray-50"
               : "text-gray-50 bg-teal-600 hover:bg-gray-100 hover:text-gray-700 border-gray-50"
               }`}
             type="button"

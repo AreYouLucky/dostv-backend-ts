@@ -87,6 +87,7 @@ export interface PostModel {
   is_featured: number | null;
   status: string | null;
   tags: string | null;
+  featured_guest: string | null;
   categories: number[];
 }
 

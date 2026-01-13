@@ -1,3 +1,10 @@
+import DOMPurify from "dompurify";
+
+
+export function purifyDom(text:string){
+  return DOMPurify.sanitize(text);
+}
+
 export function trimText(text:string, maxLength:number):string {
   if (text.length > maxLength) {
     return text.substring(0, maxLength) + '...';

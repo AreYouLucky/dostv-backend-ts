@@ -1,13 +1,13 @@
-export type Appearance = 'dark';
+export type Appearance = 'light';
 
 export function initializeTheme() {
-    document.documentElement.classList.add('dark');
-    document.documentElement.style.colorScheme = 'dark';
+    document.documentElement.classList.add('light');
+    document.documentElement.style.colorScheme = 'light';
 }
 
 export function useAppearance() {
     return {
-        appearance: 'dark',
+        appearance: 'light',
         updateAppearance: () => {}, 
     } as const;
 }

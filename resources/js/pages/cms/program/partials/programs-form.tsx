@@ -144,8 +144,8 @@ function ProgramsForm() {
             <Head title="Program Form" />
             <div className="flex flex-col flex-1 min-h-0  ">
                 <div className="flex flex-1 flex-col gap-y-3 gap-x-5 rounded-xl px-6 py-5 ">
-                    <div className='w-full flex flex-col justify-between item-center  shadow-md border rounded-lg border-gray-400/50 bg-white/50 overflow-auto p-8'>
-                        <div className="md:cols-span-2 text-teal-700 poppins-bold md:text-xl text-sm flex items-center justify-start gap-5 md:col-span-3 mb-1 pb-4  border-b">
+                    <div className='w-full flex flex-col justify-between item-center  shadow-md border rounded-lg border-gray-300/50 bg-white/50 overflow-auto p-8'>
+                        <div className="md:cols-span-2 text-gray-600 poppins-bold md:text-xl text-sm flex items-center justify-start gap-2 md:col-span-3 mb-1 pb-4  border-b">
                             <TfiLayoutMediaOverlayAlt2 /> Programs Management Form
                         </div>
                         <div className="w-full grid md:grid-cols-3 gap-4 mt-2 ">
@@ -160,7 +160,7 @@ function ProgramsForm() {
                                         accept="video/mp4,video/x-msvideo"
                                         text="Click to upload video"
                                         onChange={handleChange}
-                                        className="text-gray-600 border-teal-600 shadow p-4"
+                                        className="text-gray-600 border-gray-300 shadow p-4"
                                     />
                                     <InputError message={errors.trailer as string} />
                                 </div>
@@ -173,7 +173,7 @@ function ProgramsForm() {
                                         required
                                         onChange={handleChange}
                                         value={String(item.title)}
-                                        className="text-gray-700 border-teal-600"
+                                        className="text-gray-700 border-gray-300"
                                     />
                                     <InputError message={errors.title as string} />
                                 </div>
@@ -185,7 +185,7 @@ function ProgramsForm() {
                                             setItem((prev) => ({ ...prev, program_type: value }))
                                         }
                                     >
-                                        <SelectTrigger >
+                                        <SelectTrigger  className="border-gray-300">
                                             <SelectValue placeholder="Choose Program Type" />
                                         </SelectTrigger>
                                         <SelectContent>
@@ -208,7 +208,7 @@ function ProgramsForm() {
                                         required
                                         onChange={handleChange}
                                         value={String(item.agency)}
-                                        className="text-gray-700 border-teal-600"
+                                        className="text-gray-700 border-gray-300"
                                     />
                                     <InputError message={errors.agency as string} />
                                 </div>
@@ -221,7 +221,7 @@ function ProgramsForm() {
                                         required
                                         onChange={handleChange}
                                         value={String(item.date_started)}
-                                        className="text-gray-700 border-teal-600"
+                                        className="text-gray-700 border-gray-300"
                                     />
                                     <InputError message={errors.date_started as string} />
                                 </div>
@@ -238,7 +238,7 @@ function ProgramsForm() {
                                         accept="image/png,image/jpeg"
                                         text="Click to upload image"
                                         onChange={handleChange}
-                                        className="text-gray-600 border-teal-600 shadow p-4"
+                                        className="text-gray-600 border-gray-300 shadow p-4"
                                     />
                                     <InputError message={errors.image as string} />
                                 </div>
@@ -246,7 +246,7 @@ function ProgramsForm() {
 
                             <div className="md:col-span-3 grid gap-2 mt-2">
                                 <Label htmlFor="description" className="text-gray-700 poppins-semibold">Program Description</Label>
-                                <div className="max-h-screen  overflow-auto border border-teal-600 rounded-lg">
+                                <div className="max-h-screen rounded-lg">
                                     <TextField
                                         id="description"
                                         name="description"
