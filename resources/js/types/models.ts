@@ -78,17 +78,22 @@ export interface PostModel {
   content: string | null;
   platform: string | null;
   url: string | null;
+  image: string | null;
   trailer: string | null;
+  trailer_file: string | File | null;
   banner: string | null;
+  banner_image: string | File | null;
   thumbnail: string | null;
+  thumbnail_image: File | string | null;
   guest: string | null;
   agency: string | null;
   date_published: string | null;
   is_featured: number | null;
+  feature_guest: string | null;
   status: string | null;
   tags: string | null;
   featured_guest: string | null;
-  categories: number[];
+  categories: CategoriesModel[];
 }
 
 

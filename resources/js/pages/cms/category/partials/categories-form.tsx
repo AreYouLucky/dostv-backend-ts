@@ -84,7 +84,7 @@ function CategoriesForm(props: CategoriesFormProps) {
 
     return (
         <Dialog open={props.show} onOpenChange={props.onClose}>
-            <DialogContent className="text-gray-600 p-10 ">
+            <DialogContent className="text-gray-600 p-10 bg-white ">
                 <DialogHeader>
                     <DialogTitle className="text-teal-600 poppins-bold text-center">{props.data?.category_id === 0 ? 'Add' : 'Edit'} Category Form </DialogTitle>
                     <DialogDescription className="text-xs text-center">

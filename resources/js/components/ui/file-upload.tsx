@@ -53,9 +53,9 @@ const FileUpload = ({
           ((previewUrl) || (url !== "")) ? (
             <div className="flex flex-col items-center justify-center gap-2 w-full relative">
               {fileName.endsWith(".mp4") || fileName.endsWith(".webm") || (url !== "" && type === 1) ? (
-                <video src={previewUrl ?? ""} controls className={`rounded-lg max-h-92 ${className}`} />
+                <video src={previewUrl ?? ""} controls className={`rounded-lg max-h-80 ${className}`} />
               ) : fileName.endsWith(".jpg") || fileName.endsWith(".png") || (url !== "" && type === 2) ? (
-                <img src={previewUrl ?? ""} alt="preview" className={`rounded-lg max-h-1/2 ${className}`}  />
+                <img src={previewUrl ?? ""} alt="preview" className={`rounded-lg max-h-80 ${className}`}  />
               ) : null}
               <p className="text-xs font-semibold text-center">{fileName??''}</p>
             </div>

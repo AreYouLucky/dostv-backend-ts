@@ -34,3 +34,18 @@ export const postStatus = [
         value: 'trash',
     }
 ]
+
+export const platforms = [
+    {
+        code: 1,
+        value: 'YouTube',
+    },
+    {
+        code: 2,
+        value: 'Facebook',
+    },
+    {
+        code: 3,
+        value: 'Tiktok',
+    },
+]

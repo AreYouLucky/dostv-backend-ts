@@ -72,7 +72,7 @@ function CategoriesPage() {
             <Head title="Categories" />
             <div className="flex flex-col flex-1 min-h-0  ">
                 <div className="flex flex-1 flex-col gap-y-3 gap-x-5 rounded-xl px-6 py-5">
-                    <div className='w-full flex justify-between item-center px-6 py-4 shadow-sm border rounded-lg border-gray-400/50 bg-white/50'>
+                    <div className='w-full flex justify-between item-center px-6 py-4 shadow-sm border rounded-lg border-gray-400/50 bg-white'>
                         <div className="text-teal-600 poppins-bold md:text-lg text-sm flex items-center gap-2">
                             <TbCategoryFilled/>Categories Management Section
                         </div>
@@ -80,7 +80,7 @@ function CategoriesPage() {
                             <Button className='bg-teal-600' onClick={openModal}> <IoAddCircle /> Add Category</Button>
                         </div>
                     </div>
-                    <div className='w-full flex justify-between item-center  shadow-md border rounded-lg border-gray-400/50 overflow-auto p-2 bg-white/50'>
+                    <div className='w-full flex justify-between item-center  shadow-md border rounded-lg border-gray-400/50 overflow-auto p-2 bg-white'>
                         <PaginatedSearchTable<CategoriesModel>
                             items={data ?? []}
                             headers={[

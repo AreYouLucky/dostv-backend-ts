@@ -1,10 +1,9 @@
-import { useQuery, useMutation } from "@tanstack/react-query";
+import { useQuery, useMutation,useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
-import { PostsModel } from "@/types/models";
-// import { useMutation, useQueryClient } from "@tanstack/react-query";
-// import { AxiosError } from "axios";
+import { PostModel } from "@/types/models";
+import { AxiosError } from "axios";
 
-// type ApiOk = { status: string; category?: BannersModel; errors: undefined, id?: number };
+type ApiOk = { status: string; program?: PostModel; errors: undefined, id?: number };
 
 
 type PaginatedResponse<T> = {
@@ -18,7 +17,7 @@ type PaginatedResponse<T> = {
 };
 
 export function useFetchPosts(page: number) {
-  return useQuery<PaginatedResponse<PostsModel>>({
+  return useQuery<PaginatedResponse<PostModel>>({
     queryKey: ["posts", page],
     queryFn: async () => {
       const res = await axios.get(`/posts?page=${page}`);
@@ -30,7 +29,7 @@ export function useFetchPosts(page: number) {
 }
 
 export function useSearchPosts() {
-  return useMutation<PaginatedResponse<PostsModel>, Error, {
+  return useMutation<PaginatedResponse<PostModel>, Error, {
     title: string;
     program: string;
   }>({
@@ -39,6 +38,22 @@ export function useSearchPosts() {
         params: { title, program },
       });
       return res.data;
+    },
+  });
+}
+
+export function useCreatePost() {
+  const queryClient = useQueryClient();
+  return useMutation<ApiOk, AxiosError<ApiOk>, FormData>({
+    mutationFn: (payload) =>
+      axios
+        .post<ApiOk>("/posts", payload, {
+          headers: { "Content-Type": "multipart/form-data" },
+        })
+        .then((res) => res.data),
+
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["posts"] });
     },
   });
 }

@@ -43,7 +43,7 @@ function BreadcrumbLink({
   return (
     <Comp
       data-slot="breadcrumb-link"
-      className={cn("hover:text-gray-50 text-gray-700 transition-colors poppins-semibold", className)}
+      className={cn("hover:text-gray-700 text-teal-700 transition-colors poppins-semibold", className)}
       {...props}
     />
   )
@@ -56,7 +56,7 @@ function BreadcrumbPage({ className, ...props }: React.ComponentProps<"span">) {
       role="link"
       aria-disabled="true"
       aria-current="page"
-      className={cn("text-gray-600 poppins-semibold", className)}
+      className={cn("text-teal-600 poppins-semibold", className)}
       {...props}
     />
   )
@@ -75,7 +75,7 @@ function BreadcrumbSeparator({
       className={cn("[&>svg]:size-3.5", className)}
       {...props}
     >
-      {children ?? <ChevronRight  className="text-gray-500"/>}
+      {children ?? <ChevronRight  className="text-teal-700"/>}
     </li>
   )
 }
