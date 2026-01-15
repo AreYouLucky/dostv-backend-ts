@@ -25,6 +25,8 @@ import { trimText } from "@/hooks/use-essential-functions";
 import { useHandleChange } from "@/hooks/use-handle-change";
 import { PostModel, ProgramsModel } from "@/types/models";
 import ConfirmationDialog from "@/components/custom/confirmation-dialog";
+import ViewPostDialog from "@/components/custom/view-post-dialog";
+
 
 const breadcrumbs: BreadcrumbItem[] = [
     { title: 'Dashboard', href: '/dashboard' },
@@ -36,6 +38,8 @@ function Posts() {
     const { props } = usePage<{ programs?: ProgramsModel[] }>();
     const programs = props.programs ?? [];
     const [page, setPage] = useState(1);
+    const [post, setPost] = useState<PostModel>();
+    const [showPostDialog, setShowPostDialog] = useState(false);
     const [loadingSlug, setLoadingSlug] = useState('');
     const { item, setItem } = useHandleChange({ title: '', program: '', type: '', status: '' });
     const [deleteDialog, setDeleteDialog] = useState(false);
@@ -99,6 +103,11 @@ function Posts() {
         );
     }
 
+    const viewPostDialog = (post: PostModel) => {
+        setPost(post);
+        setShowPostDialog(true);
+    }
+
     return (
         <>
             <Head title="Posts" />
@@ -128,7 +137,7 @@ function Posts() {
                                 <BottomPopover width="min-w-[500px]">
                                     <div className="grid md:grid-cols-2 gap-4 p-4">
                                         <div className="grid gap-2 md:col-span-2">
-                                            <Label htmlFor="program_type" className="text-gray-600 poppins-semibold text-[11px]">Program Type</Label>
+                                            <Label htmlFor="program_type" className="text-gray-600 poppins-semibold text-[11px]">Program</Label>
                                             <Select
                                                 value={String(item.program)}
                                                 onValueChange={(value) => {
@@ -290,12 +299,12 @@ function Posts() {
                                                 </SelectContent>
                                             </Select>
                                         </td>
-                                        <td className="px-6 py-3 text-center poppins-bold text-xl text-teal-800 gap-1 flex relative">
+                                        <td className="px-6 py-3 text-center poppins-bold text-xl text-teal-800 gap-1 flex relative items-center justify-center">
                                             <Tooltip>
                                                 <TooltipTrigger asChild>
-                                                    <Link className='bg-transparent shadow-none hover:bg-teal-100 px-2 rounded-lg py-2 text-lg' >
+                                                    <Button className='bg-transparent shadow-none hover:bg-teal-100 px-2 rounded-lg py-2 text-lg' onClick={()=>viewPostDialog(post)} >
                                                         <FaEye className='text-[#0096cc] ' />
-                                                    </Link>
+                                                    </Button>
                                                 </TooltipTrigger>
                                                 <TooltipContent>
                                                     <p>View Post</p>
@@ -309,7 +318,7 @@ function Posts() {
                                                     </Link>
                                                 </TooltipTrigger>
                                                 <TooltipContent>
-                                                    <p>Edit Program</p>
+                                                    <p>Edit Post</p>
                                                 </TooltipContent>
                                             </Tooltip>
                                             <Tooltip>
@@ -319,7 +328,7 @@ function Posts() {
                                                     </Button>
                                                 </TooltipTrigger>
                                                 <TooltipContent>
-                                                    <p>Delete Program</p>
+                                                    <p>Delete Post</p>
                                                 </TooltipContent>
                                             </Tooltip>
                                         </td>
@@ -340,7 +349,7 @@ function Posts() {
                 </div>
             </div >
             <ConfirmationDialog show={deleteDialog} onClose={() => setDeleteDialog(false)} type={2} onConfirm={handleDelete} message={'Are you sure you want to delete this post?'} />
-
+            <ViewPostDialog show={showPostDialog} onClose={() => setShowPostDialog(false)} post={post}/>
         </>
     )
 }

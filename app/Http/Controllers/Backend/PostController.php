@@ -11,6 +11,7 @@ use App\Models\Program;
 use App\Models\Category;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
+use App\Services\ContentFunctions;
 
 class PostController extends Controller
 {
@@ -48,20 +49,9 @@ class PostController extends Controller
         if ($request->status !== "") {
             $query->where('status', 'like', '%' . $request->status . '%');
         }
-        return $query->orderBy('date_published', 'desc')->paginate(10);
+        return $query->orderBy('date_published', 'desc')->with('program')->paginate(10);
     }
 
-
-    public function searchPosts(Request $req)
-    {
-        if ($req->title !== "" && $req->program !== "") {
-            Post::where('title', $req->title)->where('program', $req->program)->paginate(10);
-        } else if ($req->title !== "") {
-            Post::where('title', $req->title)->paginate(10);
-        } else {
-            Post::where('program', $req->program)->paginate(10);
-        }
-    }
 
     public function create()
     {
@@ -73,7 +63,7 @@ class PostController extends Controller
         ]);
     }
 
-    public function store(Request $request)
+    public function store(Request $request, ContentFunctions $content)
     {
         $request->validate([
             'title' => 'required|string|max:255|unique:posts,title',
@@ -82,7 +72,7 @@ class PostController extends Controller
             'content' => 'required|string',
             'featured_guest' => 'nullable|string|max:255',
             'date_published' => 'required|string|max:50',
-            'excerpt' => 'required|string|max:500',
+            'excerpt' => 'required|string|max:1000',
             'episode' => 'nullable|string|max:50',
             'platform' => 'nullable|string|max:50',
             'url' => 'nullable|url|max:255',
@@ -110,7 +100,7 @@ class PostController extends Controller
                 'title' => $request->title,
                 'type' => $request->type,
                 'program' => $request->program,
-                'content' => $request->content,
+                'content' =>  $content->convertToPlainHtml($request->content),
                 'guest' => $request->featured_guest,
                 'date_published' => $request->date_published,
                 'excerpt' => $request->excerpt,
@@ -166,7 +156,7 @@ class PostController extends Controller
         ]);
     }
 
-    public function update(Request $request, string $code)
+    public function update(Request $request, string $code , ContentFunctions $content)
     {
         $request->validate([
             'title' => 'required',
@@ -178,7 +168,7 @@ class PostController extends Controller
             'content' => 'required|string',
             'featured_guest' => 'nullable|string|max:255',
             'date_published' => 'required|string|max:50',
-            'excerpt' => 'required|string|max:500',
+            'excerpt' => 'required|string|max:1000',
             'episode' => 'nullable|string|max:50',
             'platform' => 'nullable|string|max:50',
             'url' => 'nullable|url|max:255',
@@ -210,7 +200,7 @@ class PostController extends Controller
             $post->title = $request->title;
             $post->type = $request->type;
             $post->program = $request->program;
-            $post->content = $request->content;
+            $post->content = $content->convertToPlainHtml($request->content);
             $post->guest = $request->featured_guest;
             $post->date_published = $request->date_published;
             $post->excerpt = $request->excerpt;
@@ -237,7 +227,7 @@ class PostController extends Controller
             }
             DB::commit();
             return response()->json([
-                'status' => 'Post Successfully Added!',
+                'status' => 'Post Successfully Updated!',
                 'post' => $post
             ]);
         } catch (\Illuminate\Validation\ValidationException $e) {

@@ -35,4 +35,9 @@ class Post extends Model
     {
         return $this->hasMany(PostCategory::class, 'post_id', 'post_id');
     }
+
+    public function program()
+    {
+        return $this->belongsTo(Program::class, 'program', 'code');
+    }
 }

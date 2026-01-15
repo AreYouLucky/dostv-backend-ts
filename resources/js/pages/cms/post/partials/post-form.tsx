@@ -134,6 +134,10 @@ function PostForm() {
             onSuccess: (data) => {
                 const newUrl = `/posts/${data.post.slug}/edit`;
                 window.history.pushState({}, "", newUrl);
+                setItem((prev) => ({
+                    ...prev,
+                    post_id: data.post.post_id as number
+                }))
                 setMessage(data.status);
                 setSuccessDialog(true);
             },

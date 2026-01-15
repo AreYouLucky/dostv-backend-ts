@@ -5,9 +5,10 @@ import React from "react";
 interface VideoEmbedProps {
   url?: string;
   platform?: string;
+  height?: string;
 }
 
-const VideoEmbed = ({ url = "", platform = "", }: VideoEmbedProps) => {
+const VideoEmbed = ({ url = "", platform = "", height = "315px" }: VideoEmbedProps) => {
   if (!url || !platform) {
     return (
       <div className="w-full min-h-[215px] flex items-center justify-center border border-dashed rounded-lg">
@@ -38,7 +39,7 @@ const VideoEmbed = ({ url = "", platform = "", }: VideoEmbedProps) => {
     <iframe
       src={getEmbedUrl()}
       width="100%"
-      height="315"
+      height={height}
       style={{ border: "none", borderRadius: "8px" }}
       allow="autoplay; clipboard-write; encrypted-media; picture-in-picture"
       allowFullScreen

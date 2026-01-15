@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html  lang="en">
+<html lang="en">
 
 <head>
     <meta charset="utf-8">
@@ -68,6 +68,35 @@
             font-style: normal;
         }
 
+        .inter-light {
+            font-family: "Inter", sans-serif;
+            font-weight: 300;
+            font-style: normal;
+        }
+
+        .inter-regular {
+            font-family: "Inter", sans-serif;
+            font-weight: 400;
+            font-style: normal;
+        }
+
+        .inter-medium {
+            font-family: "Inter", sans-serif;
+            font-weight: 500;
+            font-style: normal;
+        }
+
+        .inter-semibold {
+            font-family: "Inter", sans-serif;
+            font-weight: 600;
+            font-style: normal;
+        }
+        .inter-bold {
+            font-family: "Inter", sans-serif;
+            font-weight: 700;
+            font-style: normal;
+        }
+
         :root {
             --toastify-icon-color-success: #0ccfbf;
         }
@@ -77,7 +106,7 @@
             --toastify-color-success: #000000;
             --toastify-icon-color-success: #0ccfbf;
             --toastify-toast-background: #000000;
-            --toastify-text-color-light: #f1f1f1 ;
+            --toastify-text-color-light: #f1f1f1;
         }
 
         .ck-editor__editable {
@@ -96,6 +125,9 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
         href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap"
+        rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"
         rel="stylesheet">
 
     @viteReactRefresh

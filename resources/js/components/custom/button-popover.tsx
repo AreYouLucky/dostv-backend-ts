@@ -1,7 +1,9 @@
-import { useEffect, useRef, useState, ReactNode } from "react";
+import { useRef, useState, ReactNode } from "react";
 import { TbFilterEdit } from "react-icons/tb";
 import { IoClose } from "react-icons/io5"; // X icon
 import { Button } from "../ui/button";
+import { Tooltip, TooltipContent, TooltipTrigger, } from "@/components/ui/tooltip"
+
 
 type BottomPopoverProps = {
   children: ReactNode;
@@ -18,12 +20,20 @@ export default function BottomPopover({
 
   return (
     <div className="relative inline-block" ref={ref}>
-      <Button
-        onClick={() => setOpen(!open)}
-        className="rounded-lg border text-white bg-teal-600"
-      >
-        <TbFilterEdit />
-      </Button>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <Button
+            onClick={() => setOpen(!open)}
+            className="rounded-lg border text-white bg-teal-600"
+          >
+            <TbFilterEdit />
+          </Button>
+        </TooltipTrigger>
+        <TooltipContent>
+          <p>Filter</p>
+        </TooltipContent>
+      </Tooltip>
+
 
       {open && (
         <div
