@@ -5,14 +5,10 @@ use Inertia\Inertia;
 use App\Http\Controllers\Backend\PostController;
 
 Route::middleware('auth')->group(function () {
-    Route::get('/view-posts', function () {
-        return Inertia::render('cms/post/posts-page');
-    });
+    Route::get('/view-posts', [PostController::class,'viewPostPage']);
 
     Route::resource('/posts', PostController::class)->only(['index', 'store', 'destroy', 'edit','create']);
     Route::get('/search/posts',[PostController::class, 'searchPost']);
-
-    Route::get('/post-form', function () {
-        return Inertia::render('cms/post/partials/post-form');
-    });
+    Route::post('/update-post/{id}',[PostController::class,'update']);
+    Route::post('/update-post-status',[PostController::class,'updatePostStatus']);
 });

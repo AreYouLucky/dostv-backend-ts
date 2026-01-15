@@ -12,6 +12,7 @@ import { TfiLayoutMediaOverlayAlt2 } from "react-icons/tfi";
 import FileUpload from "@/components/ui/file-upload";
 import { useCreateProgram, useUpdateProgram } from "./programs-hooks";
 import ConfirmationDialog from "@/components/custom/confirmation-dialog";
+import LoadingDialog from "@/components/custom/loading-dialog";
 import { useState } from "react";
 import { usePage } from '@inertiajs/react'
 import { ProgramsModel } from "@/types/models";
@@ -269,6 +270,8 @@ function ProgramsForm() {
                 </div>
             </div>
             <ConfirmationDialog show={successDialog} onClose={() => setSuccessDialog(false)} type={1} message={message} />
+            <LoadingDialog show={createProgram.isPending || updateProgram.isPending} message={'Uploading Program Details ...'} />
+
         </>
 
 

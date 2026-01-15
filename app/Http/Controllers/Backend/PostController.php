@@ -23,9 +23,32 @@ class PostController extends Controller
         return trim($text);
     }
 
-    public function index()
+    protected function uploadFile($folder, $request, $field)
     {
-        return Post::orderBy('date_published', 'desc')->paginate(10);
+        $file = $request->file($field);
+        $filename = preg_replace('/[^A-Za-z0-9]/', '_', $request->title) . '.' . strtolower($file->getClientOriginalExtension());
+        $file->storeAs($folder, $filename, 'public');
+        return $filename;
+    }
+
+
+
+    public function index(Request $request)
+    {   
+        $query = Post::where('status','!=' ,'trash');
+        if ($request->title !== "") {
+            $query->where('title', 'like', '%' . $request->title . '%');
+        }
+        if ($request->program !== "") {
+            $query->where('program', 'like', '%' . $request->program . '%');
+        }
+        if ($request->type !== "") {
+            $query->where('type', 'like', '%' . $request->type . '%');
+        }
+        if ($request->status !== "") {
+            $query->where('status', 'like', '%' . $request->status . '%');
+        }
+        return $query->orderBy('date_published', 'desc')->paginate(10);
     }
 
 
@@ -39,9 +62,7 @@ class PostController extends Controller
             Post::where('program', $req->program)->paginate(10);
         }
     }
-    /**
-     * Show the form for creating a new resource.
-     */
+
     public function create()
     {
         $categories  =  Category::select('category_id', 'title', 'description')->where('is_active', 1)->orderBy('title', 'asc')->get();
@@ -50,56 +71,38 @@ class PostController extends Controller
             'categories' => $categories,
             'programs' => $programs,
         ]);
-        
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
         $request->validate([
-            'title' => 'required|string|max:255',
+            'title' => 'required|string|max:255|unique:posts,title',
             'type' => 'required|string|max:50',
             'program' => 'required|string|max:50',
-            'content' => 'required|string|numeric',
+            'content' => 'required|string',
             'featured_guest' => 'nullable|string|max:255',
             'date_published' => 'required|string|max:50',
             'excerpt' => 'required|string|max:500',
             'episode' => 'nullable|string|max:50',
             'platform' => 'nullable|string|max:50',
             'url' => 'nullable|url|max:255',
-            'banner_image' => 'nullable|image|mimes:image/jpg,image/png|max:10240',
-            'thumbnail_image' => 'nullable|image|mimes:image/png,image/jpeg|max:10240',
+            'banner_image' => 'nullable|max:10240',
+            'thumbnail_image' => 'required|max:10240',
             'agency' => 'required|string|max:100',
             'tags' => 'nullable|string|max:255',
-            'trailer' => 'nullable|mimes:mp4,avi|max:30400',
+            'trailer_file' => 'nullable|max:10240',
         ]);
 
         try {
             DB::beginTransaction();
             if ($request->hasFile('banner_image')) {
-                $file = $request->file('banner_image');
-                $extension = strtolower($file->getClientOriginalExtension());
-                $safeTitle = preg_replace('/[^A-Za-z0-9]/', '_', $request->title);
-                $banner_image_filename =  $safeTitle . '.' . $extension;
-                $file->storeAs('/images/post_images/banners', $banner_image_filename, 'public');
+                $banner_filename = $this->uploadFile('/images/post_images/banners', $request, 'banner_image');
             }
-
             if ($request->hasFile('thumbnail_image')) {
-                $file = $request->file('thumbnail_image');
-                $extension = strtolower($file->getClientOriginalExtension());
-                $safeTitle = preg_replace('/[^A-Za-z0-9]/', '_', $request->title);
-                $thumbnail_image_filename =  $safeTitle . '.' . $extension;
-                $file->storeAs('/images/post_images/thumbnails', $thumbnail_image_filename, 'public');
+                $thumbnail_filename = $this->uploadFile('/images/post_images/thumbnails', $request, 'thumbnail_image');
             }
-
-            if ($request->hasFile('trailer')) {
-                $file = $request->file('trailer');
-                $extension = strtolower($file->getClientOriginalExtension());
-                $safeTitle = preg_replace('/[^A-Za-z0-9]/', '_', $request->title);
-                $video_trailer_filename =  $safeTitle . '.' . $extension;
-                $file->storeAs('/videos/post_videos/trailers', $video_trailer_filename, 'public');
+            if ($request->hasFile('trailer_file')) {
+                $trailer_filename = $this->uploadFile('/videos/post_videos/trailers', $request, 'trailer_file');
             }
 
             $post = Post::create([
@@ -108,15 +111,15 @@ class PostController extends Controller
                 'type' => $request->type,
                 'program' => $request->program,
                 'content' => $request->content,
-                'featured_guest' => $request->featured_guest,
+                'guest' => $request->featured_guest,
                 'date_published' => $request->date_published,
                 'excerpt' => $request->excerpt,
                 'episode' => $request->episode,
                 'platform' => $request->platform,
                 'url' => $request->url,
-                'trailer' => $video_trailer_filename ?? null,
-                'thumbnail' => $thumbnail_image_filename ?? null,
-                'banner_image' => $banner_image_filename ?? null,
+                'trailer' => $trailer_filename ?? null,
+                'thumbnail' => $thumbnail_filename ?? null,
+                'banner_image' => $banner_filename ?? null,
                 'agency' => $request->agency,
                 'tags' => $request->tags,
                 'description' => $this->stripHtml($request->content),
@@ -131,12 +134,12 @@ class PostController extends Controller
                     'category' => $category_id,
                 ]);
             }
-            
 
             DB::commit();
 
             return response()->json([
-                'status' => 'Post Successfully Added!'
+                'status' => 'Post Successfully Updated!',
+                'post' => $post
             ]);
         } catch (\Illuminate\Validation\ValidationException $e) {
             DB::rollBack();
@@ -146,96 +149,86 @@ class PostController extends Controller
         }
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show(string $id)
     {
         Post::where('post_id', $id)->with('categories')->first();
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function editPost(string $code)
+    public function edit(string $code)
     {
         $post  =  Post::where('slug', $code)->with('categories')->first();
-        return Inertia::render('cms/program/partials/programs-form', [
+        $categories  =  Category::select('category_id', 'title', 'description')->where('is_active', 1)->orderBy('title', 'asc')->get();
+        $programs = Program::select('program_id', 'code', 'program_type', 'title', 'description', 'agency', 'image')->where('is_active', 1)->orderBy('title', 'asc')->get();
+        return Inertia::render('cms/post/partials/post-form', [
+            'categories' => $categories,
+            'programs' => $programs,
             'post' => $post
         ]);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
+    public function update(Request $request, string $code)
     {
         $request->validate([
-            'title' => 'required|string|max:255',
+            'title' => 'required',
+            'string',
+            'max:255',
+            "unique:posts,title,{$code},slug",
             'type' => 'required|string|max:50',
             'program' => 'required|string|max:50',
-            'content' => 'required|string|numeric',
+            'content' => 'required|string',
             'featured_guest' => 'nullable|string|max:255',
             'date_published' => 'required|string|max:50',
             'excerpt' => 'required|string|max:500',
             'episode' => 'nullable|string|max:50',
             'platform' => 'nullable|string|max:50',
             'url' => 'nullable|url|max:255',
-            'banner_image' => 'nullable|image|mimes:image/jpg,image/png|max:10240',
-            'thumbnail_image' => 'nullable|image|mimes:image/png,image/jpeg|max:10240',
+            'banner_image' => 'nullable|image|max:10240',
+            'thumbnail_image' => 'nullable|image|max:10240',
             'agency' => 'required|string|max:100',
             'tags' => 'nullable|string|max:255',
-            'trailer' => 'nullable|mimes:mp4,avi|max:30400',
+            'trailer_file' => 'nullable|mimes:mp4,avi|max:30400',
         ]);
 
         try {
             DB::beginTransaction();
+
+            $post = Post::where('slug', $code)->first();
+
             if ($request->hasFile('banner_image')) {
-                $file = $request->file('banner_image');
-                $extension = strtolower($file->getClientOriginalExtension());
-                $safeTitle = preg_replace('/[^A-Za-z0-9]/', '_', $request->title);
-                $banner_image_filename =  $safeTitle . '.' . $extension;
-                $file->storeAs('/images/post_images/banners', $banner_image_filename, 'public');
+                $post->banner = $this->uploadFile('/images/post_images/banners', $request, 'banner_image');
             }
 
             if ($request->hasFile('thumbnail_image')) {
-                $file = $request->file('thumbnail_image');
-                $extension = strtolower($file->getClientOriginalExtension());
-                $safeTitle = preg_replace('/[^A-Za-z0-9]/', '_', $request->title);
-                $thumbnail_image_filename =  $safeTitle . '.' . $extension;
-                $file->storeAs('/images/post_images/thumbnails', $thumbnail_image_filename, 'public');
+                $post->thumbnail = $this->uploadFile('/images/post_images/thumbnails', $request, 'thumbnail_image');
             }
 
-            if ($request->hasFile('trailer')) {
-                $file = $request->file('trailer');
-                $extension = strtolower($file->getClientOriginalExtension());
-                $safeTitle = preg_replace('/[^A-Za-z0-9]/', '_', $request->title);
-                $video_trailer_filename =  $safeTitle . '.' . $extension;
-                $file->storeAs('/videos/post_videos/trailers', $video_trailer_filename, 'public');
+            if ($request->hasFile('trailer_file')) {
+                $post->trailer = $this->uploadFile('/videos/post_videos/trailers', $request, 'trailer_file');
             }
 
-            $post = Post::where('post_id', $id)->update([
-                'slug' => Str::slug($request->title),
-                'title' => $request->title,
-                'type' => $request->type,
-                'program' => $request->program,
-                'content' => $request->content,
-                'featured_guest' => $request->featured_guest,
-                'date_published' => $request->date_published,
-                'excerpt' => $request->excerpt,
-                'episode' => $request->episode,
-                'platform' => $request->platform,
-                'url' => $request->url,
-                'trailer' => $video_trailer_filename ?? null,
-                'thumbnail' => $thumbnail_image_filename ?? null,
-                'banner_image' => $banner_image_filename ?? null,
-                'agency' => $request->agency,
-                'tags' => $request->tags,
-                'description' => $this->stripHtml($request->content),
-                'status'   => 'published',
-            ]);
+            $post->slug = Str::slug($request->title);
+            $post->title = $request->title;
+            $post->type = $request->type;
+            $post->program = $request->program;
+            $post->content = $request->content;
+            $post->guest = $request->featured_guest;
+            $post->date_published = $request->date_published;
+            $post->excerpt = $request->excerpt;
+            $post->episode = $request->episode;
+            $post->platform = $request->platform;
+            $post->url = $request->url;
+            $post->trailer = $post->trailer ?? null;
+            $post->thumbnail = $post->thumbnail ?? null;
+            $post->banner = $post->banner ?? null;
+            $post->agency = $request->agency;
+            $post->tags = $request->tags;
+            $post->description = $this->stripHtml($request->content);
+            $post->status = 'published';
+            $post->save();
+
+
             $categories = json_decode($request->categories, true);
-            PostCategory::where('post_id', $id)->delete();
+            PostCategory::where('post_id', $post->post_id)->delete();
             foreach ($categories as $category_id) {
                 PostCategory::create([
                     'post_id' => $post->post_id,
@@ -244,7 +237,8 @@ class PostController extends Controller
             }
             DB::commit();
             return response()->json([
-                'status' => 'Post Successfully Added!'
+                'status' => 'Post Successfully Added!',
+                'post' => $post
             ]);
         } catch (\Illuminate\Validation\ValidationException $e) {
             DB::rollBack();
@@ -254,11 +248,29 @@ class PostController extends Controller
         }
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
+    public function destroy(string $code)
     {
-        //
+        Post::where('slug', $code)->update(['status' => 'trash']);
+        return response()->json([
+            'status' => 'Post Successfully Deleted!'
+        ]);
+    }
+
+    public function updatePostStatus(Request $req){
+        $req->validate([
+            'code' => 'required|string',
+            'status' => 'required|string'
+        ]);
+        Post::where('slug', $req->code)->update(['status' => $req->status]);
+        return response()->json([
+            'status' => 'Post Status Successfully Updated!'
+        ]);
+    }
+
+    public function viewPostPage(){
+        $programs = Program::select('program_id', 'code', 'program_type', 'title', 'description', 'agency', 'image')->where('is_active', 1)->orderBy('title', 'asc')->get();
+        return Inertia::render('cms/post/posts-page', [
+            'programs' => $programs,
+        ]);
     }
 }

@@ -1,4 +1,4 @@
-import { ReactNode } from "react";
+import { ReactNode, useState } from "react";
 import AppLayout from "@/layouts/app-layout";
 import { ImFilePicture } from "react-icons/im";
 import { useHandleChange } from "@/hooks/use-handle-change";
@@ -13,6 +13,7 @@ import ImageLoader from "@/components/custom/image-loader";
 import { purifyDom } from "@/hooks/use-essential-functions";
 import { Checkbox } from "@/components/ui/checkbox";
 import { MdPermMedia, MdOutlineContentPaste } from "react-icons/md";
+import { FaUpload } from "react-icons/fa";
 import { IoDocumentTextOutline } from "react-icons/io5";
 import { platforms } from "@/types/default";
 import VideoEmbed from "@/components/custom/video-embed";
@@ -21,7 +22,10 @@ import FileUpload from "@/components/ui/file-upload";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
 import { TagsInput } from "@/components/custom/tags-input";
-import { useCreatePost } from "./post-hooks";
+import { useCreatePost, useUpdatePost } from "./post-hooks";
+import { toast } from "sonner"
+import ConfirmationDialog from "@/components/custom/confirmation-dialog";
+import LoadingDialog from "@/components/custom/loading-dialog";
 import {
     Select,
     SelectTrigger,
@@ -38,22 +42,20 @@ const breadcrumbs = [
 
 
 function PostForm() {
-    const { url: pageUrl } = usePage();
     const { props } = usePage<{ programs?: ProgramsModel[] | null, categories?: CategoriesModel[] | null, post?: PostModel | null }>();
     const programs = props.programs ?? [];
     const post = props.post ?? null;
     const categories = props.categories ?? [];
-    const post_categories = props.post?.categories ?? []
-
-
-    const { item, errors, setItem, handleChange, handleArrayChange, setErrors } = useHandleChange({
+    const [message, setMessage] = useState('')
+    const [successDialog, setSuccessDialog] = useState(false)
+    const { item, errors, setItem, handleChange, setErrors } = useHandleChange({
         post_id: post?.post_id ?? 0,
         slug: post?.slug ?? '',
         title: post?.title ?? '',
         type: post?.type ?? '',
         program: post?.program ?? '',
         content: post?.content ?? '',
-        featured_guest: post?.featured_guest ?? '',
+        featured_guest: post?.guest ?? '',
         excerpt: post?.excerpt ?? '',
         episode: post?.episode ?? '',
         platform: post?.platform ?? '',
@@ -68,25 +70,27 @@ function PostForm() {
         thumbnail_image: "" as File | string,
         trailer_file: "" as File | string,
         banner_image: "" as File | string,
-        categories: post?.categories ?? [],
+        categories: post?.categories
+            ? post.categories.map((c) => Number(c.category))
+            : []
     });
 
-    const toggleCategory = (category: CategoriesModel, checked: boolean) => {
-        const current = item.categories;
 
-        const updated = checked
-            ? [...current, category]
-            : current.filter(c => c.category_id !== category.category_id);
+    const toggleCategory = (categoryId: number, checked: boolean) => {
+        setItem((prev) => ({
+            ...prev,
+            categories: checked
+                ? [...prev.categories, categoryId]
+                : prev.categories.filter((id) => id !== categoryId),
+        }))
+    }
 
-        handleArrayChange("categories", updated);
-    };
 
-    const isChecked = (id?: number) =>
-        item.categories.some(c => c.category_id === id);
+    const isChecked = (categoryId: number) => {
+        return item.categories.includes(categoryId)
+    }
 
-    const createPost = useCreatePost();
-
-    const handleSubmit = () => {
+    const createFormData = () => {
         const formData = new FormData();
         formData.append("post_id", String(item.post_id));
         formData.append("slug", String(item.slug));
@@ -100,25 +104,69 @@ function PostForm() {
         formData.append("platform", String(item.platform));
         formData.append("url", String(item.url));
         formData.append("trailer", String(item.trailer));
-        formData.append("banner_image", item.banner_image);
-        formData.append("thumbnail_image", item.thumbnail_image);
+        if (item.trailer_file instanceof File) {
+            formData.append("trailer_file", item.trailer_file);
+        }
+        if (item.banner_image instanceof File) {
+            formData.append("banner_image", item.banner_image);
+        }
+        if (item.thumbnail_image instanceof File) {
+            formData.append("thumbnail_image", item.thumbnail_image);
+        }
         formData.append("agency", String(item.agency));
         formData.append("date_published", String(item.date_published));
         formData.append("status", String(item.status));
         formData.append("tags", String(item.tags));
-        formData.append("categories", JSON.stringify(item.categories.map(c => c.category_id)));
+        formData.append(
+            "categories",
+            JSON.stringify(item.categories)
+        )
+
+        return formData;
+    }
+
+
+    const createPost = useCreatePost();
+    const createPostFn = () => {
+        const formData = createFormData();
 
         createPost.mutate(formData, {
-            onSuccess: () => {
-                window.location.href = '/view-posts';
+            onSuccess: (data) => {
+                const newUrl = `/posts/${data.post.slug}/edit`;
+                window.history.pushState({}, "", newUrl);
+                setMessage(data.status);
+                setSuccessDialog(true);
             },
             onError: (error) => {
-                if (error.response?.data.errors) {
+                if (error.response?.data?.errors) {
                     setErrors(error.response.data.errors);
+                    toast.error("Check fields for errors!");
                 }
             },
         });
+    };
+
+    const updatePost = useUpdatePost();
+    const updatePostFn = () => {
+        const formData = createFormData();
+        updatePost.mutate(
+            { payload: formData, code: item.slug },
+            {
+                onSuccess: (data) => {
+                    setMessage(data.status);
+                    setSuccessDialog(true);
+                },
+                onError: (error) => {
+                    if (error.response?.data?.errors) {
+                        setErrors(error.response.data.errors);
+                        toast.error("Check fields for errors!");
+                    }
+                }
+            }
+        );
+
     }
+
 
     return (
         <>
@@ -135,7 +183,7 @@ function PostForm() {
                             <span className="px-4 text-teal-600 poppins-bold text-[18px]  flex flex-row gap-2 items-center justify-center"><IoDocumentTextOutline /> Meta Section </span>
                         </div>
                         <div className="grid md:grid-cols-4  gap-6 text-[12px] ">
-                            <div className="md:col-span-3 grid md:grid-cols-3  gap-4 border-r px-4">
+                            <div className="md:col-span-3 grid md:grid-cols-3 grid-cols-1 gap-4 border-r px-4">
                                 <div className="grid gap-1 md:col-span-2">
                                     <Label htmlFor="title" className="text-gray-600 poppins-semibold text-[13px]">Title</Label>
                                     <Input
@@ -269,7 +317,7 @@ function PostForm() {
                                         name="date_published"
                                         required
                                         onChange={handleChange}
-                                        value={String(item.featured_guest)}
+                                        value={String(item.date_published)}
                                         className="text-gray-700 border-gray-300"
                                     />
                                     <InputError message={errors.date_published} />
@@ -320,11 +368,12 @@ function PostForm() {
                                                     <div className="flex flex-row items-center gap-3 mb-1.5 hover:scale-102 duration-300">
                                                         <Checkbox
                                                             id={`category-${category.category_id}`}
-                                                            checked={isChecked(category.category_id)}
+                                                            checked={isChecked(category.category_id as number)}
                                                             onCheckedChange={(checked) =>
-                                                                toggleCategory(category, Boolean(checked))
+                                                                toggleCategory(category.category_id as number, Boolean(checked))
                                                             }
                                                         />
+
                                                         <span>{category.title}</span>
                                                     </div>
                                                 </TooltipTrigger>
@@ -354,7 +403,7 @@ function PostForm() {
                                 <Label htmlFor="thumbnail_image" className="text-gray-700 poppins-semibold">Thumbnail </Label>
                                 <FileUpload
                                     type={2}
-                                    url={item?.thumbnail ? `/storage/images/posts/thumbnails/${item.thumbnail}` : ''}
+                                    url={item?.thumbnail ? `/storage/images/post_images/thumbnails/${item.thumbnail}` : ''}
                                     id="thumbnail_image"
                                     name="thumbnail_image"
                                     accept="image/png,image/jpeg"
@@ -378,65 +427,72 @@ function PostForm() {
                                 />
                                 <InputError message={errors.banner_image} />
                             </div>
-                            <div className="md:col-span-2 rounded-lg border border-gray-300 p-4  ">
-                                <div className="grid md:grid-cols-2 gap-4">
-                                    <div className="flex flex-col">
-                                        <Label htmlFor="url" className="text-gray-600 poppins-semibold text-[13px]">Video Url</Label>
-                                        <Input
-                                            id="url"
-                                            type="text"
-                                            name="url"
-                                            required
+                            {item.type === 'video' && (
+                                <>
+
+                                    <div className="md:col-span-2 rounded-lg border border-gray-300 p-4  ">
+                                        <div className="grid md:grid-cols-2 gap-4">
+                                            <div className="flex flex-col">
+                                                <Label htmlFor="url" className="text-gray-600 poppins-semibold text-[13px]">Video Url</Label>
+                                                <Input
+                                                    id="url"
+                                                    type="text"
+                                                    name="url"
+                                                    required
+                                                    onChange={handleChange}
+                                                    value={String(item.url)}
+                                                    className="text-gray-700 border-gray-300 "
+                                                />
+                                                <InputError message={errors.url} />
+                                            </div>
+                                            <div className="flex flex-col">
+                                                <Label htmlFor="platform" className="text-gray-600 poppins-semibold text-[13px]">Platform</Label>
+                                                <Select
+                                                    value={String(item.platform)}
+                                                    onValueChange={(value) =>
+                                                        setItem((prev) => ({ ...prev, platform: value }))
+                                                    }
+                                                >
+                                                    <SelectTrigger className="border-gray-300">
+                                                        <SelectValue placeholder="Choose Platform" className="text-[12px]" />
+                                                    </SelectTrigger>
+                                                    <SelectContent>
+                                                        {platforms.map((platform) => (
+                                                            <SelectItem
+                                                                value={platform.value ?? ''} key={platform.code}
+                                                            >
+                                                                {platform.value}
+                                                            </SelectItem>
+                                                        ))}
+                                                    </SelectContent>
+                                                </Select>
+                                                <InputError message={errors.url} />
+                                            </div>
+                                            <div className="md:col-span-2 ">
+                                                <VideoEmbed url={item.url}
+                                                    platform={item.platform}
+                                                />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="md:col-span-2 flex flex-col justify-start transition-all duration-300 ease-in-out">
+                                        <Label htmlFor="trailer_file" className="text-gray-700 poppins-semibold">Trailer Video </Label>
+                                        <FileUpload
+                                            type={1}
+                                            url={item?.trailer ? `/storage/videos/post_videos/trailers/${item.trailer}` : ''}
+                                            id="trailer_file"
+                                            name="trailer_file"
+                                            accept="video/mp4,video/x-msvideo"
+                                            text="Click to Upload Trailer"
                                             onChange={handleChange}
-                                            value={String(item.url)}
-                                            className="text-gray-700 border-gray-300 "
+                                            className="text-gray-600 border-gray-300 shadow p-4  min-h-[315px]"
                                         />
-                                        <InputError message={errors.url} />
+                                        <InputError message={errors.trailer_file} />
                                     </div>
-                                    <div className="flex flex-col">
-                                        <Label htmlFor="platform" className="text-gray-600 poppins-semibold text-[13px]">Platform</Label>
-                                        <Select
-                                            value={String(item.platform)}
-                                            onValueChange={(value) =>
-                                                setItem((prev) => ({ ...prev, platform: value }))
-                                            }
-                                        >
-                                            <SelectTrigger className="border-gray-300">
-                                                <SelectValue placeholder="Choose Platform" className="text-[12px]" />
-                                            </SelectTrigger>
-                                            <SelectContent>
-                                                {platforms.map((platform) => (
-                                                    <SelectItem
-                                                        value={platform.value ?? ''} key={platform.code}
-                                                    >
-                                                        {platform.value}
-                                                    </SelectItem>
-                                                ))}
-                                            </SelectContent>
-                                        </Select>
-                                        <InputError message={errors.url} />
-                                    </div>
-                                    <div className="md:col-span-2 ">
-                                        <VideoEmbed url={item.url}
-                                            platform={item.platform}
-                                        />
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="md:col-span-2 flex flex-col justify-start transition-all duration-300 ease-in-out">
-                                <Label htmlFor="trailer_file" className="text-gray-700 poppins-semibold">Trailer Video </Label>
-                                <FileUpload
-                                    type={1}
-                                    url={item?.trailer ? `/storage/videos/posts_videos/trailer/${item.trailer}` : ''}
-                                    id="trailer_file"
-                                    name="trailer_file"
-                                    accept="video/mp4,video/x-msvideo"
-                                    text="Click to Upload Trailer"
-                                    onChange={handleChange}
-                                    className="text-gray-600 border-gray-300 shadow p-4  min-h-[315px]"
-                                />
-                                <InputError message={errors.trailer_file} />
-                            </div>
+                                </>
+
+                            )}
+
                         </div>
                     </div>
                     <div className="w-full flex flex-col justify-between item-center  shadow-sm border rounded-lg border-gray-400/50 bg-white  overflow-auto py-10 px-8">
@@ -456,15 +512,18 @@ function PostForm() {
                             <InputError message={errors.content} />
                         </div>
                         <div className="px-4 pt-4">
-                            <Button className="bg-teal-600 w-fit poppins-bold"
-                                onClick={handleSubmit}
-                            > <Spinner className="mr-2" />
+                            <Button className="bg-teal-600 w-fit poppins-bold flex flex-row items-center justify-center"
+                                onClick={item.post_id !== 0 ? updatePostFn : createPostFn}
+                            > {createPost.isPending || updatePost.isPending ? <Spinner className="mr-1" /> : <FaUpload className="mr-1" />}
                                 {item.post_id == 0 ? 'Add' : 'Update'} Post
                             </Button>
                         </div>
                     </div>
                 </div>
             </div>
+            <ConfirmationDialog show={successDialog} onClose={() => setSuccessDialog(false)} type={1} message={message} />
+            <LoadingDialog show={createPost.isPending || updatePost.isPending} message={'Uploading Post Details ...'} />
+
         </>
     )
 }

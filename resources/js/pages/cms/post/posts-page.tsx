@@ -1,30 +1,30 @@
 import { ReactNode } from "react";
+import { useDebounce } from "@/hooks/use-debounce";
 import AppLayout from "@/layouts/app-layout";
 import { BreadcrumbItem } from "@/types";
-import { Head, Link } from "@inertiajs/react";
+import { Head, Link, usePage } from "@inertiajs/react";
 import PaginatedSearchTable from '@/components/custom/data-table-server';
 import { IoAddCircle } from "react-icons/io5";
-import { useFetchPosts, useSearchPosts } from "./partials/post-hooks";
+import { useFetchPosts, useDeletePost, useUpdatePostStatus } from "./partials/post-hooks";
 import ImageLoader from "@/components/custom/image-loader";
 import { Input } from "@/components/ui/input";
 import { Search } from "lucide-react";
 import { postStatus } from "@/types/default";
+import { purifyDom } from "@/hooks/use-essential-functions";
 import { useState } from "react";
 import { Tooltip, TooltipContent, TooltipTrigger, } from "@/components/ui/tooltip"
-import { FaTrash, FaEdit, FaEye,FaPhotoVideo  } from "react-icons/fa";
+import { FaTrash, FaEdit, FaEye, FaPhotoVideo } from "react-icons/fa";
+import { IoRefreshCircleOutline } from "react-icons/io5";
 import { Button } from '@/components/ui/button';
-import {
-    Select,
-    SelectTrigger,
-    SelectValue,
-    SelectContent,
-    SelectItem,
-} from "@/components/ui/select";
+import BottomPopover from "@/components/custom/button-popover";
+import { Label } from "@/components/ui/label";
+import { toast } from "sonner";
+import { Spinner } from "@/components/ui/spinner";
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem, } from "@/components/ui/select";
 import { trimText } from "@/hooks/use-essential-functions";
 import { useHandleChange } from "@/hooks/use-handle-change";
-import { PostModel } from "@/types/models";
-
-
+import { PostModel, ProgramsModel } from "@/types/models";
+import ConfirmationDialog from "@/components/custom/confirmation-dialog";
 
 const breadcrumbs: BreadcrumbItem[] = [
     { title: 'Dashboard', href: '/dashboard' },
@@ -33,60 +33,71 @@ const breadcrumbs: BreadcrumbItem[] = [
 
 
 function Posts() {
+    const { props } = usePage<{ programs?: ProgramsModel[] }>();
+    const programs = props.programs ?? [];
     const [page, setPage] = useState(1);
-    const { item, handleChange } = useHandleChange({ title: '', program: '' });
-    const {
-        data: postsData,
-        isLoading: isPostsLoading,
-        isFetching: isPostsFetching,
-        error,
-    } = useFetchPosts(page);
+    const [loadingSlug, setLoadingSlug] = useState('');
+    const { item, setItem } = useHandleChange({ title: '', program: '', type: '', status: '' });
+    const [deleteDialog, setDeleteDialog] = useState(false);
+    const [code, setCode] = useState('');
 
-    const searchPosts = useSearchPosts();
-
-    const handleSearch = () => {
+    const onFilterChange = () => {
         setPage(1);
-        searchPosts.mutate({
-            title: item.title ?? '',
-            program: item.program ?? '',
-        });
     };
-
-
-    const hasSearch = searchPosts.isSuccess;
-
-    const posts = hasSearch
-        ? searchPosts.data?.data ?? []
-        : postsData?.data ?? [];
-
-    const data = hasSearch ? searchPosts.data : postsData;
-
-    const isLoading =
-        isPostsLoading ||
-        isPostsFetching ||
-        searchPosts.isPending;
-
+    const debouncedTitle = useDebounce(item.title, 1000);
+    const queryFilters = {
+        ...item,
+        title: debouncedTitle,
+    };
+    const { data, isFetching, refetch } = useFetchPosts(page, queryFilters);
+    const handleRefresh = () => {
+        setPage(1);
+        setItem({ title: '', program: '', type: '', status: '' });
+        refetch();
+    };
 
     const handlePageChange = (url: string | null) => {
         if (!url) return;
-
         const parsed = new URL(url, window.location.origin);
         const pageParam = parsed.searchParams.get("page");
         const newPage = Number(pageParam || 1);
-
-        if (!Number.isNaN(newPage)) {
-            setPage(newPage);
-        }
+        if (!Number.isNaN(newPage)) { setPage(newPage); }
     };
 
-
-
-
-    const updatePostStatus = () => {
-
+    const deletePost = useDeletePost();
+    const showDeleteDialog = (code: string) => {
+        setCode(code);
+        setDeleteDialog(true);
+    }
+    const handleDelete = () => {
+        deletePost.mutate(
+            { code: code },
+            {
+                onSuccess: (res) => {
+                    toast.success(res.status);
+                    setDeleteDialog(false)
+                },
+            }
+        );
     }
 
-    if (error) return alert('An error has occurred: ' + error.message);
+    const updatePostStatus = useUpdatePostStatus();
+    const updatePostStatusFn = (value: string, code: string) => {
+        setLoadingSlug(code);
+        const formData = new FormData();
+        formData.append('status', value);
+        formData.append('code', code);
+        console.log(value, code)
+        updatePostStatus.mutate(
+            { payload: formData },
+            {
+                onSuccess: (res) => {
+                    toast.success(res.status);
+                    setLoadingSlug('');
+                },
+            }
+        );
+    }
 
     return (
         <>
@@ -95,7 +106,7 @@ function Posts() {
                 <div className="flex flex-1 flex-col gap-y-3 gap-x-5 rounded-xl px-6 py-5">
                     <div className='w-full flex justify-between item-center px-6 py-4 shadow-sm border rounded-lg border-gray-400/50 bg-white'>
                         <div className="text-teal-600 poppins-bold md:text-base text-sm flex items-center gap-2">
-                            <FaPhotoVideo/>Posts Management Section
+                            <FaPhotoVideo />Posts Management Section
                         </div>
                         <div className="text-gray-500 poppins-bold text-lg">
                             <Link className='bg-teal-600 text-gray-50 inline-flex  h-9 px-4 py-2 has-[>svg]:px-3 items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-[color,box-shadow]' href={'/posts/create'}> <IoAddCircle /> Add Post</Link>
@@ -103,20 +114,132 @@ function Posts() {
                     </div>
                     <div className='w-full flex justify-between item-center shadow-md border rounded-lg border-gray-400/50 overflow-x-hidden overflow-y-auto bg-white flex-col p-6'>
                         <div className="flex w-full relative">
-                            <div className=" relative items-center">
+                            <div className=" relative items-center flex flex-row gap-0.5 mb-3">
                                 <Search className="absolute left-2.5 top-3 text-teal-500" size={16} />
                                 <Input
+                                    id="title"
+                                    name="title"
+                                    type="text"
                                     placeholder="Search Title"
                                     value={item.title}
-                                    onChange={handleChange}
+                                    onChange={(e) => { setItem(prev => ({ ...prev, title: e.target.value })); onFilterChange() }}
                                     className="min-w-[250px] h-10 border-teal-600 shadow-none ps-8"
                                 />
-                                <button onClick={handleSearch}></button>
+                                <BottomPopover width="min-w-[500px]">
+                                    <div className="grid md:grid-cols-2 gap-4 p-4">
+                                        <div className="grid gap-2 md:col-span-2">
+                                            <Label htmlFor="program_type" className="text-gray-600 poppins-semibold text-[11px]">Program Type</Label>
+                                            <Select
+                                                value={String(item.program)}
+                                                onValueChange={(value) => {
+                                                    setItem((prev) => ({ ...prev, program: value }))
+                                                    onFilterChange()
+                                                }}
+                                            >
+                                                <SelectTrigger className="border-gray-300">
+                                                    <SelectValue placeholder="" className="text-[11px]" />
+                                                </SelectTrigger>
+                                                <SelectContent>
+                                                    {programs.map((program) => (
+                                                        <Tooltip key={program.program_id} >
+                                                            <TooltipTrigger asChild>
+                                                                <SelectItem
+                                                                    value={program.code ?? ''}
+                                                                >
+                                                                    {program.title}
+                                                                </SelectItem>
+                                                            </TooltipTrigger>
+                                                            <TooltipContent side="right" >
+                                                                <div className="flex flex-row">
+                                                                    <div className="flex flex-col">
+                                                                        <ImageLoader
+                                                                            src={`/storage/images/program_images/thumbnails/${program.image}`}
+                                                                            alt="Program Banner"
+                                                                            className="h-12 w-auto my-1 rounded"
+                                                                        />
+                                                                        <p className="poppins-semibold text-[11px]">
+                                                                            {program.title}
+                                                                        </p>
+                                                                        <p className="text-[10px] poppins-thin">
+                                                                            {program.agency ?? ''}
+                                                                        </p>
+                                                                    </div>
+                                                                    <div
+                                                                        className="p-2 text-justify"
+                                                                        dangerouslySetInnerHTML={{
+                                                                            __html: purifyDom(program.description ?? ""),
+                                                                        }}
+                                                                    />
+                                                                </div>
+                                                            </TooltipContent>
+                                                        </Tooltip>
+                                                    ))}
+                                                </SelectContent>
+                                            </Select>
+                                        </div>
+                                        <div className="grid gap-2">
+                                            <Label htmlFor="type" className="text-gray-600 poppins-semibold text-[11px]">Type</Label>
+                                            <Select
+                                                value={String(item.type)}
+                                                onValueChange={(value) => {
+                                                    setItem((prev) => ({ ...prev, type: value }))
+                                                    onFilterChange()
+                                                }}
+
+                                            >
+                                                <SelectTrigger className="border-gray-300">
+                                                    <SelectValue placeholder="" className="text-[9px]" />
+                                                </SelectTrigger>
+                                                <SelectContent>
+                                                    <SelectItem value="video">Video</SelectItem>
+                                                    <SelectItem value="blog">Blog</SelectItem>
+                                                </SelectContent>
+                                            </Select>
+                                        </div>
+                                        <div className="grid gap-2">
+                                            <Label htmlFor="status" className="text-gray-600 poppins-semibold text-[11px]">Status</Label>
+                                            <Select
+                                                value={String(item.status)}
+                                                onValueChange={(value) => {
+                                                    setItem((prev) => ({ ...prev, status: value }))
+                                                    onFilterChange()
+                                                }
+                                                }
+                                            >
+                                                <SelectTrigger className="border-gray-300">
+                                                    <SelectValue placeholder="" className="text-[12px]" />
+                                                </SelectTrigger>
+                                                <SelectContent>
+                                                    {postStatus.map((type) => (
+                                                        <SelectItem key={type.value} value={type.value}>
+                                                            {type.value}
+                                                        </SelectItem>
+                                                    ))}
+                                                </SelectContent>
+                                            </Select>
+                                        </div>
+                                    </div>
+                                </BottomPopover>
+                                <Tooltip>
+                                    <TooltipTrigger asChild>
+                                        <Button
+                                            onClick={handleRefresh}
+                                            className=" bg-teal-600 text-gray-50"
+                                            type="button"
+                                            disabled={isFetching}
+                                        >
+                                            {isFetching ? <Spinner className="mr-2" /> : <IoRefreshCircleOutline />}
+                                        </Button>
+                                    </TooltipTrigger>
+                                    <TooltipContent side="top" >
+                                        Refresh
+                                    </TooltipContent>
+                                </Tooltip>
                             </div>
                         </div>
                         <div>
                             <PaginatedSearchTable<PostModel>
-                                items={posts}
+                                items={data?.data ?? []}
                                 headers={[
                                     { name: "Title", position: "center" },
                                     { name: "Thumbnail", position: "center" },
@@ -149,12 +272,16 @@ function Posts() {
                                         <td className="px-6 py-3 text-center text-xs">
                                             <Select
                                                 value={post.status as string}
-                                                onValueChange={updatePostStatus}
+                                                onValueChange={(value) => updatePostStatusFn(value, post.slug as string)}
                                             >
-                                                <SelectTrigger className="px-2 py-0 text-xs border-gray-100 shadow-2xs">
-                                                    <SelectValue placeholder="Select Post Status" />
+                                                <SelectTrigger className="px-2 py-2 h-fit text-[10px] border-gray-100   shadow-2xs">
+                                                    {loadingSlug === post.slug ? (
+                                                        <span className="animate-pulse text-gray-400">Updating…</span>
+                                                    ) : (
+                                                        <SelectValue placeholder="Select Post Status" className="text-[10px] text-white" />
+                                                    )}
                                                 </SelectTrigger>
-                                                <SelectContent>
+                                                <SelectContent >
                                                     {postStatus.map((type) => (
                                                         <SelectItem key={type.value} value={type.value}>
                                                             {type.value}
@@ -176,7 +303,8 @@ function Posts() {
                                             </Tooltip>
                                             <Tooltip>
                                                 <TooltipTrigger asChild>
-                                                    <Link className='bg-transparent shadow-none hover:bg-teal-100 px-2 rounded-lg py-2 text-lg' >
+                                                    <Link className='bg-transparent shadow-none hover:bg-teal-100 px-2 rounded-lg py-2 text-lg'
+                                                        href={`/posts/${post.slug}/edit`} >
                                                         <FaEdit className='text-teal-600 ' />
                                                     </Link>
                                                 </TooltipTrigger>
@@ -186,7 +314,7 @@ function Posts() {
                                             </Tooltip>
                                             <Tooltip>
                                                 <TooltipTrigger asChild>
-                                                    <Button className='bg-transparent shadow-none hover:bg-teal-100 px-0'>
+                                                    <Button className='bg-transparent shadow-none hover:bg-teal-100 px-0' onClick={() => showDeleteDialog(post.slug as string)}>
                                                         <FaTrash className='text-red-500' />
                                                     </Button>
                                                 </TooltipTrigger>
@@ -203,7 +331,7 @@ function Posts() {
                                 prevPageUrl={data?.prev_page_url ?? null}
                                 total={data?.total ?? 0}
                                 onPageChange={handlePageChange}
-                                isLoading={isLoading}
+                                isLoading={isFetching}
                                 searchPlaceholder="Search posts..."
                             />
                         </div>
@@ -211,6 +339,7 @@ function Posts() {
                     </div>
                 </div>
             </div >
+            <ConfirmationDialog show={deleteDialog} onClose={() => setDeleteDialog(false)} type={2} onConfirm={handleDelete} message={'Are you sure you want to delete this post?'} />
 
         </>
     )

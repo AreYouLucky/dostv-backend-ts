@@ -31,7 +31,8 @@ class Post extends Model
         'is_converted'
     ];
 
-    public function categories() {
-        $this->hasMany(PostCategory::class, 'post_id', 'post_id');
+    public function categories()
+    {
+        return $this->hasMany(PostCategory::class, 'post_id', 'post_id');
     }
 }

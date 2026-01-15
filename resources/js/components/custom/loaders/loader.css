@@ -1,0 +1,63 @@
+:root {
+  --teal: #14b8a6;
+}
+
+.loader-wrapper {
+  display: grid;
+  place-items: center;
+}
+
+.pl1 {
+  width: 8em;
+  height: 8em;
+}
+
+.pl1__g {
+  transform-origin: 64px 64px;
+  animation: rotate 1.5s cubic-bezier(0.65, 0, 0.35, 1) infinite;
+}
+
+.pl1__rect {
+  width: 40px;
+  height: 40px;
+  rx: 8;
+  ry: 8;
+  fill: var(--teal);
+}
+
+.pl1__rect.second {
+  transform: translateY(48px);
+  animation: morph 1.5s cubic-bezier(0.65, 0, 0.35, 1) infinite;
+}
+
+@keyframes rotate {
+  0% {
+    transform: rotate(0deg);
+  }
+  80%,
+  100% {
+    transform: rotate(90deg);
+  }
+}
+
+@keyframes morph {
+  0% {
+    width: 40px;
+    height: 40px;
+    transform: translate(0, 48px);
+  }
+  25% {
+    height: 88px;
+    transform: translate(0, 0);
+  }
+  50% {
+    width: 88px;
+    height: 40px;
+  }
+  75%,
+  100% {
+    width: 40px;
+    height: 40px;
+    transform: translate(48px, 0);
+  }
+}

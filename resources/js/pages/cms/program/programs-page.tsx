@@ -191,7 +191,5 @@ function ProgramsPage() {
         </>
     )
 }
-
 ProgramsPage.layout = (page: React.ReactNode) => <AppLayout breadcrumbs={breadcrumbs}>{page}</AppLayout>;
-
 export default ProgramsPage;

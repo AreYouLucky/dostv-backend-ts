@@ -29,10 +29,6 @@ export const postStatus = [
         code: 2,
         value: 'draft',
     },
-    {
-        code: 3,
-        value: 'trash',
-    }
 ]
 
 export const platforms = [

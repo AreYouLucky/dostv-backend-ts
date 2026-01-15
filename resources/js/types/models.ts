@@ -92,6 +92,7 @@ export interface PostModel {
   feature_guest: string | null;
   status: string | null;
   tags: string | null;
+  page: number | null;
   featured_guest: string | null;
   categories: CategoriesModel[];
 }
