@@ -9,5 +9,9 @@ Route::middleware('auth')->group(function () {
         return Inertia::render('cms/banner/banners-page');
     });
 
-    Route::resource('/banners', BannersController::class)->only(['index','store','update', 'destroy', 'edit']);;
+    Route::resource('/banners', BannersController::class)->only(['index','store', 'destroy', 'edit', 'create']);
+    Route::post('/update-banner/{id}',[BannersController::class,'update']);
+    Route::post('/move-banner',[BannersController::class,'moveBanner']);
+
+    Route::post('/toggle-banner-visibility/{id}',[BannersController::class,'toggleBannerVisibility']);
 });

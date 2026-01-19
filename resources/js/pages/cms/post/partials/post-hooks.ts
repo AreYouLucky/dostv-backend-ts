@@ -101,3 +101,15 @@ export function useUpdatePostStatus() {
     },
   });
 }
+
+export function useTogglePostFeatured() {
+  const queryClient = useQueryClient();
+  return useMutation<ApiOk, AxiosError<ApiError>, { slug: string }>({
+    mutationFn: ({ slug }) =>
+      axios.post<ApiOk>(`/toggle-post-featured/${slug}`).then(res => res.data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["posts"] });
+    },
+  });
+}
+

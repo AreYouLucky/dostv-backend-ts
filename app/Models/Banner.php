@@ -10,12 +10,15 @@ class Banner extends Model
     protected $primaryKey = 'banner_id';
     protected $fillable = [
         'title',
-        'img',
+        'media',
         'code',
         'highlight_text',
+        'episodes',
+        'description',
         'url',
         'type',
         'is_banner',
-        'is_active'
+        'is_active',
+        'order'
     ];
 }

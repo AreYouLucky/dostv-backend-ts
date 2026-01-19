@@ -2,18 +2,22 @@ import { PlaceholderPattern } from '@/components/ui/placeholder-pattern';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import { Head } from '@inertiajs/react';
+import { useTopVideos } from '@/hooks/view-yt-analytics/youtube-hooks';
 
 const breadcrumbs: BreadcrumbItem[] = [
     { title: 'Dashboard', href: '/dashboard' },
 ];
+const CHANNEL_ID = 'UCWTcZ5Sqti7zNnEZT42KbtQ';
 
 function Dashboard() {
+    const { videos, loading } = useTopVideos(CHANNEL_ID);
+    console.log(videos);
     return (
         <>
             <Head title="Dashboard" />
             <div className="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4 ">
                 <div className="grid auto-rows-min gap-4 md:grid-cols-3">
-                    {[1,2,3].map((i) => (
+                    {[1, 2, 3].map((i) => (
                         <div key={i} className="relative aspect-video overflow-hidden rounded-xl border border-sidebar-border/70 dark:border-sidebar-border">
                             <PlaceholderPattern className="absolute inset-0 size-full stroke-neutral-900/20 dark:stroke-neutral-100/20" />
                         </div>
@@ -28,6 +32,6 @@ function Dashboard() {
     );
 }
 
-Dashboard.layout = (page:  React.ReactNode) => <AppLayout breadcrumbs={breadcrumbs}>{page}</AppLayout>;
+Dashboard.layout = (page: React.ReactNode) => <AppLayout breadcrumbs={breadcrumbs}>{page}</AppLayout>;
 
 export default Dashboard;

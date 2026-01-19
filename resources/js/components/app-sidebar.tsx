@@ -18,7 +18,7 @@ import AppLogo from './app-logo';
 const mainNavItems: NavItem[] = [
     {
         title: 'Advertisements',
-        href: '/view-advertisement',
+        href: '/view-advertisements',
         icon: Clapperboard,
     },
     {

@@ -21,4 +21,9 @@ class Program extends Model
         'order',
         'program_type'
     ];
+
+    public function episodes()
+    {
+        return $this->hasMany(Post::class, 'program','code');
+    }
 }

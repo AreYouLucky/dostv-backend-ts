@@ -5,7 +5,7 @@ import { BreadcrumbItem } from "@/types";
 import { Head, Link, usePage } from "@inertiajs/react";
 import PaginatedSearchTable from '@/components/custom/data-table-server';
 import { IoAddCircle } from "react-icons/io5";
-import { useFetchPosts, useDeletePost, useUpdatePostStatus } from "./partials/post-hooks";
+import { useFetchPosts, useDeletePost, useUpdatePostStatus, useTogglePostFeatured} from "./partials/post-hooks";
 import ImageLoader from "@/components/custom/image-loader";
 import { Input } from "@/components/ui/input";
 import { Search } from "lucide-react";
@@ -26,7 +26,7 @@ import { useHandleChange } from "@/hooks/use-handle-change";
 import { PostModel, ProgramsModel } from "@/types/models";
 import ConfirmationDialog from "@/components/custom/confirmation-dialog";
 import ViewPostDialog from "@/components/custom/view-post-dialog";
-
+import { TiStarFullOutline } from "react-icons/ti";
 
 const breadcrumbs: BreadcrumbItem[] = [
     { title: 'Dashboard', href: '/dashboard' },
@@ -44,7 +44,7 @@ function Posts() {
     const { item, setItem } = useHandleChange({ title: '', program: '', type: '', status: '' });
     const [deleteDialog, setDeleteDialog] = useState(false);
     const [code, setCode] = useState('');
-
+    
     const onFilterChange = () => {
         setPage(1);
     };
@@ -106,6 +106,18 @@ function Posts() {
     const viewPostDialog = (post: PostModel) => {
         setPost(post);
         setShowPostDialog(true);
+    }
+
+    const togglePostFeatured = useTogglePostFeatured();
+    const toggleFeatured = (slug : string) =>{
+        togglePostFeatured.mutate(
+            { slug: slug },
+            {
+                onSuccess: (res) => {
+                    toast.success(res.status);
+                },
+            }
+        )
     }
 
     return (
@@ -246,7 +258,7 @@ function Posts() {
                                 </Tooltip>
                             </div>
                         </div>
-                        <div>
+                        <div className="overflow-auto">
                             <PaginatedSearchTable<PostModel>
                                 items={data?.data ?? []}
                                 headers={[
@@ -302,7 +314,7 @@ function Posts() {
                                         <td className="px-6 py-3 text-center poppins-bold text-xl text-teal-800 gap-1 flex relative items-center justify-center">
                                             <Tooltip>
                                                 <TooltipTrigger asChild>
-                                                    <Button className='bg-transparent shadow-none hover:bg-teal-100 px-2 rounded-lg py-2 text-lg' onClick={()=>viewPostDialog(post)} >
+                                                    <Button className='bg-transparent shadow-none hover:bg-teal-100 px-2 rounded-lg py-2 text-lg' onClick={() => viewPostDialog(post)} >
                                                         <FaEye className='text-[#0096cc] ' />
                                                     </Button>
                                                 </TooltipTrigger>
@@ -310,6 +322,17 @@ function Posts() {
                                                     <p>View Post</p>
                                                 </TooltipContent>
                                             </Tooltip>
+                                            <Tooltip>
+                                                <TooltipTrigger asChild>
+                                                    <Button className='bg-transparent shadow-none hover:bg-teal-100 px-0' onClick={() => toggleFeatured(post.slug as string)}>
+                                                        <TiStarFullOutline className={post.is_featured == 1 ? 'text-yellow-500' : 'text-gray-400'} />
+                                                    </Button>
+                                                </TooltipTrigger>
+                                                <TooltipContent>
+                                                    <p>Feature Post</p>
+                                                </TooltipContent>
+                                            </Tooltip>
+                                            <Tooltip></Tooltip>
                                             <Tooltip>
                                                 <TooltipTrigger asChild>
                                                     <Link className='bg-transparent shadow-none hover:bg-teal-100 px-2 rounded-lg py-2 text-lg'
@@ -349,7 +372,7 @@ function Posts() {
                 </div>
             </div >
             <ConfirmationDialog show={deleteDialog} onClose={() => setDeleteDialog(false)} type={2} onConfirm={handleDelete} message={'Are you sure you want to delete this post?'} />
-            <ViewPostDialog show={showPostDialog} onClose={() => setShowPostDialog(false)} post={post}/>
+            <ViewPostDialog show={showPostDialog} onClose={() => setShowPostDialog(false)} post={post} />
         </>
     )
 }

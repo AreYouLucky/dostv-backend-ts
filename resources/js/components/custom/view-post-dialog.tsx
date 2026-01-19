@@ -6,6 +6,7 @@ import VideoEmbed from './video-embed';
 import BackgroundImg from './background-img';
 import { purifyDom } from '@/hooks/use-essential-functions';
 import VideoWithThumbnail from './video-player';
+import { FaPlay } from "react-icons/fa";
 type ViewPostDialogProps = {
     show: boolean;
     onClose: () => void;
@@ -52,13 +53,16 @@ function ViewPostDialog(props: ViewPostDialogProps) {
                                 <div className=" text-white bg-black/80 w-full inset-0 grid md:grid-cols-2 py-4">
                                     <div className='flex items-center'>
                                         <div className="px-8 py-4">
-                                            <p className="text-2xl font-bold inter-bold">{post?.title}</p>
+                                            <p className="text-[11px] poppins-semibold text-teal-500">{formatDate(post?.date_published as string)}</p>
+                                            <p className="text-2xl py-1 font-bold inter-bold">{post?.title}</p>
+                                            {post?.post_program?.title && (
+                                                <div className="text-[11px] mb-4 px-2 py-1 bg-linear-to-r from-slate-900 to-slate-700 rounded poppins-semibold w-fit">{post.post_program.title}</div>
+                                            )}
                                             {post?.guest && <p className="text-[12px]">with {post?.guest}</p>}
-                                            <p className="text-[12px] mb-4 poppins-semibold text-teal-500">{formatDate(post?.date_published as string)}</p>
                                             <p className="text-xs text-justify poppins-light">{post?.excerpt}</p>
                                             <div className='w-full mt-5'>
-                                                <Button className='bg-linear-to-r from-teal-900 to-teal-500 rounded-xl inter-bold leading-loose px-6 py-3'>
-                                                    WATCH NOW
+                                                <Button className=' bg-teal-700 rounded-2xl border inter-bold leading-loose px-8 py-3'>
+                                                    <FaPlay /> WATCH NOW
                                                 </Button>
                                             </div>
                                         </div>
@@ -90,8 +94,10 @@ function ViewPostDialog(props: ViewPostDialogProps) {
                             </div>
                             <div className='w-full py-2 mt-2 relative'>
                                 <p className="text-2xl font-bold inter-bold relative">{post?.title}</p>
+                                {post?.post_program?.title && (
+                                    <div className="text-[11px] mb-2 px-2 py-1 bg-linear-to-r from-slate-900 to-slate-700 rounded poppins-semibold w-fit">{post.post_program.title}</div>
+                                )}
                                 {post?.guest && <p className="text-[12px]">with {post?.guest}</p>}
-                                <p className="text-[12px] poppins-semibold text-teal-500">{formatDate(post?.date_published as string)}</p>
                                 {/* {post?.agency && <span className=' bg-gray-700 text-[11px] rounded px-2 py-1 '>{post?.agency}</span>} */}
                                 <div
                                     className="text-justify poppins-light text-[12px] mt-2"
@@ -99,21 +105,26 @@ function ViewPostDialog(props: ViewPostDialogProps) {
                                         __html: purifyDom(post?.content ?? ""),
                                     }}
                                 />
+                                <p className="text-[12px] poppins-semibold text-teal-500">{formatDate(post?.date_published as string)}</p>
                             </div>
                             <p className='text-sm poppins-semibold mt-6 mb-2'>Tags : {popTags(post?.tags as string)}</p>
 
                         </div>
                     </div> :
-                    <div
-                        className="p-2 text-justify poppins-light max-h-[80vh] overflow-auto px-4 scroll-slim"
-                        dangerouslySetInnerHTML={{
-                            __html: purifyDom(post?.content ?? ""),
-                        }}
-                    />
+                    <div className='w-full'>
+                        <p className="px-4 text-xl font-bold inter-bold relative mb-1">{post?.title}</p>
+                        {post?.post_program?.title && (
+                            <div className=" ml-4 mb-2 text-[11px] px-2 py-1 bg-linear-to-r from-teal-900 to-teal-600 rounded poppins-semibold w-fit">{post.post_program.title}</div>
+                        )}
+
+                        <div
+                            className="p-2 text-justify poppins-light max-h-[80vh] overflow-auto px-4 scroll-slim"
+                            dangerouslySetInnerHTML={{
+                                __html: purifyDom(post?.content ?? ""),
+                            }}
+                        />
+                    </div>
                 }
-                {/* <div className="w-full flex justify-center gap-2">
-                    <Button className="text-gray-50 bg-gray-700 text-sm" onClick={props.onClose}>Close</Button>
-                </div> */}
 
             </DialogContent>
         </Dialog>

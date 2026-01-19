@@ -11,11 +11,10 @@ import { trimText } from '@/hooks/use-essential-functions';
 import ImageLoader from '@/components/custom/image-loader';
 import { MdPermMedia } from "react-icons/md";
 import { Tooltip, TooltipContent, TooltipTrigger, } from "@/components/ui/tooltip"
-import { FaTrash, FaEdit } from "react-icons/fa";
+import { FaTrash, FaEdit, FaArrowUp, FaArrowDown } from "react-icons/fa";
 import ConfirmationDialog from '@/components/custom/confirmation-dialog';
 import { toast } from 'sonner';
 import { useState } from 'react';
-import { FaArrowUp, FaArrowDown } from "react-icons/fa";
 
 
 const breadcrumbs: BreadcrumbItem[] = [

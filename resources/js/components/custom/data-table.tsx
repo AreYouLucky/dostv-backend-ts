@@ -214,15 +214,15 @@ function PaginatedSearchTableInner<T = unknown>({
       {/* Pagination */}
       <div className="w-full flex justify-between pt-5 px-2 poppins-semibold">
         <div>
-          <span className="text-sm text-gray-600">
-            Showing <span className="text-gray-700">{count.from}</span> to{" "}
-            <span className="text-gray-700">{count.to}</span> of{" "}
-            <span className="text-gray-700">{count.total}</span> Entries
+          <span className="text-sm text-teal-600">
+            Showing <span className="text-teal-700">{count.from}</span> to{" "}
+            <span className="text-teal-700">{count.to}</span> of{" "}
+            <span className="text-teal-700">{count.total}</span> Entries
           </span>
         </div>
         <div className="flex items-center gap-2">
           {/* Optional: show current page / total */}
-          <span className="text-sm text-gray-600">
+          <span className="text-sm text-teal-600">
             Page {page} / {totalPages}
           </span>
 

@@ -45,3 +45,31 @@ export const platforms = [
         value: 'Tiktok',
     },
 ]
+
+export const bannerTypes = [
+    {
+        code: 1,
+        label: 'Image Only',
+    },
+    {
+        code: 2,
+        label: 'Image with Overlay Elements',
+    },
+    {
+        code: 3,
+        label: 'Program Highlight – Image',
+    },
+    {
+        code: 4,
+        label: 'Program Highlight – Video',
+    },
+    {
+        code: 5,
+        label: 'Video Only',
+    },
+    {
+        code: 6,
+        label: 'Video with Overlay Elements',
+    },
+];
+

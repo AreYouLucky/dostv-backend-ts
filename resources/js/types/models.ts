@@ -54,13 +54,19 @@ export const emptyProgram: ProgramsModel = {
 } as const;
 
 
-export interface BannersModel {
+export interface BannerModel {
   banner_id?: number | null;
   title: string | null;
-  img?: string | null;
-  highlight_text: string | null;
+  media?: string | null;
+  media_file?: File | null;
+  code?: string | null;
+  highlight_text?: string | null;
+  episodes?: string | null;
+  description?: string | null;
   url?: string | null;
   type: number | null;
+  is_banner: number | null;
+  is_active: number | null;
   [key: string | number]: unknown;
 }
 
@@ -94,12 +100,12 @@ export interface PostModel {
   tags: string | null;
   page: number | null;
   featured_guest: string | null;
-  programs: ProgramsModel[];
+  post_program: ProgramsModel;
   categories: CategoriesModel[];
 }
 
 
-export interface advertisementsModel {
+export interface AdvertisementModel {
   advertisement_id: number | null;
   title: string | null;
   thumbnail: string | null;
@@ -109,4 +115,7 @@ export interface advertisementsModel {
   excerpt: string | null;
   is_redirect: number | null;
   is_active: string | null;
+  is_banner: number | null;
+  created_at: string | null;
+  updated_at: string | null;
 }

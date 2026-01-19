@@ -16,6 +16,8 @@ class Advertisement extends Model
         'description',
         'excerpt',
         'is_redirect',
-        'is_active'
+        'is_active',
+        'is_banner',
+        'order'
     ];
 }

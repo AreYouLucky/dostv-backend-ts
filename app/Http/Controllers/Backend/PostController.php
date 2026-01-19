@@ -49,7 +49,7 @@ class PostController extends Controller
         if ($request->status !== "") {
             $query->where('status', 'like', '%' . $request->status . '%');
         }
-        return $query->orderBy('date_published', 'desc')->with('program')->paginate(10);
+        return $query->orderBy('date_published', 'desc')->with('post_program')->paginate(10);
     }
 
 
@@ -261,6 +261,16 @@ class PostController extends Controller
         $programs = Program::select('program_id', 'code', 'program_type', 'title', 'description', 'agency', 'image')->where('is_active', 1)->orderBy('title', 'asc')->get();
         return Inertia::render('cms/post/posts-page', [
             'programs' => $programs,
+        ]);
+    }
+
+    public function togglePostFeatured(String $post){
+        $post = Post::where('slug', $post)->first();
+        Post::where('program', $post->program)->update(['is_featured' => 0]);
+        $post->is_featured = !$post->is_featured;
+        $post->save();
+        return response()->json([
+            'status' => 'Post Featured Status Successfully Updated!'
         ]);
     }
 }
