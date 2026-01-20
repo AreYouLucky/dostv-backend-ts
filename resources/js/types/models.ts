@@ -73,6 +73,7 @@ export interface BannerModel {
 
 
 export interface PostModel {
+  program_id: number | null;
   post_id: number | null;
   slug: string | null;
   title: string | null;
@@ -111,6 +112,7 @@ export interface AdvertisementModel {
   thumbnail: string | null;
   url: string | null;
   slug: string | null;
+  order: number | null;
   description: string | null;
   excerpt: string | null;
   is_redirect: number | null;

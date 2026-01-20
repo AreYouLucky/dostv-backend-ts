@@ -41,7 +41,7 @@ class PostController extends Controller
             $query->where('title', 'like', '%' . $request->title . '%');
         }
         if ($request->program !== "") {
-            $query->where('program', 'like', '%' . $request->program . '%');
+            $query->where('program_id', 'like', '%' . $request->program_id . '%');
         }
         if ($request->type !== "") {
             $query->where('type', 'like', '%' . $request->type . '%');
@@ -99,7 +99,7 @@ class PostController extends Controller
                 'slug' => Str::slug($request->title),
                 'title' => $request->title,
                 'type' => $request->type,
-                'program' => $request->program,
+                'program_id' => $request->program,
                 'content' =>  $content->convertToPlainHtml($request->content),
                 'guest' => $request->featured_guest,
                 'date_published' => $request->date_published,
@@ -199,7 +199,7 @@ class PostController extends Controller
             $post->slug = Str::slug($request->title);
             $post->title = $request->title;
             $post->type = $request->type;
-            $post->program = $request->program;
+            $post->program_id = $request->program;
             $post->content = $content->convertToPlainHtml($request->content);
             $post->guest = $request->featured_guest;
             $post->date_published = $request->date_published;

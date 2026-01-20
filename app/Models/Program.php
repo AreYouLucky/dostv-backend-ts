@@ -24,6 +24,6 @@ class Program extends Model
 
     public function episodes()
     {
-        return $this->hasMany(Post::class, 'program','code');
+        return $this->hasMany(Post::class, 'program_id','program_id');
     }
 }

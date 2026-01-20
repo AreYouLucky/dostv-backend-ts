@@ -38,6 +38,6 @@ class Post extends Model
 
     public function post_program()
     {
-        return $this->belongsTo(Program::class, 'program', 'code');
+        return $this->belongsTo(Program::class, 'program_id', 'program_id');
     }
 }

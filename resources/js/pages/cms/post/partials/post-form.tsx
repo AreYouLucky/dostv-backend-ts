@@ -53,7 +53,7 @@ function PostForm() {
         slug: post?.slug ?? '',
         title: post?.title ?? '',
         type: post?.type ?? '',
-        program: post?.program ?? '',
+        program: post?.program_id ?? '',
         content: post?.content ?? '',
         featured_guest: post?.guest ?? '',
         excerpt: post?.excerpt ?? '',
@@ -219,7 +219,7 @@ function PostForm() {
                                                 <Tooltip key={program.program_id} >
                                                     <TooltipTrigger asChild>
                                                         <SelectItem
-                                                            value={program.code ?? ''}
+                                                            value={String(program.program_id)}
                                                         >
                                                             {program.title}
                                                         </SelectItem>

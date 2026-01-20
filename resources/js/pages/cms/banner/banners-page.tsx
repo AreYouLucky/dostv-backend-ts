@@ -148,7 +148,7 @@ function BannersPage() {
                                                     </Button>
                                                 </TooltipTrigger>
                                                 <TooltipContent>
-                                                    <p>View Post</p>
+                                                    <p>View Banner</p>
                                                 </TooltipContent>
                                             </Tooltip>
                                             <Tooltip>
@@ -158,7 +158,7 @@ function BannersPage() {
                                                     </Button>
                                                 </TooltipTrigger>
                                                 <TooltipContent>
-                                                    <p>Banner Category</p>
+                                                    <p>{r.is_banner == 1 ? 'Hide Banner' : 'Show Banner'}</p>
                                                 </TooltipContent>
                                             </Tooltip>
                                             <Tooltip>
@@ -168,7 +168,7 @@ function BannersPage() {
                                                     </Link>
                                                 </TooltipTrigger>
                                                 <TooltipContent>
-                                                    <p>Edit Program</p>
+                                                    <p>Edit Banner</p>
                                                 </TooltipContent>
                                             </Tooltip>
                                             <Tooltip>
@@ -181,7 +181,7 @@ function BannersPage() {
                                                     </Button>
                                                 </TooltipTrigger>
                                                 <TooltipContent>
-                                                    <p>Delete Program</p>
+                                                    <p>Delete Banner</p>
                                                 </TooltipContent>
                                             </Tooltip>
                                         </div>

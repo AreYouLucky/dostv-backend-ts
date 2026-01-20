@@ -165,7 +165,7 @@ function Posts() {
                                                         <Tooltip key={program.program_id} >
                                                             <TooltipTrigger asChild>
                                                                 <SelectItem
-                                                                    value={program.code ?? ''}
+                                                                    value={String(program.program_id)}
                                                                 >
                                                                     {program.title}
                                                                 </SelectItem>
@@ -329,7 +329,7 @@ function Posts() {
                                                     </Button>
                                                 </TooltipTrigger>
                                                 <TooltipContent>
-                                                    <p>Feature Post</p>
+                                                    <p>{post.is_featured == 1 ? 'Remove Featured' : 'Featured Post'}</p>
                                                 </TooltipContent>
                                             </Tooltip>
                                             <Tooltip></Tooltip>
