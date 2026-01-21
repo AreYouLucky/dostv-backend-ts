@@ -11,7 +11,7 @@ import {
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
 import { type NavItem } from '@/types';
-import { BookOpen, Globe, Clapperboard, ImagePlay, Newspaper, MonitorPlay, GalleryHorizontalEnd } from 'lucide-react';
+import { BookOpen, Globe, Clapperboard, ImagePlay, Newspaper, MonitorPlay, GalleryHorizontalEnd, MicVocal } from 'lucide-react';
 import AppLogo from './app-logo';
 
 
@@ -40,6 +40,11 @@ const mainNavItems: NavItem[] = [
         title: 'Programs',
         href: '/view-programs',
         icon: GalleryHorizontalEnd,
+    },
+    {
+        title: 'Testimonials',
+        href: '/view-testimonials',
+        icon: MicVocal,
     },
 ];
 

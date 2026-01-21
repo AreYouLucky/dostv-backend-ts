@@ -16,5 +16,8 @@ class Testimonial extends Model
         'description',
         'excerpt',
         'date_published',
+        'is_banner',
+        'is_active',
+        'slug'
     ];
 }

@@ -5,7 +5,7 @@ import { BreadcrumbItem } from "@/types";
 import { Head, Link, usePage } from "@inertiajs/react";
 import PaginatedSearchTable from '@/components/custom/data-table-server';
 import { IoAddCircle } from "react-icons/io5";
-import { useFetchPosts, useDeletePost, useUpdatePostStatus, useTogglePostFeatured} from "./partials/post-hooks";
+import { useFetchPosts, useDeletePost, useUpdatePostStatus, useTogglePostFeatured, useRestorePost } from "./partials/post-hooks";
 import ImageLoader from "@/components/custom/image-loader";
 import { Input } from "@/components/ui/input";
 import { Search } from "lucide-react";
@@ -27,6 +27,7 @@ import { PostModel, ProgramsModel } from "@/types/models";
 import ConfirmationDialog from "@/components/custom/confirmation-dialog";
 import ViewPostDialog from "@/components/custom/view-post-dialog";
 import { TiStarFullOutline } from "react-icons/ti";
+import { MdOutlineRestore } from "react-icons/md";
 
 const breadcrumbs: BreadcrumbItem[] = [
     { title: 'Dashboard', href: '/dashboard' },
@@ -44,7 +45,7 @@ function Posts() {
     const { item, setItem } = useHandleChange({ title: '', program: '', type: '', status: '' });
     const [deleteDialog, setDeleteDialog] = useState(false);
     const [code, setCode] = useState('');
-    
+
     const onFilterChange = () => {
         setPage(1);
     };
@@ -81,6 +82,10 @@ function Posts() {
                     toast.success(res.status);
                     setDeleteDialog(false)
                 },
+                onError: (err) => {
+                    if (err.message)
+                        toast.error(err.message);
+                }
             }
         );
     }
@@ -99,6 +104,10 @@ function Posts() {
                     toast.success(res.status);
                     setLoadingSlug('');
                 },
+                onError: (err) => {
+                    if (err.message)
+                        toast.error(err.message);
+                }
             }
         );
     }
@@ -109,13 +118,33 @@ function Posts() {
     }
 
     const togglePostFeatured = useTogglePostFeatured();
-    const toggleFeatured = (slug : string) =>{
+    const toggleFeatured = (slug: string) => {
         togglePostFeatured.mutate(
             { slug: slug },
             {
                 onSuccess: (res) => {
                     toast.success(res.status);
                 },
+                onError: (err) => {
+                    if (err.message)
+                        toast.error(err.message);
+                }
+            }
+        )
+    }
+
+    const restorePost = useRestorePost();
+    const restorePostFn = (slug: string) => {
+        restorePost.mutate(
+            { slug: slug },
+            {
+                onSuccess: (res) => {
+                    toast.success(res.status);
+                },
+                onError: (err) => {
+                    if (err.message)
+                        toast.error(err.message);
+                }
             }
         )
     }
@@ -271,7 +300,7 @@ function Posts() {
                                     { name: "Actions", position: "center" },
                                 ]}
                                 renderRow={(post) => (
-                                    <tr key={post.post_id} className="text-gray-800 hover:scale-102 duration-300 border-b p-2 ">
+                                    <tr key={post.post_id} className="text-gray-800  border-b p-2 ">
                                         <td className="px-6 py-3 text-start poppins-semibold text-teal-800 text-[11.4px]">{post.title}</td>
                                         <td >
                                             <div className='flex justify-center items-center relative h-full hover:scale-110 duration-300'>
@@ -303,58 +332,69 @@ function Posts() {
                                                     )}
                                                 </SelectTrigger>
                                                 <SelectContent >
-                                                    {postStatus.map((type) => (
-                                                        <SelectItem key={type.value} value={type.value}>
-                                                            {type.value}
+
+                                                    {item.status === 'trashed' ? <SelectItem value={'trashed'}>
+                                                        trashed
+                                                    </SelectItem> : <>
+                                                        <SelectItem value={'published'}>
+                                                            published
                                                         </SelectItem>
-                                                    ))}
+                                                        <SelectItem value={'drafted'}>
+                                                            drafted
+                                                        </SelectItem>
+                                                    </>}
                                                 </SelectContent>
                                             </Select>
                                         </td>
-                                        <td className="px-6 py-3 text-center poppins-bold text-xl text-teal-800 gap-1 flex relative items-center justify-center">
-                                            <Tooltip>
-                                                <TooltipTrigger asChild>
-                                                    <Button className='bg-transparent shadow-none hover:bg-teal-100 px-2 rounded-lg py-2 text-lg' onClick={() => viewPostDialog(post)} >
-                                                        <FaEye className='text-[#0096cc] ' />
-                                                    </Button>
-                                                </TooltipTrigger>
-                                                <TooltipContent>
-                                                    <p>View Post</p>
-                                                </TooltipContent>
-                                            </Tooltip>
-                                            <Tooltip>
-                                                <TooltipTrigger asChild>
-                                                    <Button className='bg-transparent shadow-none hover:bg-teal-100 px-0' onClick={() => toggleFeatured(post.slug as string)}>
-                                                        <TiStarFullOutline className={post.is_featured == 1 ? 'text-yellow-500' : 'text-gray-400'} />
-                                                    </Button>
-                                                </TooltipTrigger>
-                                                <TooltipContent>
-                                                    <p>{post.is_featured == 1 ? 'Remove Featured' : 'Featured Post'}</p>
-                                                </TooltipContent>
-                                            </Tooltip>
-                                            <Tooltip></Tooltip>
-                                            <Tooltip>
-                                                <TooltipTrigger asChild>
-                                                    <Link className='bg-transparent shadow-none hover:bg-teal-100 px-2 rounded-lg py-2 text-lg'
-                                                        href={`/posts/${post.slug}/edit`} >
-                                                        <FaEdit className='text-teal-600 ' />
-                                                    </Link>
-                                                </TooltipTrigger>
-                                                <TooltipContent>
-                                                    <p>Edit Post</p>
-                                                </TooltipContent>
-                                            </Tooltip>
-                                            <Tooltip>
-                                                <TooltipTrigger asChild>
-                                                    <Button className='bg-transparent shadow-none hover:bg-teal-100 px-0' onClick={() => showDeleteDialog(post.slug as string)}>
-                                                        <FaTrash className='text-red-500' />
-                                                    </Button>
-                                                </TooltipTrigger>
-                                                <TooltipContent>
-                                                    <p>Delete Post</p>
-                                                </TooltipContent>
-                                            </Tooltip>
-                                        </td>
+                                        {item.status === 'trashed' ?
+                                            <td className="px-6 py-3 text-center">
+                                                <Button className="flex text-xs items-center gap-1 flex-row bg-teal-700" onClick={() => restorePostFn(post.slug as string)} ><MdOutlineRestore/>Restore</Button>
+                                            </td> :
+                                            <td className="px-6 py-3 text-center poppins-bold text-xl text-teal-800 gap-1 flex relative items-center justify-center">
+                                                <Tooltip>
+                                                    <TooltipTrigger asChild>
+                                                        <Button className='bg-transparent shadow-none hover:bg-teal-100 px-2 rounded-lg py-2 text-lg' onClick={() => viewPostDialog(post)} >
+                                                            <FaEye className='text-[#0096cc] ' />
+                                                        </Button>
+                                                    </TooltipTrigger>
+                                                    <TooltipContent>
+                                                        <p>View Post</p>
+                                                    </TooltipContent>
+                                                </Tooltip>
+                                                <Tooltip>
+                                                    <TooltipTrigger asChild>
+                                                        <Button className='bg-transparent shadow-none hover:bg-teal-100 px-0' onClick={() => toggleFeatured(post.slug as string)}>
+                                                            <TiStarFullOutline className={post.is_featured == 1 ? 'text-yellow-500' : 'text-gray-400'} />
+                                                        </Button>
+                                                    </TooltipTrigger>
+                                                    <TooltipContent>
+                                                        <p>{post.is_featured == 1 ? 'Remove Featured' : 'Featured Post'}</p>
+                                                    </TooltipContent>
+                                                </Tooltip>
+                                                <Tooltip></Tooltip>
+                                                <Tooltip>
+                                                    <TooltipTrigger asChild>
+                                                        <Link className='bg-transparent shadow-none hover:bg-teal-100 px-2 rounded-lg py-2 text-lg'
+                                                            href={`/posts/${post.slug}/edit`} >
+                                                            <FaEdit className='text-teal-600 ' />
+                                                        </Link>
+                                                    </TooltipTrigger>
+                                                    <TooltipContent>
+                                                        <p>Edit Post</p>
+                                                    </TooltipContent>
+                                                </Tooltip>
+                                                <Tooltip>
+                                                    <TooltipTrigger asChild>
+                                                        <Button className='bg-transparent shadow-none hover:bg-teal-100 px-0' onClick={() => showDeleteDialog(post.slug as string)}>
+                                                            <FaTrash className='text-red-500' />
+                                                        </Button>
+                                                    </TooltipTrigger>
+                                                    <TooltipContent>
+                                                        <p>Delete Post</p>
+                                                    </TooltipContent>
+                                                </Tooltip>
+                                            </td>
+                                        }
                                     </tr>
                                 )}
                                 itemsPerPage={data?.per_page ?? 10}

@@ -6,10 +6,10 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/text-area";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner"
-import { useCreateCategory,useUpdateCategory } from "./categories-hooks";
+import { useCreateCategory, useUpdateCategory } from "./categories-hooks";
 import { useHandleChange } from "@/hooks/use-handle-change";
 import { useEffect } from "react";
-import { CategoriesModel} from "@/types/models";
+import { CategoriesModel } from "@/types/models";
 
 
 
@@ -35,7 +35,8 @@ function CategoriesForm(props: CategoriesFormProps) {
                 },
                 onError: (err) => {
                     setErrors(err.response?.data?.errors ?? {});
-                    toast.error('Check Fields for error!')
+                    if (err.message)
+                        toast.error(err.message);
                 },
             }
         );
@@ -59,7 +60,8 @@ function CategoriesForm(props: CategoriesFormProps) {
                 },
                 onError: (err) => {
                     setErrors(err.response?.data?.errors ?? {});
-                    toast.error('Check fields for error!');
+                    if (err.message)
+                    toast.error(err.message);
                 },
             }
         );
@@ -80,7 +82,7 @@ function CategoriesForm(props: CategoriesFormProps) {
                 description: props.data.description,
             });
         }
-    }, [ props.data, setItem, clearFields]);
+    }, [props.data, setItem, clearFields]);
 
     return (
         <Dialog open={props.show} onOpenChange={props.onClose}>

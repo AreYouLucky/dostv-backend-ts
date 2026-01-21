@@ -53,8 +53,9 @@ function AdvertisementsPage() {
                     toast.success(`${status} ${type === 1 ? "Up!" : "Down!"}`);
                     refetch();
                 },
-                onError() {
-                    toast.error("Move failed");
+                onError(err) {
+                    if (err.message)
+                        toast.error(err.message);
                 },
             }
         );
@@ -72,6 +73,10 @@ function AdvertisementsPage() {
             onSuccess: () => {
                 toast.success("Advertisement Deleted Successfully")
                 setDeleteDialog(false)
+            },
+            onError: (err) => {
+                if (err.message)
+                    toast.error(err.message);
             }
         });
     }
@@ -81,6 +86,10 @@ function AdvertisementsPage() {
         toggleAdvertisement.mutate({ id }, {
             onSuccess: () => {
                 toast.success("Advertisement visibility successfully toggled")
+            },
+            onError: (err) => {
+                if (err.message)
+                    toast.error(err.message);
             }
         })
     }

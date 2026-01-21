@@ -35,22 +35,29 @@ class PostController extends Controller
 
 
     public function index(Request $request)
-    {   
-        $query = Post::where('status','!=' ,'trash');
-        if ($request->title !== "") {
+    {
+        $query = Post::query();
+        if ($request->filled('status')) {
+                $query->where('status', $request->status);
+        } else {
+            $query->where('status', '!=', 'trashed');
+        }
+        if ($request->filled('title')) {
             $query->where('title', 'like', '%' . $request->title . '%');
         }
-        if ($request->program !== "") {
-            $query->where('program_id', 'like', '%' . $request->program_id . '%');
+        if ($request->filled('program_id')) {
+            $query->where('program_id', $request->program_id);
         }
-        if ($request->type !== "") {
-            $query->where('type', 'like', '%' . $request->type . '%');
+        if ($request->filled('type')) {
+            $query->where('type', $request->type);
         }
-        if ($request->status !== "") {
-            $query->where('status', 'like', '%' . $request->status . '%');
-        }
-        return $query->orderBy('date_published', 'desc')->with('post_program')->paginate(10);
+
+        return $query
+            ->with('post_program')
+            ->orderBy('date_published', 'desc')
+            ->paginate(10);
     }
+
 
 
     public function create()
@@ -135,7 +142,8 @@ class PostController extends Controller
             DB::rollBack();
             return response()->json([
                 'errors' => $e->errors(),
-            ], 422);
+                'message' => $e->getMessage(),
+            ], 500);
         }
     }
 
@@ -156,7 +164,7 @@ class PostController extends Controller
         ]);
     }
 
-    public function update(Request $request, string $code , ContentFunctions $content)
+    public function update(Request $request, string $code, ContentFunctions $content)
     {
         $request->validate([
             'title' => 'required',
@@ -240,13 +248,14 @@ class PostController extends Controller
 
     public function destroy(string $code)
     {
-        Post::where('slug', $code)->update(['status' => 'trash']);
+        Post::where('slug', $code)->update(['status' => 'trashed']);
         return response()->json([
             'status' => 'Post Successfully Deleted!'
         ]);
     }
 
-    public function updatePostStatus(Request $req){
+    public function updatePostStatus(Request $req)
+    {
         $req->validate([
             'code' => 'required|string',
             'status' => 'required|string'
@@ -257,20 +266,30 @@ class PostController extends Controller
         ]);
     }
 
-    public function viewPostPage(){
+    public function viewPostPage()
+    {
         $programs = Program::select('program_id', 'code', 'program_type', 'title', 'description', 'agency', 'image')->where('is_active', 1)->orderBy('title', 'asc')->get();
         return Inertia::render('cms/post/posts-page', [
             'programs' => $programs,
         ]);
     }
 
-    public function togglePostFeatured(String $post){
+    public function togglePostFeatured(String $post)
+    {
         $post = Post::where('slug', $post)->first();
         Post::where('program', $post->program)->update(['is_featured' => 0]);
         $post->is_featured = !$post->is_featured;
         $post->save();
         return response()->json([
             'status' => 'Post Featured Status Successfully Updated!'
+        ]);
+    }
+
+    public function restorePost(String $post)
+    {
+        Post::where('slug', $post)->update(['status' => 'drafted']);
+        return response()->json([
+            'status' => 'Post Successfully Restored!'
         ]);
     }
 }

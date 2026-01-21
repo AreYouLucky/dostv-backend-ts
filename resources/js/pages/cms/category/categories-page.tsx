@@ -32,29 +32,38 @@ function CategoriesPage() {
     const openModal = () => {
         setShowDialog(true)
     }
-    
+
     const closeModal = () => {
         setCategory(emptyCategory)
         setShowDialog(false)
     }
-    
+
     const openEditModal = (item: CategoriesModel) => {
         setCategory(item)
         setShowDialog(true)
     }
-    
+
     const openDeleteDialog = (id: number) => {
         setShowDeleteDialog(true)
         setId(id)
-        
+
     }
-    
+
     const toggleBanner = (id: number) => {
         toggleCategory.mutate({
-            payload: { id }  
+            payload: { id }
+        }, {
+            onSuccess: () => {
+                toast.success("Category updated successfully");
+
+            },
+            onError: (err) => {
+                if (err.message)
+                    toast.error(err.message);
+            }
         });
     }
-    
+
     const confirmCategoryDeletion = () => {
         deleteCategory.mutate(
             { id: id },
@@ -63,6 +72,10 @@ function CategoriesPage() {
                     toast.success(res.status);
                     setShowDeleteDialog(false)
                 },
+                onError: (err) => {
+                    if (err.message)
+                        toast.error(err.message);
+                }
             }
         );
     }
@@ -74,7 +87,7 @@ function CategoriesPage() {
                 <div className="flex flex-1 flex-col gap-y-3 gap-x-5 rounded-xl px-6 py-5">
                     <div className='w-full flex justify-between item-center px-6 py-4 shadow-sm border rounded-lg border-gray-400/50 bg-white'>
                         <div className="text-teal-600 poppins-bold md:text-lg text-sm flex items-center gap-2">
-                            <TbCategoryFilled/>Categories Management Section
+                            <TbCategoryFilled />Categories Management Section
                         </div>
                         <div className="text-gray-500 poppins-bold text-lg">
                             <Button className='bg-teal-600' onClick={openModal}> <IoAddCircle /> Add Category</Button>
@@ -96,7 +109,7 @@ function CategoriesPage() {
                                     <td className="px-6 py-1.5 flex flex-row">
                                         <Tooltip>
                                             <TooltipTrigger asChild>
-                                                <Button className='bg-transparent shadow-none hover:bg-teal-100 px-0' onClick={()=>toggleBanner(r.category_id as number)}>
+                                                <Button className='bg-transparent shadow-none hover:bg-teal-100 px-0' onClick={() => toggleBanner(r.category_id as number)}>
                                                     <TiStarFullOutline className={r.is_banner == 1 ? 'text-blue-500' : 'text-gray-400'} />
                                                 </Button>
                                             </TooltipTrigger>

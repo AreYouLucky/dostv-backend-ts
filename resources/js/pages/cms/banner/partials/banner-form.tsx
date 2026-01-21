@@ -82,6 +82,8 @@ function BannersForm() {
                     setErrors(error.response.data.errors);
                     toast.error("Check fields for errors!");
                 }
+                if (error.message)
+                    toast.error(error.message);
             }
         })
     }
@@ -100,6 +102,8 @@ function BannersForm() {
                     setErrors(error.response.data.errors);
                     toast.error("Check fields for errors!");
                 }
+                if (error.message)
+                    toast.error(error.message);
             }
         })
     }
@@ -110,7 +114,7 @@ function BannersForm() {
         <>
             <Head title="Program Form" />
             <div className="flex flex-col flex-1 min-h-0  ">
-                <div className="flex flex-1 flex-col gap-y-3 gap-x-5 rounded-xl px-6 py-5 ">
+                <div className="flex flex-1 flex-col gap-y-1 gap-x-5 rounded-xl px-6 py-5 ">
                     <div className='bg-teal-600/90 w-full flex flex-col justify-between item-center  shadow-sm border rounded-lg border-gray-300/50  overflow-auto py-6 px-8'>
                         <div className="md:cols-span-2 text-gray-50 poppins-bold md:text-lg text-sm flex items-center justify-start gap-2 md:col-span-3 ">
                             <PiImagesBold /> Banner Management Form
@@ -331,7 +335,7 @@ function BannersForm() {
                 </div>
             </div>
             <ConfirmationDialog show={successDialog} onClose={() => setSuccessDialog(false)} type={1} message={message} />
-            <LoadingDialog show={createBanner.isPending || updateBanner.isPending} message={'Uploading Program Details ...'} />
+            <LoadingDialog show={createBanner.isPending || updateBanner.isPending} message={'Uploading Banner Details ...'} />
         </>
     )
 

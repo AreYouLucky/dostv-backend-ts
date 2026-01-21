@@ -49,7 +49,8 @@ class AdvertisementController extends Controller
             'url' => $request->url,
             'excerpt' => $request->excerpt,
             'thumbnail' => $thumbnail_filename ?? '',
-            'is_redirect' => $request->is_redirect
+            'is_redirect' => $request->is_redirect,
+            'slug' => $content->createSlug($request->title),
         ]);
         $advertisement->order = $advertisement->advertisement_id;
         $advertisement->save();
@@ -83,6 +84,7 @@ class AdvertisementController extends Controller
             $advertisement->thumbnail  = $this->uploadFile('/images/advertisements', $request, 'thumbnail_image');
         }
         $advertisement->title = $request->title;
+        $advertisement->slug = $content->createSlug($request->title);
         $advertisement->description = $request->description ? $content->convertToPlainHtml($request->description) : null;
         $advertisement->url = $request->url;
         $advertisement->excerpt = $request->excerpt;

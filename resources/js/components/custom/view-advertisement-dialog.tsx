@@ -32,17 +32,13 @@ function ViewAdvertisementDialog(props: ViewAdvertisementDialogProps) {
                     <div>
                         <p className="text-2xl py-1 font-bold inter-bold">{advertisement?.title}</p>
                     </div>
-                    <div>
-                        <div
-                            className=" text-justify poppins-light max-h-[80vh] overflow-auto scroll-slim"
-                            dangerouslySetInnerHTML={{
-                                __html: purifyDom(advertisement?.description ?? ""),
-                            }}
-                        />
-                    </div>
-
+                    <div
+                        className=" text-justify poppins-light max-h-[80vh] overflow-auto scroll-slim"
+                        dangerouslySetInnerHTML={{
+                            __html: purifyDom(advertisement?.description ?? ""),
+                        }}
+                    />
                 </div>
-
             </DialogContent>
         </Dialog>
     )

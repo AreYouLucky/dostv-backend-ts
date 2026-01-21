@@ -27,3 +27,12 @@ export function convertShortDate(date: Date | string | number): string {
     year: 'numeric',
   });
 }
+
+export function convertLonghDate(date: Date | string | number): string {
+  const d = new Date(date);
+  return d.toLocaleDateString('en-US', {
+    month: 'long',
+    day: 'numeric',
+    year: 'numeric',
+  });
+}

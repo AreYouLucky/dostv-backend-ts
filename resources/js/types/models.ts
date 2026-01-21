@@ -121,3 +121,19 @@ export interface AdvertisementModel {
   created_at: string | null;
   updated_at: string | null;
 }
+
+export interface TestimonialModel {
+  testimonial_id: number | null;
+  title: string | null;
+  guest: string | null;
+  thumbnail: string | null;
+  url: string | null;
+  slug: string | null;
+  description: string | null;
+  excerpt: string | null;
+  is_active: number | null;
+  is_banner: number | null; 
+  date_published: string | null;
+  created_at: string | null;
+  updated_at: string | null;
+}

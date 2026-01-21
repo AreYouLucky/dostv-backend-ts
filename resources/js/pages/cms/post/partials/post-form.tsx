@@ -146,6 +146,8 @@ function PostForm() {
                     setErrors(error.response.data.errors);
                     toast.error("Check fields for errors!");
                 }
+                if (error.message)
+                    toast.error(error.message);
             },
         });
     };
@@ -165,6 +167,8 @@ function PostForm() {
                         setErrors(error.response.data.errors);
                         toast.error("Check fields for errors!");
                     }
+                    if (error.message)
+                        toast.error(error.message);
                 }
             }
         );

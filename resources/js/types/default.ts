@@ -27,7 +27,11 @@ export const postStatus = [
     },
     {
         code: 2,
-        value: 'draft',
+        value: 'drafted',
+    },
+    {
+        code: 3,
+        value: 'trashed',
     },
 ]
 

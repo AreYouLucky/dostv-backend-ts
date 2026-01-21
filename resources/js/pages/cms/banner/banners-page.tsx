@@ -10,7 +10,7 @@ import { useFetchBanners, useDeleteBanner, useMoveBanner, useToggleBannerVisibil
 import { IoAddCircle } from "react-icons/io5";
 import { LuImageUpscale } from "react-icons/lu";
 import { Tooltip, TooltipContent, TooltipTrigger, } from "@/components/ui/tooltip"
-import { FaArrowUp, FaArrowDown, FaTrash, FaEdit, FaEye,FaFlag} from "react-icons/fa";
+import { FaArrowUp, FaArrowDown, FaTrash, FaEdit, FaEye, FaFlag } from "react-icons/fa";
 import ViewBannerDialog from "@/components/custom/view-banner-dialog";
 import ConfirmationDialog from "@/components/custom/confirmation-dialog";
 import { Button } from "@/components/ui/button";
@@ -36,6 +36,10 @@ function BannersPage() {
             onSuccess: () => {
                 toast.success("Banner Updated Successfully")
                 setDeleteDialog(false)
+            },
+            onError: (err) => {
+                if (err.message)
+                    toast.error(err.message);
             }
         });
     }
@@ -65,8 +69,9 @@ function BannersPage() {
                     toast.success(`${status} ${type === 1 ? "Up!" : "Down!"}`);
                     refetch();
                 },
-                onError() {
-                    toast.error("Move failed");
+                onError(error) {
+                    if (error.message)
+                        toast.error(error.message);
                 },
             }
         );
@@ -78,6 +83,10 @@ function BannersPage() {
             {
                 onSuccess: () => {
                     toast.success("Banner updated successfully");
+                },
+                onError: (err) => {
+                    if (err.message)
+                        toast.error(err.message);
                 }
             }
 

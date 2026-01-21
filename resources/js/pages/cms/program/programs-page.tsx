@@ -45,6 +45,10 @@ function ProgramsPage() {
                     toast.success(res.status);
                     setDeleteDialog(false)
                 },
+                onError: (err) => {
+                    if (err.message)
+                        toast.error(err.message);
+                }
             }
         );
     }
@@ -59,7 +63,7 @@ function ProgramsPage() {
         formData.append("type", String(type));
 
 
-        
+
 
         const maxLength = data.length;
         if (type === 2 && data[maxLength - 1]?.order === order) {
@@ -76,8 +80,9 @@ function ProgramsPage() {
                 toast.success(`${status} ${type === 1 ? "Up!" : "Down!"}`);
                 refetch()
             },
-            onError(){
-                toast.error("Move failed");
+            onError(error) {
+                if (error.message)
+                    toast.error(error.message);
             },
         });
     };

@@ -21,5 +21,6 @@ require __DIR__.'/backend/programs.php';
 require __DIR__.'/backend/banners.php';
 require __DIR__.'/backend/posts.php';
 require __DIR__.'/backend/advertisements.php';
+require __DIR__.'/backend/testimonials.php';
 
 
