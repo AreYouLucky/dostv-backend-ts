@@ -520,7 +520,7 @@ function PostForm() {
                             <InputError message={errors.content} />
                         </div>
                         <div className="px-4 pt-4">
-                            <Button className="bg-teal-600 w-fit poppins-bold flex flex-row items-center justify-center"
+                            <Button className="bg-teal-600 text-white w-fit poppins-bold flex flex-row items-center justify-center"
                                 onClick={item.post_id !== 0 ? updatePostFn : createPostFn}
                             > {createPost.isPending || updatePost.isPending ? <Spinner className="mr-1" /> : <FaUpload className="mr-1" />}
                                 {item.post_id == 0 ? 'Add' : 'Update'} Post

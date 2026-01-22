@@ -28,7 +28,7 @@ export function NavFooter({
                         <SidebarMenuItem key={item.title}>
                             <SidebarMenuButton
                                 asChild
-                                className="text-neutral-600 hover:text-neutral-800 dark:text-neutral-300 dark:hover:text-neutral-100"
+                                className="text-neutral-600 hover:text-neutral-800 dark:text-neutral-300 dark:hover:text-neutral-100 inter-semibold"
                             >
                                 <a
                                     href={resolveUrl(item.href)}
@@ -41,7 +41,7 @@ export function NavFooter({
                                             className="h-5 w-5"
                                         />
                                     )}
-                                    <span className='poppins-semibold text-[12.5px]'>{item.title}</span>
+                                    <span className='inter-semibold text-[12.5px]'>{item.title}</span>
                                 </a>
                             </SidebarMenuButton>
                         </SidebarMenuItem>

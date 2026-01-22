@@ -14,4 +14,9 @@ class Category extends Model
         'is_banner',
         'is_active',
     ];
+
+    public function postCategories()
+    {
+        return $this->hasMany(PostCategory::class, 'category', 'category_id');
+    }
 }

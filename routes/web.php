@@ -5,13 +5,6 @@ use Inertia\Inertia;
 use App\Http\Controllers\YoutubeController;
 
 
-
-Route::middleware(['auth'])->group(function () {
-    Route::get('/dashboard', function () {
-        return Inertia::render('dashboard');
-    })->name('dashboard');
-});
-
 Route::get('/youtube/top-videos/{year}', [YoutubeController::class, 'topVideos']);
 
 require __DIR__.'/settings.php';
@@ -22,5 +15,6 @@ require __DIR__.'/backend/banners.php';
 require __DIR__.'/backend/posts.php';
 require __DIR__.'/backend/advertisements.php';
 require __DIR__.'/backend/testimonials.php';
+require __DIR__.'/backend/dashboard.php';
 
 

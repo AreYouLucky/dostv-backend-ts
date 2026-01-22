@@ -120,7 +120,7 @@ function BannersForm() {
                             <PiImagesBold /> Banner Management Form
                         </div>
                     </div>
-                    <div className='w-full flex flex-col justify-between item-center  shadow-md border rounded-lg border-gray-300 bg-white overflow-auto p-8'>
+                    <div className='w-full flex flex-col justify-between item-center  shadow-md border rounded-lg border-gray-300 bg-white/70 overflow-auto p-8'>
                         <div className="w-full grid md:grid-cols-3 gap-4 mt-2 ">
                             <div className="grid gap-2">
                                 <Label htmlFor="type" className="text-gray-700 poppins-semibold">Banner Type</Label>

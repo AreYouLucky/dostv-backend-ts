@@ -4,7 +4,6 @@ import { createInertiaApp } from '@inertiajs/react';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
-// import { initializeTheme } from './hooks/use-appearance';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
@@ -29,9 +28,13 @@ createInertiaApp({
         );
     },
     progress: {
-        color: '#4B5563',
+        // The delay after which the progress bar will appear, in milliseconds...
+        delay: 250,
+        // The color of the progress bar...
+        color: '#29d',
+        // Whether to include the default NProgress styles...
+        includeCSS: true,
+        // Whether the NProgress spinner will be shown...
+        showSpinner: false,
     },
 });
-
-
-// initializeTheme();

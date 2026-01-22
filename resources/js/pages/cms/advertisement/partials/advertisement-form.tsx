@@ -101,12 +101,12 @@ function AdvertisementForm() {
             <Head title="Program Form" />
             <div className="flex flex-col flex-1 min-h-0  ">
                 <div className="flex flex-1 flex-col gap-y-1 gap-x-5 rounded-xl px-6 py-5 ">
-                    <div className='bg-teal-600/90 w-full flex flex-col justify-between item-center  shadow-sm border rounded-lg border-gray-300/50  overflow-auto py-6 px-8'>
+                    <div className='bg-teal-600 w-full flex flex-col justify-between item-center  shadow-sm border rounded-lg border-gray-300/50  overflow-auto py-6 px-8'>
                         <div className="md:cols-span-2 text-gray-50 poppins-bold md:text-lg text-sm flex items-center justify-start gap-2 md:col-span-3 ">
                             <FaPhotoVideo /> Advertisement Management Form
                         </div>
                     </div>
-                    <div className='w-full flex flex-col justify-between item-center  shadow-md border rounded-lg border-gray-300 bg-white overflow-auto p-8'>
+                    <div className='w-full flex flex-col justify-between item-center  shadow-md border rounded-lg border-gray-300 bg-white/80 overflow-auto p-8'>
                         <div className="w-full grid md:grid-cols-3 gap-4">
                             <div className="border-r md:col-span-2 border-gray-300 grid md:grid-cols-3 gap-4 pl-4 pr-8 py-4 h-fit">
                                 <div className="grid gap-2">
@@ -203,7 +203,7 @@ function AdvertisementForm() {
                                 <InputError message={errors.description} />
                             </div>
                         </div>
-                        <div className="m-4">
+                        <div className="mx-4 mt-6">
                             <Button className="w-fit bg-teal-600 hover:bg-teal-700 text-white poppins-semibold  text-sm px-4 py-2 rounded-md"
                                 onClick={() => item.advertisement_id !== 0 ? updateAdvertisementFn() : createAdvertisementFn()}>
                                 {createAdvertisement.isPending || updateAdvertisement.isPending ? <Spinner /> : <MdCloudUpload />}

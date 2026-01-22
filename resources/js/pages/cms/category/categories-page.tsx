@@ -85,15 +85,15 @@ function CategoriesPage() {
             <Head title="Categories" />
             <div className="flex flex-col flex-1 min-h-0  ">
                 <div className="flex flex-1 flex-col gap-y-3 gap-x-5 rounded-xl px-6 py-5">
-                    <div className='w-full flex justify-between item-center px-6 py-4 shadow-sm border rounded-lg border-gray-400/50 bg-white'>
-                        <div className="text-teal-600 poppins-bold md:text-lg text-sm flex items-center gap-2">
+                    <div className='w-full flex justify-between item-center px-6 py-4 shadow-sm border rounded-lg border-gray-400/50 bg-white/50'>
+                        <div className="text-teal-700 poppins-bold md:text-base text-sm flex items-center gap-2">
                             <TbCategoryFilled />Categories Management Section
                         </div>
                         <div className="text-gray-500 poppins-bold text-lg">
-                            <Button className='bg-teal-600' onClick={openModal}> <IoAddCircle /> Add Category</Button>
+                            <Button className='bg-teal-600 text-white' onClick={openModal}> <IoAddCircle /> Add Category</Button>
                         </div>
                     </div>
-                    <div className='w-full flex justify-between item-center  shadow-md border rounded-lg border-gray-400/50 overflow-auto p-2 bg-white'>
+                    <div className='w-full flex justify-between item-center  shadow-md border rounded-lg border-gray-400/50 overflow-auto p-2 bg-white/50'>
                         <PaginatedSearchTable<CategoriesModel>
                             items={data ?? []}
                             headers={[
@@ -104,8 +104,8 @@ function CategoriesPage() {
                             searchBy={(item) => `${item.title} ${item.description}`}
                             renderRow={(r) => (
                                 <tr key={r.category_id} className="border-b  duration-200 hover:scale-101">
-                                    <td className="px-6 py-1.5 text-start poppins-semibold text-teal-800">{r.title}</td>
-                                    <td className="px-6 py-1.5 text-center text-[13px] text-gray-700">{r.description}</td>
+                                    <td className="px-6 py-1.5 text-start poppins-semibold text-teal-800 text-[13px]">{r.title}</td>
+                                    <td className="px-6 py-1.5 text-center text-[12px] text-gray-700">{r.description}</td>
                                     <td className="px-6 py-1.5 flex flex-row">
                                         <Tooltip>
                                             <TooltipTrigger asChild>

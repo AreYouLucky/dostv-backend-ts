@@ -69,7 +69,7 @@ function TestimonialsPage() {
             <div className="flex flex-col flex-1 min-h-0  ">
                 <div className="flex flex-1 flex-col gap-y-3 gap-x-5 rounded-xl px-6 py-5">
                     <div className='w-full flex justify-between item-center px-6 py-4 shadow-sm border rounded-lg border-gray-400/50 bg-white/50'>
-                        <div className="text-teal-700 poppins-bold md:text-lg text-sm flex items-center gap-2">
+                        <div className="text-teal-700 poppins-bold md:text-base text-sm flex items-center gap-2">
                             <MdRecordVoiceOver />
                             Testimonials Management Section
                         </div>
@@ -90,7 +90,7 @@ function TestimonialsPage() {
                             searchBy={(item) => `${item.title} ${item.description}`}
                             renderRow={(r) => (
                                 <tr key={r.testimonial_id} className="border-b  duration-300 hover:scale-101 cursor-pointer">
-                                    <td className="px-6 py-1.5 text-start poppins-semibold text-teal-800 text-[11.2px]">{r.title}</td>
+                                    <td className="px-6 py-1.5 text-start poppins-semibold text-teal-800 text-[12px]">{r.title}</td>
                                     <td >
                                         <div className='flex justify-center items-center relative h-full hover:scale-110 duration-300'>
                                             <ImageLoader
@@ -100,8 +100,8 @@ function TestimonialsPage() {
                                             />
                                         </div>
                                     </td>
-                                    <td className="px-6 py-1.5 text-start poppins-semibold text-teal-800 text-[11.2px]">{r.guest ? r.guest : 'Not Set'}</td>
-                                    <td className="px-6 py-1.5 poppins-semibold text-teal-800 text-[11.2px] text-justify">{r.description ? trimText(r.description, 150) : 'Not Set'}</td>
+                                    <td className="px-6 py-1.5 text-start poppins-semibold text-[11.2px]">{r.guest ? r.guest : 'Not Set'}</td>
+                                    <td className="px-6 py-1.5 poppins-semibold text-[11.2px] text-justify">{r.description ? trimText(r.description, 150) : 'Not Set'}</td>
                                     <td>
                                         <div className='px-6 py-1.5 text-center poppins-bold text-xl text-teal-800 gap-1 flex relative'>
                                             <Tooltip>

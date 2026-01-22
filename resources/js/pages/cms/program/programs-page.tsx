@@ -92,15 +92,15 @@ function ProgramsPage() {
             <Head title="Programs" />
             <div className="flex flex-col flex-1 min-h-0  ">
                 <div className="flex flex-1 flex-col gap-y-3 gap-x-5 rounded-xl px-6 py-5">
-                    <div className='w-full flex justify-between item-center px-6 py-4 shadow-sm border rounded-lg border-gray-400/50 bg-white'>
-                        <div className="text-teal-600 poppins-bold md:text-base text-sm flex items-center gap-2">
+                    <div className='w-full flex justify-between item-center px-6 py-4 shadow-sm border rounded-lg border-gray-400/50 bg-white/50'>
+                        <div className="text-teal-700 poppins-bold md:text-base text-sm flex items-center gap-2">
                             <MdPermMedia /> Programs Management Section
                         </div>
                         <div className="text-teal-500 poppins-bold text-lg">
                             <Link className='bg-teal-600 text-gray-50 inline-flex  h-9 px-4 py-2 has-[>svg]:px-3 items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-[color,box-shadow]' href={'/program-form'}> <IoAddCircle /> Add Program</Link>
                         </div>
                     </div>
-                    <div className='w-full flex justify-between item-center  shadow-md border rounded-lg border-gray-400/50 overflow-auto p-2 bg-white'>
+                    <div className='w-full flex justify-between item-center  shadow-md border rounded-lg border-gray-400/50 overflow-auto p-2 bg-white/50'>
                         <PaginatedSearchTable<ProgramsModel>
                             items={data ?? []}
                             headers={[
@@ -116,7 +116,7 @@ function ProgramsPage() {
                             searchBy={(item) => `${item.title} ${item.description} ${item.agency}`}
                             renderRow={(r) => (
                                 <tr key={r.program_id} className="border-b  duration-300 hover:scale-102">
-                                    <td className="px-6 py-1.5 text-start poppins-semibold text-teal-800 text-[11.2px]">{r.title}</td>
+                                    <td className="px-6 py-1.5 text-start poppins-semibold text-teal-800 text-[12px]">{r.title}</td>
                                     <td >
                                         <div className='flex justify-center items-center relative h-full hover:scale-110 duration-300'>
                                             <ImageLoader

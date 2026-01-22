@@ -25,7 +25,7 @@ export function NavMain({ items = [] }: { items: NavItem[] }) {
                     >
                         <Link href='/dashboard' prefetch>
                             <LayoutGrid />
-                            <span className='text-[12.5px]'>Dashboard</span>
+                            <span className='text-[12.5px] inter-semibold'>Dashboard</span>
                         </Link>
                     </SidebarMenuButton>
                 </SidebarMenuItem>
@@ -43,7 +43,7 @@ export function NavMain({ items = [] }: { items: NavItem[] }) {
                         >
                             <Link href={item.href} prefetch>
                                 {item.icon && <item.icon />}
-                                <span className='text-[12.5px]'>{item.title}</span>
+                                <span className='text-[12.5px] inter-semibold'>{item.title}</span>
                             </Link>
                         </SidebarMenuButton>
                     </SidebarMenuItem>
