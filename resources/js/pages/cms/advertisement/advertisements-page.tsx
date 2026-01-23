@@ -132,8 +132,8 @@ function AdvertisementsPage() {
                                             />
                                         </div>
                                     </td>
-                                    <td className="px-6 py-1.5 text-start poppins-semibold text-[12px]">{r.url ? r.url : 'Not Set'}</td>
-                                    <td className="px-6 py-1.5 poppins-semibold  text-[11.2px] text-justify">{r.description ? trimText(r.description, 150) : 'Not Set'}</td>
+                                    <td className="px-6 py-1.5 text-start poppins-regular text-[12px]">{r.url ? r.url : 'Not Set'}</td>
+                                    <td className="px-6 py-1.5 poppins-regular  text-[11.2px] text-justify">{r.excerpt ? trimText(r.excerpt, 150) : 'Not Set'}</td>
                                     <td>
                                         <div className='px-6 py-1.5 text-center poppins-bold text-xl text-teal-800 gap-1 flex relative'>
                                             <Tooltip>

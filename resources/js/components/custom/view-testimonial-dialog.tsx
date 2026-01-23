@@ -15,7 +15,7 @@ function ViewTestimonialDialog(props: ViewTestimonialDialogProps) {
     const testimonial = props.testimonial ?? null;
     return (
         <Dialog open={props.show} onOpenChange={props.onClose}>
-            <DialogContent className="text-gray-50  bg-slate-900/95 w-[90vw] md:w-200 md:max-w-200 lg:max-w-250 lg:w-250 max-w-[95vw] border-gray-700" >
+            <DialogContent className="text-slate-800  bg-white w-[90vw] md:w-200 md:max-w-200 lg:max-w-250 lg:w-250 max-w-[95vw] border-gray-700 px-6" >
                 <DialogHeader>
                     <DialogTitle >
                         <span className='sr-only'> View Testimonial </span>

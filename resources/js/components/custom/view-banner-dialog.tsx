@@ -21,7 +21,7 @@ function ViewPostDialog(props: ViewPostDialogProps) {
     const banner = props.banner ?? null;
     return (
         <Dialog open={props.show} onOpenChange={props.onClose}>
-            <DialogContent className="text-gray-50  bg-slate-900/95 w-[90vw] md:w-200 md:max-w-200 lg:max-w-300 lg:w-300 max-w-[95vw] border-gray-700" >
+            <DialogContent className="text-slate-800  bg-white w-[90vw] md:w-200 md:max-w-200 lg:max-w-300 lg:w-300 max-w-[95vw] border-gray-700" >
                 <DialogHeader>
                     <DialogTitle >
                         <span className='sr-only'> View Banner Dialog </span>
@@ -30,7 +30,7 @@ function ViewPostDialog(props: ViewPostDialogProps) {
                         <span className='sr-only'> This just show the post view </span>
                     </DialogDescription>
                 </DialogHeader>
-                <div className='max-h-[80vh] overflow-auto px-4 py-5 scroll-slim flex flex-col gap-4 mb-4 '>
+                <div className='max-h-[80vh] overflow-auto px-4 py-5 scroll-slim flex flex-col gap-4 mb-4 text-white'>
                     {banner?.type && [1, 2, 3].includes(banner.type) ?
                         <BackgroundImg imageSrc={`/storage/images/banners/${banner?.media}`} className='aspect-21/9'>
                             {
