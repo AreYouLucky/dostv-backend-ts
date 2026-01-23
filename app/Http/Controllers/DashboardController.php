@@ -70,8 +70,7 @@ class DashboardController extends Controller
 
     public function getRecentPost()
     {
-        return Post::select('posts.thumbnail', 'posts.title', 'posts.date_published', 'posts.excerpt')
-            ->whereNot('status', 'trashed')
+        return Post::whereNot('status', 'trashed')->with('post_program')
             ->orderBy('date_published', 'desc')
             ->get()
             ->take(7);

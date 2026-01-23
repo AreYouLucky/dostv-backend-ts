@@ -56,7 +56,7 @@ function TopYouTube() {
             <Crown className="w-4 h-4" />
           </div>
           <div>
-            <h3 className="text-[15px] font-semibold tracking-wide text-slate-800 uppercase">
+            <h3 className="text-[15px] font-semibold tracking-wide text-teal-800 uppercase">
               Top 10 YouTube Videos
             </h3>
             <p className="text-[11px] text-slate-500">

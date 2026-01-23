@@ -31,7 +31,7 @@ function ViewPostDialog(props: ViewPostDialogProps) {
     }
     return (
         <Dialog open={props.show} onOpenChange={props.onClose}>
-            <DialogContent className="text-gray-50  bg-slate-900/95 w-[90vw] md:w-200 md:max-w-200 lg:max-w-250 lg:w-250 max-w-[95vw] border-gray-700" >
+            <DialogContent className="text-slate-900  bg-gray-50/95 w-[90vw] md:w-200 md:max-w-200 lg:max-w-250 lg:w-250 max-w-[95vw] border-gray-700" >
                 <DialogHeader>
                     <DialogTitle >
                         <span className='sr-only'> View Post Dialog </span>
@@ -41,7 +41,7 @@ function ViewPostDialog(props: ViewPostDialogProps) {
                     </DialogDescription>
                 </DialogHeader>
                 {post?.type == 'video' ?
-                    <div className='max-h-[80vh] overflow-auto px-4 scroll-slim flex flex-col gap-4 mb-4'>
+                    <div className='max-h-[80vh] overflow-auto px-4 scroll-slim flex flex-col gap-4 mb-4 '>
                         <div className='w-full rounded-lg my-2'>
                             <div className="mb-4 inter-semibold text-lg">
                                 Teaser Preview
@@ -50,7 +50,7 @@ function ViewPostDialog(props: ViewPostDialogProps) {
                                 imageSrc={`/storage/images/post_images/thumbnails/${post?.thumbnail}`}
                                 className=" w-full border-2 border-gray-500 rounded-lg overflow-hidden"
                             >
-                                <div className=" text-white bg-black/80 w-full inset-0 grid md:grid-cols-2 py-4">
+                                <div className=" text-white bg-linear-to-r from-slate-900/80 via-slate-700/80 to-slate-800/80 w-full inset-0 grid md:grid-cols-2 py-4">
                                     <div className='flex items-center'>
                                         <div className="px-8 py-4">
                                             <p className="text-[11px] poppins-semibold text-teal-500">{formatDate(post?.date_published as string)}</p>
@@ -73,7 +73,7 @@ function ViewPostDialog(props: ViewPostDialogProps) {
                                             thumbnailSrc={`/storage/images/post_images/banners/${post?.banner}`}
                                             thumbnailFallbackSrc={`/storage/images/post_images/thumbnails/${post?.thumbnail}`}
                                             delay={3000}
-                                            className=" w-auto my-1 rounded border border-gray-500"
+                                            className=" w-auto my-1 rounded border-2 border-gray-500"
                                         />
                                         {post?.trailer && <span className='absolute right-3 top-0 bg-teal-700 px-3 py-1 rounded text-sm poppins-semibold'>Teaser Video </span>}
 
@@ -82,10 +82,10 @@ function ViewPostDialog(props: ViewPostDialogProps) {
                             </BackgroundImg>
                         </div>
 
-                        <div className=" inter-semibold text-lg mt-8">
+                        <div className=" inter-semibold text-lg">
                             Post Preview
                         </div>
-                        <div className='w-full mb-2  border rounded-lg p-8'>
+                        <div className='w-full mb-2  border rounded-lg p-8 bg-linear-to-br from-slate-900 via-slate-700 to-slate-800 text-white'>
                             <div className='mt-2 '>
                                 <VideoEmbed url={post?.url as string}
                                     platform={post?.platform as string}
@@ -111,10 +111,10 @@ function ViewPostDialog(props: ViewPostDialogProps) {
 
                         </div>
                     </div> :
-                    <div className='w-full'>
+                    <div className='w-ful p-6'>
                         <p className="px-4 text-xl font-bold inter-bold relative mb-1">{post?.title}</p>
                         {post?.post_program?.title && (
-                            <div className=" ml-4 mb-2 text-[11px] px-2 py-1 bg-linear-to-r from-teal-900 to-teal-600 rounded poppins-semibold w-fit">{post.post_program.title}</div>
+                            <div className=" ml-4 mb-2 text-[11px] px-2 py-1 bg-linear-to-r text-white from-teal-900 to-teal-600 rounded poppins-semibold w-fit">{post.post_program.title}</div>
                         )}
 
                         <div

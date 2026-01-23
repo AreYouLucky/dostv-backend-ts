@@ -9,9 +9,9 @@ type PieData = {
 import { useFetchProgramCount } from "./dashboard-hooks";
 
 export default function CategoryPieChart() {
-    const { data, isLoading } = useFetchProgramCount();
+    const { data, isFetching } = useFetchProgramCount();
 
-    if (isLoading) return
+    if (isFetching) return
     <div className=" flex justify-center  flex-col rounded-2xl bg-white/80 shadow-md">
         <CardSkeleton type="single" />;
     </div>

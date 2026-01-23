@@ -27,7 +27,7 @@ function Dashboard() {
                     <div className='md:col-span-2'>
                         <ContentCount />
                     </div>
-                    <div className='md:col-span-3'>
+                    <div className='md:col-span-3 rounded-2xl bg-white/80 min-h-40  shadow-md hover:shadow-lg transition-shadow duration-200'>
                         <CategoryPieChart />
                     </div>
                 </div>

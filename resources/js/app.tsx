@@ -37,4 +37,9 @@ createInertiaApp({
         // Whether the NProgress spinner will be shown...
         showSpinner: false,
     },
+    defaults: {
+        visitOptions: () => {
+            return { viewTransition: true }
+        },
+    },
 });

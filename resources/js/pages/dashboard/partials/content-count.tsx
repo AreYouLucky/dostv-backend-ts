@@ -1,11 +1,11 @@
 import { useFetchContentCount } from "./dashboard-hooks";
 import { CardSkeleton } from "@/components/custom/card-skeleton";
 function ContentCount() {
-    const { data, isLoading } = useFetchContentCount();
-    if (isLoading) {
+    const { data, isFetching } = useFetchContentCount();
+    if (isFetching) {
         return (
-            <div className="aspect-square flex  flex-col rounded-2xl bg-white/80 shadow-md">
-                <CardSkeleton type="content" />;
+            <div className=" flex  flex-col rounded-2xl bg-white/80 shadow-md">
+                <CardSkeleton type="chart" />
             </div>
         );
     }

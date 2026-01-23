@@ -11,6 +11,8 @@ interface AppLayoutProps {
 export default ({ children, breadcrumbs, ...props }: AppLayoutProps) => (
     <AppLayoutTemplate breadcrumbs={breadcrumbs} {...props}>
         <Toaster />
-        {children}
+        <main className='page-content'>
+            {children}
+        </main>
     </AppLayoutTemplate>
 );
