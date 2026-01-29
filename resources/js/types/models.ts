@@ -137,3 +137,21 @@ export interface TestimonialModel {
   created_at: string | null;
   updated_at: string | null;
 }
+
+export interface AgencyModel{
+   name: string | null;
+   website_url: string | null;
+}
+
+export interface RegionModel{
+   name: string | null;
+}
+
+export interface ProgramSeasonModel{
+   title: string | null;
+   description: string | null;
+   program_id: number | null;
+   thumbnail: string | null;
+   thumbnail_image: File | string | null;
+   season: number | null;
+}

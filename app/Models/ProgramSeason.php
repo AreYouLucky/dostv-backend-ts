@@ -8,6 +8,6 @@ class ProgramSeason extends Model
 {
     protected $table = 'program_seasons';
     protected $fillable = [
-        'program', 'title', 'description', 'thumbnail'
+        'program', 'title', 'description', 'thumbnail','season'
     ];
 }
