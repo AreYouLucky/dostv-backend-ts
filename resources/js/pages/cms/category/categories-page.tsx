@@ -97,8 +97,8 @@ function CategoriesPage() {
                         <PaginatedSearchTable<CategoriesModel>
                             items={data ?? []}
                             headers={[
-                                { name: "Title", position: "center" },
-                                { name: "Description", position: "center" },
+                                { name: "Category Title", position: "center" },
+                                { name: "Category Description", position: "center" },
                                 { name: "Actions", position: "center" },
                             ]}
                             searchBy={(item) => `${item.title} ${item.description}`}
