@@ -206,7 +206,7 @@ function PostForm() {
                                     <InputError message={errors.title} />
                                 </div>
                                 <div className="grid gap-1">
-                                    <Label htmlFor="program_type" className="text-gray-600 poppins-semibold text-[13px]">Program</Label>
+                                    <Label htmlFor="program_type" className="text-gray-600 poppins-semibold text-[13px]">Program Type</Label>
                                     <Select
                                         value={String(item.program)}
                                         onValueChange={(value) => {

@@ -26,7 +26,6 @@ function ViewPostDialog(props: ViewPostDialogProps) {
     }
 
     function popTags(text: string) {
-        if(text === '' || text === null) return ;
         const array = text.split(",");
         return <>{array.map((item) => <span className=' bg-linear-to-r from-teal-800 to-teal-600 text-[11px] rounded-lg px-2 py-1 ml-1 '>{item}</span>)}</>
     }

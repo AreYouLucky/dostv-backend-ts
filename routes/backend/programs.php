@@ -20,4 +20,5 @@ Route::middleware('auth')->group(function () {
 
     //Program Seasons
     Route::resource('/program-seasons', ProgramSeasonController::class)->only(['store', 'edit']);
+    Route::post('/save-program-seasons/{id}',[ProgramSeasonController::class,'update']);
 });

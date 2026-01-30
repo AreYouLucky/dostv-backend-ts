@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import PaginatedSearchTable from '@/components/custom/data-table';
 import { useFetchPrograms, useDeleteProgram, useMoveProgram } from './partials/programs-hooks';
 import { ProgramsModel } from '@/types/models';
-import { trimText } from '@/hooks/use-essential-functions';
+import { trimText, purifyDom } from '@/hooks/use-essential-functions';
 import ImageLoader from '@/components/custom/image-loader';
 import { MdPermMedia } from "react-icons/md";
 import { Tooltip, TooltipContent, TooltipTrigger, } from "@/components/ui/tooltip"
@@ -104,18 +104,43 @@ function ProgramsPage() {
                         <PaginatedSearchTable<ProgramsModel>
                             items={data ?? []}
                             headers={[
+                                { name: "Order", position: "center" },
                                 { name: "Title", position: "center" },
                                 { name: "Banner", position: "center" },
-                                { name: "Code", position: "center" },
                                 { name: "Description", position: "center" },
                                 { name: "Type", position: "center" },
                                 { name: "Agency", position: "center" },
-                                { name: "Order", position: "center" },
+                                { name: "Seasons", position: "center" },
                                 { name: "Actions", position: "center" },
                             ]}
                             searchBy={(item) => `${item.title} ${item.description} ${item.agency}`}
                             renderRow={(r) => (
                                 <tr key={r.program_id} className="border-b  duration-300 hover:scale-102">
+                                    <td >
+                                        <div className='px-6 py-1.5 text-center poppins-bold text-xl text-teal-800 gap-1 flex relative'>
+                                            <Tooltip>
+                                                <TooltipTrigger asChild>
+                                                    <button className=' disabled:pointer-events-none disabled:opacity-50 bg-transparent shadow-none hover:bg-teal-100 p-0 rounded-lg duration-300  cursor-pointer text-lg' disabled={(data?.[0].order === r.order)} onClick={() => moveProgramFn(r.program_id as number, 1, r.order as number)}>
+                                                        <FaArrowUp className='text-teal-500 hover:scale-110 duration-300 text-[12px]' />
+                                                    </button>
+                                                </TooltipTrigger>
+                                                <TooltipContent>
+                                                    <p>Move Up</p>
+                                                </TooltipContent>
+                                            </Tooltip>
+                                            <Tooltip>
+                                                <TooltipTrigger asChild>
+                                                    <button className=' disabled:pointer-events-none disabled:opacity-50 bg-transparent shadow-none hover:bg-teal-100 p-0 text-lg rounded-lg duration-300  cursor-pointer' onClick={() => moveProgramFn(r.program_id as number, 2, r.order as number)}
+                                                        disabled={(data?.[data?.length - 1].order === r.order)}>
+                                                        <FaArrowDown className='text-teal-500 hover:scale-110  duration-300 text-[12px]' />
+                                                    </button>
+                                                </TooltipTrigger>
+                                                <TooltipContent>
+                                                    <p>Move Down</p>
+                                                </TooltipContent>
+                                            </Tooltip>
+                                        </div>
+                                    </td>
                                     <td className="px-6 py-1.5 text-start poppins-semibold text-teal-800 text-[12px]">{r.title}</td>
                                     <td >
                                         <div className='flex justify-center items-center relative h-full hover:scale-110 duration-300'>
@@ -128,34 +153,17 @@ function ProgramsPage() {
                                         </div>
                                     </td>
 
-                                    <td className="px-6 py-1.5 text-center text-gray-800 text-[12px]">{r.code}</td>
-                                    <td className="px-6 py-1.5 text-[11px] text-justify">{r.description !== '' ? trimText(r.description, 255) : 'Not Set'}</td>
+                                    <td className="px-6 py-1.5 text-[11px] text-justify">{r.description !== '' ?
+                                        <div
+                                            className="p-2 text-justify"
+                                            dangerouslySetInnerHTML={{
+                                                __html: purifyDom(trimText(r.description, 220) ?? ""),
+                                            }}
+                                        /> : 'Not Set'}</td>
                                     <td className="px-6 py-1.5 text-justify">{r.program_type}</td>
                                     <td className="px-6 py-1.5 text-center">{r.agency}</td>
-                                    <td >
-                                        <div className='px-6 py-1.5 text-center poppins-bold text-xl text-teal-800 gap-1 flex relative'>
-                                            <Tooltip>
-                                                <TooltipTrigger asChild>
-                                                    <button className=' disabled:pointer-events-none disabled:opacity-50 bg-transparent shadow-none hover:bg-teal-100 p-0 rounded-lg duration-300  cursor-pointer text-lg' disabled={(data?.[0].order === r.order)} onClick={() => moveProgramFn(r.program_id as number, 1, r.order as number)}>
-                                                        <FaArrowUp className='text-teal-500 hover:scale-110 duration-300' />
-                                                    </button>
-                                                </TooltipTrigger>
-                                                <TooltipContent>
-                                                    <p>Move Up</p>
-                                                </TooltipContent>
-                                            </Tooltip>
-                                            <Tooltip>
-                                                <TooltipTrigger asChild>
-                                                    <button className=' disabled:pointer-events-none disabled:opacity-50 bg-transparent shadow-none hover:bg-teal-100 p-0 text-lg rounded-lg duration-300  cursor-pointer' onClick={() => moveProgramFn(r.program_id as number, 2, r.order as number)}
-                                                        disabled={(data?.[data?.length - 1].order === r.order)}>
-                                                        <FaArrowDown className='text-teal-500 hover:scale-110  duration-300' />
-                                                    </button>
-                                                </TooltipTrigger>
-                                                <TooltipContent>
-                                                    <p>Move Down</p>
-                                                </TooltipContent>
-                                            </Tooltip>
-                                        </div>
+                                    <td className="px-6 py-1.5 text-center text-gray-800 text-[12px]">
+                                        <Link className="bg-teal-500 text-[11px] poppins-bold text-white px-4 py-1.5 rounded-md shadow-sm uppercase" href={`/program-seasons/${r.program_id}/edit`}>view</Link>
                                     </td>
                                     <td>
                                         <div className='px-6 py-1.5 text-center poppins-bold text-xl text-teal-800 gap-1 flex relative'>

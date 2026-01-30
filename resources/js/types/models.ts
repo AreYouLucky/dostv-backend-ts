@@ -132,26 +132,37 @@ export interface TestimonialModel {
   description: string | null;
   excerpt: string | null;
   is_active: number | null;
-  is_banner: number | null; 
+  is_banner: number | null;
   date_published: string | null;
   created_at: string | null;
   updated_at: string | null;
 }
-
-export interface AgencyModel{
-   name: string | null;
-   website_url: string | null;
+export interface AgencyModel {
+  name: string | null;
+  website_url: string | null;
 }
 
-export interface RegionModel{
-   name: string | null;
+export interface RegionModel {
+  name: string | null;
 }
 
-export interface ProgramSeasonModel{
-   title: string | null;
-   description: string | null;
-   program_id: number | null;
-   thumbnail: string | null;
-   thumbnail_image: File | string | null;
-   season: number | null;
+export interface PostAgencyModel {
+  post_id: number | null;
+  agency_id: number | null;
 }
+
+export interface PostRegionModel {
+  post_id: number | null;
+  region_id: number | null;
+}
+
+export interface ProgramSeasonModel {
+  uuid: number | null;
+  program: number | null;
+  title: string | null;
+  description: string | null;
+  thumbnail: string | null;
+  season: number | null;
+  [key: string | number]: unknown;
+}
+
