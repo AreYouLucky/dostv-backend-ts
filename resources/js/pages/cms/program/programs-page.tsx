@@ -11,7 +11,7 @@ import { trimText, purifyDom } from '@/hooks/use-essential-functions';
 import ImageLoader from '@/components/custom/image-loader';
 import { MdPermMedia } from "react-icons/md";
 import { Tooltip, TooltipContent, TooltipTrigger, } from "@/components/ui/tooltip"
-import { FaTrash, FaEdit, FaArrowUp, FaArrowDown } from "react-icons/fa";
+import { FaTrash, FaEdit, FaArrowUp, FaArrowDown , FaEye} from "react-icons/fa";
 import ConfirmationDialog from '@/components/custom/confirmation-dialog';
 import { toast } from 'sonner';
 import { useState } from 'react';
@@ -163,7 +163,7 @@ function ProgramsPage() {
                                     <td className="px-6 py-1.5 text-justify">{r.program_type}</td>
                                     <td className="px-6 py-1.5 text-center">{r.agency}</td>
                                     <td className="px-6 py-1.5 text-center text-gray-800 text-[12px]">
-                                        <Link className="bg-teal-500 text-[11px] poppins-bold text-white px-4 py-1.5 rounded-md shadow-sm uppercase" href={`/program-seasons/${r.program_id}/edit`}>view</Link>
+                                        <Link className="bg-teal-500 text-[11px] poppins-bold text-white px-4 py-1.5 rounded-md shadow-sm uppercase flex items-center gap-2" href={`/program-seasons/${r.program_id}/edit`}> <FaEye/> view</Link>
                                     </td>
                                     <td>
                                         <div className='px-6 py-1.5 text-center poppins-bold text-xl text-teal-800 gap-1 flex relative'>

@@ -11,7 +11,13 @@ use App\Models\Program;
 use App\Models\Category;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\Rule;
 use App\Services\ContentFunctions;
+use App\Models\ProgramSeason;
+use App\Models\Agency;
+use App\Models\Region;
+use App\Models\PostAgency;
+use App\Models\PostRegion;
 
 class PostController extends Controller
 {
@@ -38,15 +44,15 @@ class PostController extends Controller
     {
         $query = Post::query();
         if ($request->filled('status')) {
-                $query->where('status', $request->status);
+            $query->where('status', $request->status);
         } else {
             $query->where('status', '!=', 'trashed');
         }
         if ($request->filled('title')) {
             $query->where('title', 'like', '%' . $request->title . '%');
         }
-        if ($request->filled('program_id')) {
-            $query->where('program_id', $request->program_id);
+        if ($request->filled('program')) {
+            $query->where('program_id', $request->program);
         }
         if ($request->filled('type')) {
             $query->where('type', $request->type);
@@ -54,6 +60,15 @@ class PostController extends Controller
 
         return $query
             ->with('post_program')
+            ->with([
+                'agencies' => function ($q) {
+                    $q->join('agencies', 'post_agencies.agency_id', '=', 'agencies.id')
+                        ->select(
+                            'post_agencies.*',
+                            'agencies.name as agency_name'
+                        );
+                },
+            ])
             ->orderBy('date_published', 'desc')
             ->paginate(10);
     }
@@ -64,9 +79,15 @@ class PostController extends Controller
     {
         $categories  =  Category::select('category_id', 'title', 'description')->where('is_active', 1)->orderBy('title', 'asc')->get();
         $programs = Program::select('program_id', 'code', 'program_type', 'title', 'description', 'agency', 'image')->where('is_active', 1)->orderBy('title', 'asc')->get();
+        $seasons = ProgramSeason::get();
+        $agencies = Agency::orderBy('name', 'asc')->get();
+        $regions = Region::orderBy('name', 'asc')->get();
         return Inertia::render('cms/post/partials/post-form', [
             'categories' => $categories,
             'programs' => $programs,
+            'seasons' => $seasons,
+            'agencies' => $agencies,
+            'regions' => $regions
         ]);
     }
 
@@ -75,7 +96,7 @@ class PostController extends Controller
         $request->validate([
             'title' => 'required|string|max:255|unique:posts,title',
             'type' => 'required|string|max:50',
-            'program' => 'required|string|max:50',
+            'program' => 'required|number|max:50',
             'content' => 'required|string',
             'featured_guest' => 'nullable|string|max:255',
             'date_published' => 'required|string|max:50',
@@ -85,9 +106,8 @@ class PostController extends Controller
             'url' => 'nullable|url|max:255',
             'banner_image' => 'nullable|max:10240',
             'thumbnail_image' => 'required|max:10240',
-            'agency' => 'required|string|max:100',
             'tags' => 'nullable|string|max:255',
-            'trailer_file' => 'nullable|max:10240',
+            'trailer_file' => 'nullable|max:50240',
         ]);
 
         try {
@@ -117,7 +137,6 @@ class PostController extends Controller
                 'trailer' => $trailer_filename ?? null,
                 'thumbnail' => $thumbnail_filename ?? null,
                 'banner_image' => $banner_filename ?? null,
-                'agency' => $request->agency,
                 'tags' => $request->tags,
                 'description' => $this->stripHtml($request->content),
                 'status'   => 'published',
@@ -129,6 +148,22 @@ class PostController extends Controller
                 PostCategory::create([
                     'post_id' => $post->post_id,
                     'category' => $category_id,
+                ]);
+            }
+
+            $agencies = json_decode($request->agencies, true);
+            foreach ($agencies as $agency_id) {
+                PostAgency::create([
+                    'post_id' => $post->post_id,
+                    'agency_id' => $agency_id
+                ]);
+            }
+
+            $regions = json_decode($request->regions, true);
+            foreach ($regions as $region_id) {
+                PostRegion::create([
+                    'post_id' => $post->post_id,
+                    'region_id' => $region_id
                 ]);
             }
 
@@ -154,23 +189,26 @@ class PostController extends Controller
 
     public function edit(string $code)
     {
-        $post  =  Post::where('slug', $code)->with('categories')->first();
+        $post  =  Post::where('slug', $code)->with('categories')->with('agencies')->with('regions')->first();
         $categories  =  Category::select('category_id', 'title', 'description')->where('is_active', 1)->orderBy('title', 'asc')->get();
         $programs = Program::select('program_id', 'code', 'program_type', 'title', 'description', 'agency', 'image')->where('is_active', 1)->orderBy('title', 'asc')->get();
+        $seasons = ProgramSeason::get();
+        $agencies = Agency::orderBy('name', 'asc')->get();
+        $regions = Region::orderBy('name', 'asc')->get();
         return Inertia::render('cms/post/partials/post-form', [
             'categories' => $categories,
             'programs' => $programs,
-            'post' => $post
+            'post' => $post,
+            'seasons' => $seasons,
+            'agencies' => $agencies,
+            'regions' => $regions
         ]);
     }
 
     public function update(Request $request, string $code, ContentFunctions $content)
     {
         $request->validate([
-            'title' => 'required',
-            'string',
-            'max:255',
-            "unique:posts,title,{$code},slug",
+            'title' => "required|string|max:255|unique:posts,title," . $code . ",slug",
             'type' => 'required|string|max:50',
             'program' => 'required|string|max:50',
             'content' => 'required|string',
@@ -182,10 +220,10 @@ class PostController extends Controller
             'url' => 'nullable|url|max:255',
             'banner_image' => 'nullable|image|max:10240',
             'thumbnail_image' => 'nullable|image|max:10240',
-            'agency' => 'required|string|max:100',
             'tags' => 'nullable|string|max:255',
             'trailer_file' => 'nullable|mimes:mp4,avi|max:30400',
         ]);
+
 
         try {
             DB::beginTransaction();
@@ -218,7 +256,6 @@ class PostController extends Controller
             $post->trailer = $post->trailer ?? null;
             $post->thumbnail = $post->thumbnail ?? null;
             $post->banner = $post->banner ?? null;
-            $post->agency = $request->agency;
             $post->tags = $request->tags;
             $post->description = $this->stripHtml($request->content);
             $post->status = 'published';
@@ -231,6 +268,22 @@ class PostController extends Controller
                 PostCategory::create([
                     'post_id' => $post->post_id,
                     'category' => $category_id,
+                ]);
+            }
+            PostAgency::where('post_id', $post->post_id)->delete();
+            $agencies = json_decode($request->agencies, true);
+            foreach ($agencies as $agency_id) {
+                PostAgency::create([
+                    'post_id' => $post->post_id,
+                    'agency_id' => $agency_id
+                ]);
+            }
+            PostRegion::where('post_id', $post->post_id)->delete();
+            $regions = json_decode($request->regions, true);
+            foreach ($regions as $region_id) {
+                PostRegion::create([
+                    'post_id' => $post->post_id,
+                    'region_id' => $region_id
                 ]);
             }
             DB::commit();
@@ -277,7 +330,7 @@ class PostController extends Controller
     public function togglePostFeatured(String $post)
     {
         $post = Post::where('slug', $post)->first();
-        Post::where('program', $post->program)->update(['is_featured' => 0]);
+        Post::where('program_id', $post->program_id)->update(['is_featured' => 0]);
         $post->is_featured = !$post->is_featured;
         $post->save();
         return response()->json([

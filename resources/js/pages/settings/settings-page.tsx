@@ -14,6 +14,10 @@ import { FaRegSave } from "react-icons/fa";
 import { useState } from "react";
 import axios from 'axios';
 import ConfirmationDialog from '@/components/custom/confirmation-dialog';
+import Cropper from "react-easy-crop";
+import { type Area } from "react-easy-crop";
+import { MdOutlineChangeCircle } from "react-icons/md";
+
 
 const breadcrumbs: BreadcrumbItem[] = [
     { title: 'Settings', href: '/Settings' },
@@ -31,6 +35,12 @@ function SettingsPage() {
     const getInitials = useInitials();
     const [successDialog, setSuccessDialog] = useState(false);
     const [currentUser, setCurrentUser] = useState<User>(user);
+    const [image, setImage] = useState<string | null>(null);
+    const [crop, setCrop] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
+    const [zoom, setZoom] = useState<number>(1);
+    const [croppedAreaPixels, setCroppedAreaPixels] = useState<Area | null>(null);
+    const [showCropper, setShowCropper] = useState<boolean>(false);
+
     const [tab, setTab] = useState<'profile' | 'password'>('profile');
     const [message, setMessage] = useState('');
     const [loading, setLoading] = useState(false);
@@ -47,7 +57,7 @@ function SettingsPage() {
                 setSuccessDialog(true)
                 setLoading(false)
             }
-        ).catch((err)=>{
+        ).catch((err) => {
             setErrors(err.response.data.errors)
             setLoading(false)
         })
@@ -57,18 +67,90 @@ function SettingsPage() {
         const formData = new FormData();
         formData.append('name', item.name);
         formData.append('email', item.email);
-        axios.post('/update-profile',formData).then(
+        axios.post('/update-profile', formData).then(
             (res) => {
                 setMessage(res.data.status)
-                setCurrentUser({...currentUser, name: item.name, email: item.email})
+                setCurrentUser({ ...currentUser, name: item.name, email: item.email })
                 setSuccessDialog(true)
                 setLoading(false)
             }
-        ).catch((err)=>{
+        ).catch((err) => {
             setErrors(err.response.data.errors)
             setLoading(false)
         })
     }
+
+    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        const imageUrl = URL.createObjectURL(file);
+        setImage(imageUrl);
+        setShowCropper(true);
+    };
+    const onCropComplete = (_: Area, croppedPixels: Area) => {
+        setCroppedAreaPixels(croppedPixels);
+    };
+
+
+    const handleUploadProfile = async (): Promise<void> => {
+        if (!image || !croppedAreaPixels) return;
+
+        try {
+            const croppedImageBlob = await getCroppedImg(image, croppedAreaPixels);
+
+            const formData = new FormData();
+            formData.append("image", croppedImageBlob, "profile.png");
+            await axios.post("/update-profile-picture", formData, {
+                headers: { "Content-Type": "multipart/form-data" }
+            }).then(() => {
+                window.location.reload();
+            });
+            setShowCropper(false);
+        } catch (error) {
+            console.error(error);
+            alert("An unexpected error occurred. Please try again.");
+        }
+    };
+
+    const getCroppedImg = (imageSrc: string, crop: Area): Promise<Blob> => {
+        return new Promise((resolve, reject) => {
+            const image = new Image();
+            image.crossOrigin = "anonymous";
+            image.src = imageSrc;
+
+            image.onload = () => {
+                const canvas = document.createElement("canvas");
+                const ctx = canvas.getContext("2d");
+
+                if (!ctx) return reject("2D context not supported");
+
+                canvas.width = crop.width;
+                canvas.height = crop.height;
+
+                ctx.drawImage(
+                    image,
+                    crop.x,
+                    crop.y,
+                    crop.width,
+                    crop.height,
+                    0,
+                    0,
+                    crop.width,
+                    crop.height
+                );
+
+                canvas.toBlob((blob) => {
+                    if (!blob) return reject("Canvas is empty");
+                    resolve(blob);
+                }, "image/png");
+            };
+
+            image.onerror = () => reject("Failed to load image");
+        });
+    };
+
+
 
 
     return (
@@ -82,13 +164,19 @@ function SettingsPage() {
                     </h1>
                 </div>
                 <div className="grid md:grid-cols-3 gap-6">
-                    <div className="bg-linear-to-br from-teal-900 to-teal-600 rounded-2xl shadow-md hover:shadow-lg transition-shadow duration-200 flex justify-center items-center p-6 gap-4">
-                        <Avatar className="h-28 w-28">
-                            <AvatarImage src={user.avatar} alt={user.name} />
-                            <AvatarFallback className="rounded-full bg-neutral-200 text-black inter-bold text-4xl">
-                                {getInitials(currentUser.name)}
-                            </AvatarFallback>
-                        </Avatar>
+                    <div className="bg-linear-to-br from-teal-900 to-teal-600 rounded-2xl shadow-md hover:shadow-lg transition-shadow duration-200 flex justify-center flex-col items-center p-6 gap-4">
+                        <div className='relative'>
+                            <Avatar className="h-40 w-40 border-8">
+                                <AvatarImage src={user.avatar && `/storage/${user.avatar}`} alt={user.name} />
+                                <AvatarFallback className="rounded-full bg-neutral-200 text-black inter-bold text-4xl">
+                                    {getInitials(currentUser.name)}
+                                </AvatarFallback>
+                            </Avatar>
+                            <label className='absolute right-2 bottom-2 cursor-pointer' data-popover-target="popover-default">
+                                <MdOutlineChangeCircle className='text-3xl text-teal-600 bg-white rounded-full' />
+                                <input type="file" accept="image/*" className="hidden" onChange={handleFileChange} />
+                            </label>
+                        </div>
                         <div className="text-center text-white">
                             <p className="text-xl font-semibold inter-semibold truncate uppercase">{currentUser.name}</p>
                             <p className="text-gray-200 text-sm truncate">{currentUser.email}</p>
@@ -180,7 +268,29 @@ function SettingsPage() {
                 </div>
             </div>
             <ConfirmationDialog show={successDialog} onClose={() => setSuccessDialog(false)} type={1} message={message} />
+            {showCropper && (
+                <div className="fixed top-0 left-0 w-screen h-screen bg-black/70 z-50 flex flex-col items-center justify-center p-4">
+                    <div className="p-8 bg-white rounded-lg">
+                        <div className="relative md:w-[650px] md:h-[650px]  w-[300px] h-[300px]  bg-white rounded-lg p-4 overflow-hidden">
+                            <Cropper
+                                image={image ?? undefined}
+                                crop={crop}
+                                zoom={zoom}
+                                aspect={1}
+                                onCropChange={setCrop}
+                                onZoomChange={setZoom}
+                                onCropComplete={onCropComplete}
+                            />
 
+                        </div>
+
+                        <div className="mt-4 flex gap-2">
+                            <Button onClick={handleUploadProfile} className="px-4 py-2 bg-teal-600 text-white rounded-lg">Update Profile</Button>
+                            <Button onClick={() => setShowCropper(false)} className="px-4 py-2 bg-gray-200 rounded-lg border">Cancel</Button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </>
     );
 }

@@ -93,7 +93,7 @@ export interface PostModel {
   thumbnail: string | null;
   thumbnail_image: File | string | null;
   guest: string | null;
-  agency: string | null;
+  agencies: PostAgencyModel[] | null;
   date_published: string | null;
   is_featured: number | null;
   feature_guest: string | null;
@@ -103,6 +103,8 @@ export interface PostModel {
   featured_guest: string | null;
   post_program: ProgramsModel;
   categories: CategoriesModel[];
+  season: number | null;
+  regions: RegionModel[];
 }
 
 
@@ -138,17 +140,20 @@ export interface TestimonialModel {
   updated_at: string | null;
 }
 export interface AgencyModel {
+  id: number | null;
   name: string | null;
   website_url: string | null;
 }
 
 export interface RegionModel {
+  id: number | null;
   name: string | null;
 }
 
 export interface PostAgencyModel {
   post_id: number | null;
   agency_id: number | null;
+  agency_name: string | null;
 }
 
 export interface PostRegionModel {
@@ -158,7 +163,8 @@ export interface PostRegionModel {
 
 export interface ProgramSeasonModel {
   uuid: number | null;
-  program: number | null;
+  id: number | null;
+  program_id: number | null;
   title: string | null;
   description: string | null;
   thumbnail: string | null;

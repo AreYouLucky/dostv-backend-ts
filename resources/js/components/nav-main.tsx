@@ -8,7 +8,9 @@ import {
 import { resolveUrl } from '@/lib/utils';
 import { type NavItem } from '@/types';
 import { Link, usePage } from '@inertiajs/react';
-import { LayoutGrid} from 'lucide-react';
+import { LayoutGrid } from 'lucide-react';
+import { FaUsersCog } from "react-icons/fa";
+import { LuSquareActivity } from "react-icons/lu";
 
 export function NavMain({ items = [] }: { items: NavItem[] }) {
     const page = usePage();
@@ -48,6 +50,35 @@ export function NavMain({ items = [] }: { items: NavItem[] }) {
                         </SidebarMenuButton>
                     </SidebarMenuItem>
                 ))}
+            </SidebarMenu>
+            <SidebarGroupLabel className='mt-4 text-[12px] py-2 text-gray-400'>User Activity</SidebarGroupLabel>
+            <SidebarMenu >
+                <SidebarMenuItem >
+                    <SidebarMenuButton
+                        asChild
+                        isActive={page.url.startsWith(
+                            resolveUrl('/users-management'),
+                        )}
+                        tooltip={{ children: 'Manage Users' }}
+                    >
+                        <Link href='/users-management' prefetch>
+                            <FaUsersCog />
+                            <span className='text-[12.5px] inter-semibold'>Users</span>
+                        </Link>
+                    </SidebarMenuButton>
+                    <SidebarMenuButton
+                        asChild
+                        isActive={page.url.startsWith(
+                            resolveUrl('/activities'),
+                        )}
+                        tooltip={{ children: 'View Activities' }}
+                    >
+                        <Link href='/activities' prefetch>
+                            <LuSquareActivity />
+                            <span className='text-[12.5px] inter-semibold'>activities</span>
+                        </Link>
+                    </SidebarMenuButton>
+                </SidebarMenuItem>
             </SidebarMenu>
         </SidebarGroup>
     );

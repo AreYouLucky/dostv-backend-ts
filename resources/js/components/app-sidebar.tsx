@@ -48,6 +48,7 @@ const mainNavItems: NavItem[] = [
     },
 ];
 
+
 const footerNavItems: NavItem[] = [
     {
         title: 'About',

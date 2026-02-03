@@ -3,7 +3,7 @@ import AppLayout from "@/layouts/app-layout";
 import { ImFilePicture } from "react-icons/im";
 import { useHandleChange } from "@/hooks/use-handle-change";
 import { Head, usePage } from "@inertiajs/react";
-import { PostModel, ProgramsModel, CategoriesModel } from "@/types/models";
+import { PostModel, ProgramsModel, CategoriesModel, ProgramSeasonModel, AgencyModel, RegionModel } from "@/types/models";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/text-area";
 import { Label } from "@/components/ui/label";
@@ -26,6 +26,7 @@ import { useCreatePost, useUpdatePost } from "./post-hooks";
 import { toast } from "sonner"
 import ConfirmationDialog from "@/components/custom/confirmation-dialog";
 import LoadingDialog from "@/components/custom/loading-dialog";
+import { MultiSelect } from "@/components/custom/multiselect";
 import {
     Select,
     SelectTrigger,
@@ -42,12 +43,16 @@ const breadcrumbs = [
 
 
 function PostForm() {
-    const { props } = usePage<{ programs?: ProgramsModel[] | null, categories?: CategoriesModel[] | null, post?: PostModel | null }>();
+    const { props } = usePage<{
+        programs?: ProgramsModel[] | null, categories?: CategoriesModel[] | null,
+        post?: PostModel | null, seasons?: ProgramSeasonModel[] | null, agencies?: AgencyModel[] | null, regions?: RegionModel[] | null
+    }>();
     const programs = props.programs ?? [];
     const post = props.post ?? null;
     const categories = props.categories ?? [];
     const [message, setMessage] = useState('')
     const [successDialog, setSuccessDialog] = useState(false)
+    const [filteredSeasons, setFilteredSeasons] = useState<ProgramSeasonModel[] | null>()
     const { item, errors, setItem, handleChange, setErrors } = useHandleChange({
         post_id: post?.post_id ?? 0,
         slug: post?.slug ?? '',
@@ -63,16 +68,17 @@ function PostForm() {
         trailer: post?.trailer ?? '',
         banner: post?.banner ?? '',
         thumbnail: post?.thumbnail ?? '',
-        agency: post?.agency ?? '',
+        agencies: post?.agencies ? post.agencies.map((c) => Number(c.agency_id)) : [],
+        regions: post?.regions ? post.regions.map((c) => Number(c.id)) : [],
         date_published: post?.date_published ?? '',
         status: post?.status ?? '',
         tags: post?.tags ?? '',
         thumbnail_image: "" as File | string,
         trailer_file: "" as File | string,
         banner_image: "" as File | string,
+        season: post?.season ?? '',
         categories: post?.categories
-            ? post.categories.map((c) => Number(c.category))
-            : []
+            ? post.categories.map((c) => Number(c.category)) : []
     });
 
 
@@ -83,6 +89,11 @@ function PostForm() {
                 ? [...prev.categories, categoryId]
                 : prev.categories.filter((id) => id !== categoryId),
         }))
+    }
+
+    const filteredSeasonsFn = (program_id: number) => {
+        console.log(props.seasons)
+        setFilteredSeasons(props.seasons?.filter((season) => season.program_id === program_id))
     }
 
 
@@ -113,14 +124,12 @@ function PostForm() {
         if (item.thumbnail_image instanceof File) {
             formData.append("thumbnail_image", item.thumbnail_image);
         }
-        formData.append("agency", String(item.agency));
         formData.append("date_published", String(item.date_published));
         formData.append("status", String(item.status));
         formData.append("tags", String(item.tags));
-        formData.append(
-            "categories",
-            JSON.stringify(item.categories)
-        )
+        formData.append("categories",JSON.stringify(item.categories))
+        formData.append("agencies",JSON.stringify(item.agencies))
+        formData.append("regions",JSON.stringify(item.regions))
 
         return formData;
     }
@@ -180,7 +189,7 @@ function PostForm() {
         <>
             <Head title="Program Form" />
             <div className="flex flex-col flex-1 min-h-0  px-2 py-4">
-                <div className="flex flex-1 flex-col gap-y-5 gap-x-5 rounded-xl px-6 py-3">
+                <div className="flex flex-1 flex-col gap-y-2 rounded-xl px-6 py-3">
                     <div className='bg-teal-600/90 w-full flex flex-col justify-between item-center  shadow-sm border rounded-lg border-gray-300/50  overflow-auto py-6 px-8'>
                         <div className="md:cols-span-2 text-gray-50 poppins-bold md:text-lg text-sm flex items-center justify-start gap-2 md:col-span-3 ">
                             <ImFilePicture /> Post Management Form
@@ -206,17 +215,39 @@ function PostForm() {
                                     <InputError message={errors.title} />
                                 </div>
                                 <div className="grid gap-1">
-                                    <Label htmlFor="program_type" className="text-gray-600 poppins-semibold text-[13px]">Program Type</Label>
+                                    <Label htmlFor="type" className="text-gray-600 poppins-semibold text-[13px]">Type</Label>
                                     <Select
-                                        value={String(item.program)}
+                                        value={String(item.type)}
                                         onValueChange={(value) => {
-                                            setItem((prev) => ({ ...prev, program: value }))
-                                            setErrors((prev) => ({ ...prev, program: '' }))
+                                            setErrors((prev) => ({ ...prev, type: '' }))
+                                            setItem((prev) => ({ ...prev, type: value }))
                                         }
                                         }
                                     >
                                         <SelectTrigger className="border-gray-300">
-                                            <SelectValue placeholder="Choose Program Type" className="text-[12px]" />
+                                            <SelectValue placeholder="" className="text-[12px]" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            <SelectItem value="video">Video</SelectItem>
+                                            <SelectItem value="blog">Blog</SelectItem>
+                                        </SelectContent>
+                                    </Select>
+
+                                    <InputError message={errors.type} />
+                                </div>
+                                <div className="grid gap-1">
+                                    <Label htmlFor="program_type" className="text-gray-600 poppins-semibold text-[13px]">Program</Label>
+                                    <Select
+                                        value={String(item.program)}
+                                        onValueChange={(value) => {
+                                                setItem((prev) => ({ ...prev, program: value }))
+                                                setErrors((prev) => ({ ...prev, program: '' }))
+                                                filteredSeasonsFn(Number(value))
+                                            }
+                                        }
+                                    >
+                                        <SelectTrigger className="border-gray-300">
+                                            <SelectValue placeholder="" className="text-[12px]" />
                                         </SelectTrigger>
                                         <SelectContent>
                                             {programs.map((program) => (
@@ -257,40 +288,59 @@ function PostForm() {
                                     </Select>
                                     <InputError message={errors.program} />
                                 </div>
-                                <div className="grid gap-1">
-                                    <Label htmlFor="type" className="text-gray-600 poppins-semibold text-[13px]">Type</Label>
-                                    <Select
-                                        value={String(item.type)}
-                                        onValueChange={(value) => {
-                                            setErrors((prev) => ({ ...prev, type: '' }))
-                                            setItem((prev) => ({ ...prev, type: value }))
-                                        }
-                                        }
-                                    >
-                                        <SelectTrigger className="border-gray-300">
-                                            <SelectValue placeholder="Choose Post Type" className="text-[12px]" />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            <SelectItem value="video">Video</SelectItem>
-                                            <SelectItem value="blog">Blog</SelectItem>
-                                        </SelectContent>
-                                    </Select>
-
-                                    <InputError message={errors.type} />
-                                </div>
-                                <div className="grid gap-1">
-                                    <Label htmlFor="agency" className="text-gray-600 poppins-semibold text-[13px]">Agency</Label>
-                                    <Input
-                                        id="agency"
-                                        type="text"
-                                        name="agency"
-                                        required
-                                        onChange={handleChange}
-                                        value={String(item.agency)}
-                                        className="text-gray-700 border-gray-300"
-                                    />
-                                    <InputError message={errors.agency} />
-                                </div>
+                                {filteredSeasons && filteredSeasons?.length > 0 &&
+                                    <div className="grid gap-1">
+                                        <Label htmlFor="program_season" className="text-gray-600 poppins-semibold text-[13px]">Program Season</Label>
+                                        <Select
+                                            value={String(item.season)}
+                                            onValueChange={(value) => {
+                                                setItem((prev) => ({ ...prev, season: value }))
+                                                setErrors((prev) => ({ ...prev, season: '' }))
+                                            }
+                                            }
+                                        >
+                                            <SelectTrigger className="border-gray-300">
+                                                <SelectValue placeholder="" className="text-[12px]" />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                {filteredSeasons?.map((season) => (
+                                                    <Tooltip key={season.id} >
+                                                        <TooltipTrigger asChild>
+                                                            <SelectItem
+                                                                value={String(season.id)}
+                                                            >
+                                                                {season.title}  - {season.season}
+                                                            </SelectItem>
+                                                        </TooltipTrigger>
+                                                        <TooltipContent side="right" >
+                                                            <div className="flex flex-row gap-2">
+                                                                <div className="flex flex-col">
+                                                                    <ImageLoader
+                                                                        src={`/storage/images/program_images/seasons/${season.thumbnail}`}
+                                                                        alt="Program Banner"
+                                                                        className="h-12 w-auto my-1 rounded"
+                                                                    />
+                                                                </div>
+                                                                <div>
+                                                                    <p className="poppins-semibold text-[12px]">
+                                                                        {season.title}
+                                                                    </p>
+                                                                    <div
+                                                                        className=" text-justify"
+                                                                        dangerouslySetInnerHTML={{
+                                                                            __html: purifyDom(season.description ?? ""),
+                                                                        }}
+                                                                    />
+                                                                </div>
+                                                            </div>
+                                                        </TooltipContent>
+                                                    </Tooltip>
+                                                ))}
+                                            </SelectContent>
+                                        </Select>
+                                        <InputError message={errors.program} />
+                                    </div>
+                                }
                                 <div className="grid gap-1">
                                     <Label htmlFor="episode" className="text-gray-600 poppins-semibold text-[13px]">Episode</Label>
                                     <Input
@@ -303,6 +353,36 @@ function PostForm() {
                                         className="text-gray-700 border-gray-300"
                                     />
                                     <InputError message={errors.episode} />
+                                </div>
+                                <div className="grid gap-1">
+                                    <Label htmlFor="agency" className="text-gray-600 poppins-semibold text-[13px]">Agencies</Label>
+                                    <MultiSelect
+                                        options={props?.agencies ?? []}
+                                        selectedIds={item.agencies}
+                                        onChange={(ids) =>
+                                            setItem((prev) => ({
+                                                ...prev,
+                                                agencies: ids.map((id) => Number(id)),
+                                            }))}
+                                        getOptionValue={(item) => item.id as number}
+                                        getOptionLabel={(item) => item.name as string}
+                                        placeholder="Select Agencies"
+                                    />
+                                </div>
+                                <div className="grid gap-1">
+                                    <Label htmlFor="region" className="text-gray-600 poppins-semibold text-[13px]">Regions</Label>
+                                    <MultiSelect
+                                        options={props?.regions ?? []}
+                                        selectedIds={item.regions}
+                                        onChange={(ids) =>
+                                            setItem((prev) => ({
+                                                ...prev,
+                                                regions: ids.map((id) => Number(id)),
+                                            }))}
+                                        getOptionValue={(item) => item.id as number}
+                                        getOptionLabel={(item) => item.name as string}
+                                        placeholder="Select Regions"
+                                    />
                                 </div>
                                 <div className="grid gap-1">
                                     <Label htmlFor="featured_guest" className="text-gray-600 poppins-semibold text-[13px]">Featured Guest</Label>
@@ -425,7 +505,7 @@ function PostForm() {
                                 <Label htmlFor="banner_image" className="text-gray-700 poppins-semibold">Banner Image <span className="poppins-regular text-gray-600">(Aspect-Ratio 4:5)</span> </Label>
                                 <FileUpload
                                     type={2}
-                                    url={item?.banner ? `/storage/images/posts/banners/${item.banner}` : ''}
+                                    url={item?.banner ? `/storage/images/post_images/banners/${item.banner}` : ''}
                                     id="banner_image"
                                     name="banner_image"
                                     accept="image/png,image/jpeg"

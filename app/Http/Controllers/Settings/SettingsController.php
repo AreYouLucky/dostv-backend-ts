@@ -40,4 +40,25 @@ class SettingsController extends Controller
             'status' => 'Password successfully updated!'
         ]);
     }
+
+    public function updateProfilePicture(Request $request)
+    {
+        $request->validate([
+            'image' => ['required', 'image', 'mimes:jpg,png,jpeg'],
+        ]);
+
+        if ($request->hasFile("image")) {
+                $file = $request->file("image");
+                $filename = $request->user()->name . '.' . $file->getClientOriginalExtension();
+                $storagePath = $file->storeAs('images/users', $filename, 'public');
+            }
+
+         $request->user()->update([
+            'avatar' => $storagePath ?? null
+        ]);
+
+        return response()->json([
+            'status' => 'Profile Picture successfully updated!'
+        ]);
+    }
 }

@@ -10,4 +10,6 @@ Route::middleware('auth')->group(function () {
     });
     Route::post('/update-password', [SettingsController::class, 'updatePassword']);
     Route::post('/update-profile', [SettingsController::class, 'updateProfile']);
+
+    Route::post('/update-profile-picture', [SettingsController::class, 'updateProfilePicture']);
 });

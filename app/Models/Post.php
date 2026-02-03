@@ -35,6 +35,14 @@ class Post extends Model
     {
         return $this->hasMany(PostCategory::class, 'post_id', 'post_id');
     }
+    public function agencies()
+    {
+        return $this->hasMany(PostAgency::class, 'post_id', 'post_id');
+    }
+        public function regions()
+    {
+        return $this->hasMany(PostRegion::class, 'post_id', 'post_id');
+    }
 
     public function post_program()
     {

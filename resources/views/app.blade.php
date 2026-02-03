@@ -47,13 +47,13 @@
 
         .poppins-medium {
             font-family: "Montserrat", sans-serif;
-            font-weight: 500;
+            font-weight: 450;
             font-style: normal;
         }
 
         .poppins-semibold {
             font-family: "Montserrat", sans-serif;
-            font-weight: 600;
+            font-weight: 550;
             font-style: normal;
         }
 

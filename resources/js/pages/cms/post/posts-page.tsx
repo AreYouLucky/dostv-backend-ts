@@ -295,7 +295,7 @@ function Posts() {
                                     { name: "Thumbnail", position: "center" },
                                     { name: "Description", position: "center" },
                                     { name: "Type", position: "center" },
-                                    { name: "Agency", position: "center" },
+                                    { name: "Agencies", position: "center" },
                                     { name: "Status", position: "center" },
                                     { name: "Actions", position: "center" },
                                 ]}
@@ -313,11 +313,16 @@ function Posts() {
                                             </div>
                                         </td>
                                         <td className="px-6 py-3 text-[11.2px] text-justify wrap-break-words">{post.description !== '' ? trimText(String(post.description), 180) : 'Not Set'}</td>
-                                        <td className="px-6 py-3 text-center">
+                                        <td className="px-6 py-3 text-center uppercase text-[11px]">
                                             {post.type}
                                         </td>
-                                        <td className="px-6 py-3 text-center">
-                                            {post.agency}
+                                        <td className="px-6 py-3 text-center text-[11px]">
+                                            {
+                                                post.agencies?.length
+                                                    ? post.agencies.map((c) => c.agency_name).join(', ')
+                                                    : 'Not Set'
+                                            }
+
                                         </td>
                                         <td className="px-6 py-3 text-center text-xs">
                                             <Select
@@ -348,7 +353,7 @@ function Posts() {
                                         </td>
                                         {item.status === 'trashed' ?
                                             <td className="px-6 py-3 text-center">
-                                                <Button className="flex text-xs items-center gap-1 flex-row bg-teal-700" onClick={() => restorePostFn(post.slug as string)} ><MdOutlineRestore/>Restore</Button>
+                                                <Button className="flex text-xs items-center gap-1 flex-row bg-teal-700" onClick={() => restorePostFn(post.slug as string)} ><MdOutlineRestore />Restore</Button>
                                             </td> :
                                             <td className="px-6 py-3 text-center poppins-bold text-xl text-teal-800 gap-1 flex relative items-center justify-center">
                                                 <Tooltip>

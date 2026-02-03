@@ -13,8 +13,8 @@ export function UserInfo({
 
     return (
         <>
-            <Avatar className="h-8 w-8 overflow-hidden rounded-full">
-                <AvatarImage src={user.avatar} alt={user.name} />
+            <Avatar className="h-8 w-8 overflow-hidden rounded-full border-2">
+                <AvatarImage src={user.avatar && `/storage/${user.avatar}`} alt={user.name} />
                 <AvatarFallback className="rounded-lg bg-neutral-200 text-black dark:bg-teal-700 dark:text-white inter-bold">
                     {getInitials(user.name)}
                 </AvatarFallback>

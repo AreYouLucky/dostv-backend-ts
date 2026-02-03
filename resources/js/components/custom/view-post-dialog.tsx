@@ -27,7 +27,7 @@ function ViewPostDialog(props: ViewPostDialogProps) {
 
     function popTags(text: string) {
         const array = text.split(",");
-        return <>{array.map((item) => <span className=' bg-linear-to-r from-teal-800 to-teal-600 text-[11px] rounded-lg px-2 py-1 ml-1 '>{item}</span>)}</>
+        return <>{array.map((item, index) => <span key={index} className=' bg-linear-to-r from-teal-800 to-teal-600 text-[11px] rounded-lg px-2 py-1 ml-1 '>{item}</span>)}</>
     }
     return (
         <Dialog open={props.show} onOpenChange={props.onClose}>
@@ -47,7 +47,7 @@ function ViewPostDialog(props: ViewPostDialogProps) {
                                 Teaser Preview
                             </div>
                             <BackgroundImg
-                                imageSrc={`/storage/images/post_images/thumbnails/${post?.thumbnail}`}
+                                imageSrc={post.banner ? `/storage/images/post_images/banners/${post?.banner}` : `/storage/images/post_images/thumbnails/${post?.thumbnail}`}
                                 className=" w-full border-2 border-gray-500 rounded-lg overflow-hidden"
                             >
                                 <div className=" text-white bg-linear-to-r from-slate-900/80 via-slate-700/80 to-slate-800/80 w-full inset-0 grid md:grid-cols-2 py-4">
@@ -70,8 +70,8 @@ function ViewPostDialog(props: ViewPostDialogProps) {
                                     <div className='px-4 py-2 flex justify-center items-center relative'>
                                         <VideoWithThumbnail
                                             videoSrc={`/storage/videos/post_videos/trailers/${post?.trailer}`}
-                                            thumbnailSrc={`/storage/images/post_images/banners/${post?.banner}`}
-                                            thumbnailFallbackSrc={`/storage/images/post_images/thumbnails/${post?.thumbnail}`}
+                                            thumbnailSrc={`/storage/images/post_images/thumbnails/${post?.thumbnail}`}
+                                            thumbnailFallbackSrc={`/storage/images/post_images/banners/${post?.banner}`}
                                             delay={3000}
                                             className=" w-auto my-1 rounded border-2 border-gray-500"
                                         />
@@ -100,7 +100,7 @@ function ViewPostDialog(props: ViewPostDialogProps) {
                                 {post?.guest && <p className="text-[12px]">with {post?.guest}</p>}
                                 {/* {post?.agency && <span className=' bg-gray-700 text-[11px] rounded px-2 py-1 '>{post?.agency}</span>} */}
                                 <div
-                                    className="text-justify poppins-light text-[12px] mt-2"
+                                    className="text-justify poppins-light text-[12px] mt-2 bg-transparent text-white"
                                     dangerouslySetInnerHTML={{
                                         __html: purifyDom(post?.content ?? ""),
                                     }}
@@ -118,7 +118,7 @@ function ViewPostDialog(props: ViewPostDialogProps) {
                         )}
 
                         <div
-                            className="p-2 text-justify poppins-light max-h-[80vh] overflow-auto px-4 scroll-slim"
+                            className="p-2 text-justify poppins-light max-h-[80vh] overflow-auto px-4 scroll-slim  text-white"
                             dangerouslySetInnerHTML={{
                                 __html: purifyDom(post?.content ?? ""),
                             }}
