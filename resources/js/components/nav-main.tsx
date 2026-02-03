@@ -11,9 +11,12 @@ import { Link, usePage } from '@inertiajs/react';
 import { LayoutGrid } from 'lucide-react';
 import { FaUsersCog } from "react-icons/fa";
 import { LuSquareActivity } from "react-icons/lu";
+import { type SharedData } from '@/types';
+
 
 export function NavMain({ items = [] }: { items: NavItem[] }) {
     const page = usePage();
+    const { auth } = usePage<SharedData>().props;
     return (
         <SidebarGroup className="px-2 py-3">
             <SidebarMenu >
@@ -54,18 +57,20 @@ export function NavMain({ items = [] }: { items: NavItem[] }) {
             <SidebarGroupLabel className='mt-4 text-[12px] py-2 text-gray-400'>User Activity</SidebarGroupLabel>
             <SidebarMenu >
                 <SidebarMenuItem >
-                    <SidebarMenuButton
-                        asChild
-                        isActive={page.url.startsWith(
-                            resolveUrl('/users-management'),
-                        )}
-                        tooltip={{ children: 'Manage Users' }}
-                    >
-                        <Link href='/users-management' prefetch>
-                            <FaUsersCog />
-                            <span className='text-[12.5px] inter-semibold'>Users</span>
-                        </Link>
-                    </SidebarMenuButton>
+                    {auth.user.role === 'admin' && (
+                        <SidebarMenuButton
+                            asChild
+                            isActive={page.url.startsWith(
+                                resolveUrl('/users-management'),
+                            )}
+                            tooltip={{ children: 'Manage Users' }}
+                        >
+                            <Link href='/users-management' prefetch>
+                                <FaUsersCog />
+                                <span className='text-[12.5px] inter-semibold'>Users</span>
+                            </Link>
+                        </SidebarMenuButton>
+                    )}
                     <SidebarMenuButton
                         asChild
                         isActive={page.url.startsWith(
@@ -75,7 +80,7 @@ export function NavMain({ items = [] }: { items: NavItem[] }) {
                     >
                         <Link href='/activities' prefetch>
                             <LuSquareActivity />
-                            <span className='text-[12.5px] inter-semibold'>activities</span>
+                            <span className='text-[12.5px] inter-semibold'>Activities</span>
                         </Link>
                     </SidebarMenuButton>
                 </SidebarMenuItem>

@@ -31,13 +31,14 @@ export interface SharedData {
 }
 
 export interface User {
-    id: number;
+    user_id: number | null;
     name: string;
-    email: string;
-    avatar?: string;
-    email_verified_at: string | null;
+    email?: string | null;
+    avatar?: string ;
+    role?: string;
+    email_verified_at?: string | null;
     two_factor_enabled?: boolean;
-    created_at: string;
-    updated_at: string;
+    created_at?: string|null;
+    updated_at?: string| null;
     [key: string]: unknown; // This allows for additional properties...
 }

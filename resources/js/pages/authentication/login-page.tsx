@@ -34,10 +34,10 @@ function LoginPage() {
                         autoComplete="email"
                         placeholder="email@example.com"
                         onChange={handleChange}
-                        value={String(item.email)}
+                        value={String(item?.email ?? '')}
                         className="text-gray-500 bg-gray-50"
                     />
-                    <InputError message={errors.email} />
+                    <InputError message={errors?.email ?? ''} />
                 </div>
 
                 <div className="grid gap-2">
@@ -50,10 +50,10 @@ function LoginPage() {
                         autoComplete="current-password"
                         placeholder="Password"
                         onChange={handleChange}
-                        value={String(item.password)}
+                        value={String(item?.password ?? '')}
                         className="text-gray-500 bg-gray-50"
                     />
-                    <InputError message={errors.password} />
+                    <InputError message={errors?.password} />
                 </div>
 
                 <div className="flex items-center space-x-3">

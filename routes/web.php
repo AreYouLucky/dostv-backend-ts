@@ -16,5 +16,6 @@ require __DIR__.'/backend/advertisements.php';
 require __DIR__.'/backend/testimonials.php';
 require __DIR__.'/backend/dashboard.php';
 require __DIR__.'/backend/settings.php';
+require __DIR__.'/backend/users.php';
 
 
