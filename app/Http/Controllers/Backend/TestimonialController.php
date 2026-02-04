@@ -5,8 +5,11 @@ namespace App\Http\Controllers\Backend;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Testimonial;
+use App\Models\User;
 use Inertia\Inertia;
 use App\Services\ContentFunctions;
+use App\Services\UserActions;
+use Illuminate\Support\Facades\Auth;
 
 class TestimonialController extends Controller
 {
@@ -27,7 +30,7 @@ class TestimonialController extends Controller
         return Inertia::render('cms/testimonial/partials/testimonial-form');
     }
 
-    public function store(Request $request, ContentFunctions $content)
+    public function store(Request $request, ContentFunctions $content, UserActions $userActions)
     {
         $request->validate([
             'title' => ['required', 'string', 'unique:testimonials,title'],
@@ -49,6 +52,7 @@ class TestimonialController extends Controller
             'guest' => $request->guest,
             'date_published' => $request->date_published
         ]);
+        $userActions->logUserActions($request->user()->user_id, 'Created a testimonial entitled ' . $request->title);
 
         return response()->json([
             'status' => 'Testimonial Successfully Created!',
@@ -64,7 +68,7 @@ class TestimonialController extends Controller
         ]);
     }
 
-    public function update(Request $request, string $id)
+    public function update(Request $request, string $id, UserActions $userActions)
     {
         $request->validate([
             'title' => ['required', 'string', 'unique:testimonials,title,' . $id . ',testimonial_id'],
@@ -84,6 +88,8 @@ class TestimonialController extends Controller
         $testimonial->guest = $request->guest;
         $testimonial->date_published = $request->date_published;
         $testimonial->save();
+
+        $userActions->logUserActions($request->user()->user_id, 'Updated a testimonial entitled ' . $request->title);
         return response()->json([
             'status' => 'Testimonial Successfully Updated!',
             'testimonial' => $testimonial
@@ -95,16 +101,19 @@ class TestimonialController extends Controller
      */
     public function destroy(string $id)
     {
+
         Testimonial::where('testimonial_id', $id)->update(['is_active'=>0]);
         return response()->json([
             'status' => 'Testimonial Successfully Deleted!'
         ]);
     }
 
-    public function toggleTestimonialVisibility(String $id){
+    public function toggleTestimonialVisibility(String $id, UserActions $userActions){
+        $user = Auth::user();
         $testimonial = Testimonial::where('testimonial_id', $id)->first();
         $testimonial->is_banner = !$testimonial->is_banner;
         $testimonial->save();
+        $userActions->logUserActions($user->user_id, 'Updated a testimonial status entitled ' . $testimonial->title);
         return response()->json([
             'status' => 'Testimonial Status Successfully Updated!'
         ]);

@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Backend;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Category;
+use App\Services\UserActions;
+use Illuminate\Support\Facades\Auth;
 
 class CategoriesController extends Controller
 {
@@ -16,7 +18,7 @@ class CategoriesController extends Controller
         return Category::orderBy('title', 'asc')->where('is_active',1)->get();
     }
 
-    public function store(Request $request)
+    public function store(Request $request, UserActions $userActions)
     {
         $request->validate([
             'title' => ['required', 'string', 'unique:categories,title'],
@@ -28,6 +30,7 @@ class CategoriesController extends Controller
             'is_banner' => 0,
             'is_active' => 1
         ]);
+        $userActions->logUserActions($request->user()->user_id, 'Created a category entitled ' . $request->title);
         return response()->json([
             'status' => 'Category Successfully Added!'
         ]);
@@ -50,7 +53,7 @@ class CategoriesController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, string $id, UserActions $userActions)
     {
         $request->validate([
             'title' => ['required', 'string', 'unique:categories,title,'. $id. ',category_id'],
@@ -60,6 +63,7 @@ class CategoriesController extends Controller
             'title' => $request->title,
             'description' => $request->description,
         ]);
+        $userActions->logUserActions($request->user()->user_id, 'Updated a category entitled ' . $request->title);
         return response()->json([
             'status' => 'Category Successfully Updated!'
         ]);
@@ -68,9 +72,11 @@ class CategoriesController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(string $id, UserActions $userActions)
     {
-        Category::where('category_id', $id)->update(['is_active'=>0]);
+        $user = Auth::user();
+        $cat =Category::where('category_id', $id)->update(['is_active'=>0]);
+        $userActions->logUserActions($user->user_id, 'Deleted a category entitled ' . $cat->title);
         return response()->json([
             'status' => 'Category Successfully Deleted!'
         ]);

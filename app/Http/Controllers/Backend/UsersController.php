@@ -7,6 +7,8 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Validation\Rules\Password;
 use Illuminate\Support\Facades\Hash;
+use App\Services\UserActions;
+use Illuminate\Support\Facades\Auth;
 
 class UsersController extends Controller
 {
@@ -21,7 +23,7 @@ class UsersController extends Controller
             ->orderBy('name', 'asc')
             ->get();
     }
-    public function store(Request $request)
+    public function store(Request $request, UserActions $userActions)
     {
         $request->validate([
             'name' => ['required', 'string', 'max:255', 'unique:users,name,NULL,id,is_active,1',],
@@ -43,13 +45,14 @@ class UsersController extends Controller
             'avatar' => $storagePath ?? null,
             'role' => 'encoder'
         ]);
+        $userActions->logUserActions($request->user()->user_id, 'Created a new account named ' . $request->name);
 
         return response()->json([
             'status' => 'Profile Successfully Created!'
         ]);
     }
 
-    public function update(Request $request, string $id)
+    public function update(Request $request, string $id, UserActions $userActions)
     {
         $request->validate([
             'name' => ['required', 'string', 'max:255', 'unique:users,name,' . $id . ',user_id,is_active,1',],
@@ -68,6 +71,8 @@ class UsersController extends Controller
 
         $user->save();
 
+        $userActions->logUserActions($request->user()->user_id, 'Updated an account named ' . $request->name);
+
         return response()->json([
             'status' => 'Profile Successfully Updated!'
         ]);
@@ -76,15 +81,17 @@ class UsersController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(string $id, UserActions $userActions)
     {
-        User::where('user_id', $id)->update(['is_active'=>0]);
+        $user = Auth::user();
+        $u = User::where('user_id', $id)->update(['is_active'=>0]);
+        $userActions->logUserActions($user->user_id, 'Deleted an account named ' . $u->name);
         return response()->json([
             'status' => 'Profile Successfully Deleted!'
         ]);
     }
 
-    public function changePassword(Request $request, string $id)
+    public function changePassword(Request $request, string $id, UserActions $userActions)
     {
         $request->validate([
             'password' => ['required', 'string', 'min:8', 'confirmed', Password::default()],
@@ -92,6 +99,7 @@ class UsersController extends Controller
         $user = User::find($id);
         $user->password = Hash::make($request->password);
         $user->save();
+        $userActions->logUserActions($request->user()->user_id, 'Updated the password of an account named ' . $user->name);
         return response()->json([
             'status' => 'Password Successfully Updated!'
         ]);

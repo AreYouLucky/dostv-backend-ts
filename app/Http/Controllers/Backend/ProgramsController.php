@@ -4,9 +4,12 @@ namespace App\Http\Controllers\Backend;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Program;
+use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use App\Services\ContentFunctions;
 use Inertia\Inertia;
+use App\Services\UserActions;
+use Illuminate\Support\Facades\Auth;
 
 class ProgramsController extends Controller
 {
@@ -26,7 +29,7 @@ class ProgramsController extends Controller
     }
 
 
-    public function store(Request $request, ContentFunctions $content)
+    public function store(Request $request, ContentFunctions $content, UserActions $userActions)
     {
 
         $request->validate([
@@ -78,6 +81,8 @@ class ProgramsController extends Controller
 
             DB::commit();
 
+            $userActions->logUserActions($request->user()->user_id, 'Created a program entitled ' . $request->title);
+
             return response()->json([
                 'status' => 'Program Successfully Saved!',
                 'program' => $program
@@ -91,7 +96,7 @@ class ProgramsController extends Controller
         }
     }
 
-    public function update(Request $request, string $id,  ContentFunctions $content)
+    public function update(Request $request, string $id,  ContentFunctions $content, UserActions $userActions)
     {
 
         $request->validate([
@@ -134,6 +139,8 @@ class ProgramsController extends Controller
             $program->program_type = $request->program_type;
             $program->save();
             DB::commit();
+            $userActions->logUserActions($request->user()->user_id, 'Created a program entitled ' . $request->title);
+
 
             return response()->json([
                 'status' => 'Program Successfully Updated!',
@@ -151,11 +158,13 @@ class ProgramsController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(String $id)
+    public function destroy(String $id, UserActions $userActions)
     {
+        $user = Auth::user();
         $program = Program::where('program_id', $id)->first();
         $program->is_active = $program->is_active == 1 ? 0 : 1;
         $program->save();
+        $userActions->logUserActions($user->user_id, 'Deleted a program entitled ' . $program->title);
         return response()->json([
             'status' => 'Program Successfully Deleted!'
         ]);

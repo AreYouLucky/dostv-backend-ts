@@ -26,6 +26,7 @@ export interface PaginatedSearchTableProps<T = unknown> {
   onRefresh?: () => void;
   isLoading?: boolean;
   emptyText?: string;
+  hasSearch?: boolean;
 }
 
 /* -------------------- Type Guards -------------------- */
@@ -87,6 +88,7 @@ function PaginatedSearchTableInner<T = unknown>({
   searchBy,
   onRefresh,
   isLoading = false,
+  hasSearch = true,
   emptyText = "No Available Data",
 }: PaginatedSearchTableProps<T>) {
   const [searchTerm, setSearchTerm] = useState<string>("");
@@ -145,7 +147,7 @@ function PaginatedSearchTableInner<T = unknown>({
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(e.target.value);
-    setCurrentPage(1); 
+    setCurrentPage(1);
   };
 
   const nextPage = () => {
@@ -157,33 +159,36 @@ function PaginatedSearchTableInner<T = unknown>({
 
   return (
     <div className="w-full rounded-lg text-gray-900 p-6">
-      <div className="w-full flex items-center mb-4 gap-1 z-50">
-        <div className="flex relative items-center">
-          <Input
-            placeholder={searchPlaceholder}
-            value={searchTerm}
-            onChange={handleSearch}
-            className="min-w-[250px] h-10 border-gray-500 shadow-none ps-8"
-          />
+      {hasSearch && (
+        <div className="w-full flex items-center mb-4 gap-1 z-50">
+          <div className="flex relative items-center">
+            <Input
+              placeholder={searchPlaceholder}
+              value={searchTerm}
+              onChange={handleSearch}
+              className="min-w-[250px] h-10 border-gray-500 shadow-none ps-8"
+            />
 
-          <Search className="absolute left-2.5 text-gray-500" size={16} />
+            <Search className="absolute left-2.5 text-gray-500" size={16} />
 
-        </div>
-
-        {onRefresh && (
-          <div>
-            <Button
-              onClick={onRefresh}
-              className="px-4 bg-teal-600 h-full text-gray-50 poppins-semibold"
-              type="button"
-              disabled={isLoading}
-            >
-              {isLoading ? <Spinner className="mr-2" /> : <RefreshCcw />}
-              Refresh
-            </Button>
           </div>
-        )}
-      </div>
+
+          {onRefresh && (
+            <div>
+              <Button
+                onClick={onRefresh}
+                className="px-4 bg-teal-600 h-full text-gray-50 poppins-semibold"
+                type="button"
+                disabled={isLoading}
+              >
+                {isLoading ? <Spinner className="mr-2" /> : <RefreshCcw />}
+                Refresh
+              </Button>
+            </div>
+          )}
+        </div>
+      )}
+
 
       {/* Table */}
       <DataTable headers={headers}>

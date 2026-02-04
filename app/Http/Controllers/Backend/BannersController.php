@@ -8,6 +8,9 @@ use App\Models\Banner;
 use App\Models\Program;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\DB;
+use App\Services\UserActions;
+use Illuminate\Support\Facades\Auth; 
+
 class BannersController extends Controller
 {
     protected function uploadFile($folder, $request, $field)
@@ -40,7 +43,7 @@ class BannersController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(Request $request, UserActions $userActions)
     {
         $request->validate([
             'title' => ['required', 'string', 'unique:banners,title'],
@@ -71,6 +74,7 @@ class BannersController extends Controller
             'url' => $request->url ?? '',
             'media' => $banner_filename ?? '',
         ]);
+        $userActions->logUserActions($request->user()->user_id, 'Created a banner entitled ' . $request->title);
         return response()->json([
             'status' => 'Banner Successfully Added!',
             'banner' => $banner
@@ -105,7 +109,7 @@ class BannersController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, string $id, UserActions $userActions)
     {
         $request->validate([
             'title' => ['required', 'string', 'unique:banners,title,' . $id . ',banner_id'],
@@ -141,7 +145,7 @@ class BannersController extends Controller
             $banner->episodes = $request->episodes ?? '';
             $banner->url = $request->url ?? '';
             $banner->save();
-
+            $userActions->logUserActions($request->user()->user_id, 'Updated a banner entitled ' . $request->title);
             DB::commit();
             return response()->json([
                 'status' => 'Banner Successfully Updated!',
@@ -158,9 +162,11 @@ class BannersController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(string $id, UserActions $userActions)
     {
-        Banner::where('banner_id', $id)->update(['is_active'=>0]);
+        $user =  Auth::user();
+        $banner = Banner::where('banner_id', $id)->update(['is_active'=>0]);
+        $userActions->logUserActions($user->user_id, 'Deleted a banner entitled ' . $banner->title);
         return response()->json([
             'status' => 'Banner Successfully Deleted!'
         ]);

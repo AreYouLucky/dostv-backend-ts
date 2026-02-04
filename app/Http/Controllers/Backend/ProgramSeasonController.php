@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
+use App\Services\UserActions;
 
 class ProgramSeasonController extends Controller
 {
@@ -60,7 +61,7 @@ class ProgramSeasonController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, string $id, UserActions $userActions)
     {
 
         $request->validate([
@@ -124,6 +125,7 @@ class ProgramSeasonController extends Controller
             }
             $season->delete();
         }
+        $userActions->logUserActions($request->user()->user_id, 'Updated the list of seasons of ' . $program->title);
 
         return response()->json(['status' => 'Seasons Successfully Updated!']);
     }

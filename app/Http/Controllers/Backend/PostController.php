@@ -11,13 +11,14 @@ use App\Models\Program;
 use App\Models\Category;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Validation\Rule;
+use App\Services\UserActions;
 use App\Services\ContentFunctions;
 use App\Models\ProgramSeason;
 use App\Models\Agency;
 use App\Models\Region;
 use App\Models\PostAgency;
 use App\Models\PostRegion;
+use Illuminate\Support\Facades\Auth;
 
 class PostController extends Controller
 {
@@ -91,7 +92,7 @@ class PostController extends Controller
         ]);
     }
 
-    public function store(Request $request, ContentFunctions $content)
+    public function store(Request $request, ContentFunctions $content, UserActions $userActions)
     {
         $request->validate([
             'title' => 'required|string|max:255|unique:posts,title',
@@ -166,6 +167,7 @@ class PostController extends Controller
                     'region_id' => $region_id
                 ]);
             }
+            $userActions->logUserActions($request->user()->user_id, 'Created a post entitled ' . $request->title);
 
             DB::commit();
 
@@ -205,7 +207,7 @@ class PostController extends Controller
         ]);
     }
 
-    public function update(Request $request, string $code, ContentFunctions $content)
+    public function update(Request $request, string $code, ContentFunctions $content, UserActions $userActions)
     {
         $request->validate([
             'title' => "required|string|max:255|unique:posts,title," . $code . ",slug",
@@ -286,6 +288,7 @@ class PostController extends Controller
                     'region_id' => $region_id
                 ]);
             }
+            $userActions->logUserActions($request->user()->user_id, 'Updated a post entitled ' . $post->title);
             DB::commit();
             return response()->json([
                 'status' => 'Post Successfully Updated!',
@@ -299,9 +302,11 @@ class PostController extends Controller
         }
     }
 
-    public function destroy(string $code)
+    public function destroy(string $code, UserActions $userActions )
     {
-        Post::where('slug', $code)->update(['status' => 'trashed']);
+        $user = Auth::user();
+        $post = Post::where('slug', $code)->update(['status' => 'trashed']);
+        $userActions->logUserActions($user->user_id, 'Deleted a post entitled ' . $post->title);
         return response()->json([
             'status' => 'Post Successfully Deleted!'
         ]);

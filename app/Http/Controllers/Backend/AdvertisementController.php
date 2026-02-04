@@ -7,6 +7,8 @@ use Illuminate\Http\Request;
 use App\Models\Advertisement;
 use App\Services\ContentFunctions;
 use Inertia\Inertia;
+use App\Services\UserActions;
+use Illuminate\Support\Facades\Auth;
 
 class AdvertisementController extends Controller
 {
@@ -28,7 +30,7 @@ class AdvertisementController extends Controller
         return Inertia::render('cms/advertisement/partials/advertisement-form');
     }
 
-    public function store(Request $request, ContentFunctions $content)
+    public function store(Request $request, ContentFunctions $content, UserActions $userActions)
     {
         $request->validate([
             'title' => ['required', 'string', 'unique:advertisements,title'],
@@ -55,6 +57,8 @@ class AdvertisementController extends Controller
         $advertisement->order = $advertisement->advertisement_id;
         $advertisement->save();
 
+        $userActions->logUserActions($request->user()->user_id, 'Created an advertisement entitled ' . $request->title);
+
         return response()->json([
             'advertisement' => $advertisement,
             'status' => 'Advertisement Successfully Updated!',
@@ -68,7 +72,7 @@ class AdvertisementController extends Controller
             'advertisement' => $advertisement
         ]);
     }
-    public function update(Request $request, string $id, ContentFunctions $content)
+    public function update(Request $request, string $id, ContentFunctions $content, UserActions $userActions)
     {
         $request->validate([
             'title' => ['required', 'string', 'unique:advertisements,title,' . $id . ',advertisement_id'],
@@ -91,6 +95,8 @@ class AdvertisementController extends Controller
         $advertisement->is_redirect = $request->is_redirect;
         $advertisement->save();
 
+        $userActions->logUserActions($request->user()->user_id, 'Updated an advertisement entitled ' . $request->title);
+
         return response()->json([
             'status' => 'Advertisement Successfully Updated!',
         ], 200);
@@ -99,9 +105,11 @@ class AdvertisementController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(string $id, UserActions $userActions)
     {
-        Advertisement::where('advertisement_id', $id)->update(['is_active'=>0]);
+        $user =  Auth::user();
+        $ads = Advertisement::where('advertisement_id', $id)->update(['is_active'=>0]);
+        $userActions->logUserActions($user->user_id, 'Deleted an advertisement entitled ' . $ads->title);
         return response()->json([
             'status' => 'Advertisement Successfully Deleted!'
         ]);
