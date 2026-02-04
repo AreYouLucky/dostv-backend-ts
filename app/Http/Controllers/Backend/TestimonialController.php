@@ -113,7 +113,7 @@ class TestimonialController extends Controller
         $testimonial = Testimonial::where('testimonial_id', $id)->first();
         $testimonial->is_banner = !$testimonial->is_banner;
         $testimonial->save();
-        $userActions->logUserActions($user->user_id, 'Updated a testimonial status entitled ' . $testimonial->title);
+        $userActions->logUserActions($user->user_id, $testimonial->is_banner ? 'Unhide a testimonial entitled ' . $testimonial->title : 'Hide a testimonial entitled ' . $testimonial->title);
         return response()->json([
             'status' => 'Testimonial Status Successfully Updated!'
         ]);

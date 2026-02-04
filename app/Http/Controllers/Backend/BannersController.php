@@ -172,10 +172,12 @@ class BannersController extends Controller
         ]);
     }
 
-    public function toggleBanner(String $id){
+    public function toggleBanner(String $id, UserActions $userActions){
+        $user =  Auth::user();
         $banner = Banner::where('banner_id', $id)->first();
         $banner->is_banner = !$banner->is_banner;
         $banner->save();
+        $userActions->logUserActions($user->user_id, $banner->is_banner ? 'Unhide the banner entitled ' . $banner->title : 'Hide the banner entitled ' . $banner->title);
         return response()->json([
             'status' => 'Banner Status Successfully Updated!'
         ]);

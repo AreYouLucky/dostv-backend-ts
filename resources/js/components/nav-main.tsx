@@ -57,7 +57,7 @@ export function NavMain({ items = [] }: { items: NavItem[] }) {
             <SidebarGroupLabel className='mt-4 text-[12px] py-2 text-gray-400'>User Activity</SidebarGroupLabel>
             <SidebarMenu >
                 <SidebarMenuItem >
-                    {auth.user.role === 'admin' && (
+                    {auth.user.role === 'admin' || auth.user.role === 'superadmin' && (
                         <SidebarMenuButton
                             asChild
                             isActive={page.url.startsWith(

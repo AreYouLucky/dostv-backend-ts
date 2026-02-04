@@ -312,13 +312,14 @@ class PostController extends Controller
         ]);
     }
 
-    public function updatePostStatus(Request $req)
+    public function updatePostStatus(Request $req, UserActions $userActions)
     {
         $req->validate([
             'code' => 'required|string',
             'status' => 'required|string'
         ]);
-        Post::where('slug', $req->code)->update(['status' => $req->status]);
+        $post = Post::where('slug', $req->code)->update(['status' => $req->status]);
+        $userActions->logUserActions($req->user()->user_id, $req->code .' post entitled ' . $post->title);
         return response()->json([
             'status' => 'Post Status Successfully Updated!'
         ]);
@@ -332,12 +333,15 @@ class PostController extends Controller
         ]);
     }
 
-    public function togglePostFeatured(String $post)
+    public function togglePostFeatured(String $post, UserActions $userActions)
     {
+        $user = Auth::user();
         $post = Post::where('slug', $post)->first();
         Post::where('program_id', $post->program_id)->update(['is_featured' => 0]);
         $post->is_featured = !$post->is_featured;
         $post->save();
+        $program = Program::where('program_id', $post->program_id)->first();
+        $userActions->logUserActions($user->user_id, $post->is_featured ? 'Featured a post entitled ' . $post->title . ' on the program '. $program->title : 'Unfeatured a post entitled ' . $post->title . ' on the program '. $program->title);
         return response()->json([
             'status' => 'Post Featured Status Successfully Updated!'
         ]);

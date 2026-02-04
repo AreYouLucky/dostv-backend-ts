@@ -158,10 +158,12 @@ class AdvertisementController extends Controller
         ]);
     }
 
-    public function toggleAdvertisementVisibility(String $id){
+    public function toggleAdvertisementVisibility(String $id, UserActions $userActions){
+        $user = Auth::user();
         $advertisement = Advertisement::find($id);
         $advertisement->is_banner = !$advertisement->is_banner;
         $advertisement->save();
+        $userActions->logUserActions($user->user_id, $advertisement->is_banner ? 'Unhide the advertisement entitled ' . $advertisement->title : 'Hide the advertisement entitled ' . $advertisement->title);
         return response()->json([
             'status' => 'success',
             'message' => 'Advertisement visibility successfully toggled'
