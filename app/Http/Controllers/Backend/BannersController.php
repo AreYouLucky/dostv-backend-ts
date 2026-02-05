@@ -55,6 +55,7 @@ class BannersController extends Controller
             'highlight_text' => ['nullable', 'string'],
             'episodes' => ['nullable', 'string'],
             'url' => ['nullable', 'string'],
+            'duration' => ['required', 'string', 'numeric'],
         ]);
 
         if ($request->hasFile('media')) {
@@ -73,6 +74,7 @@ class BannersController extends Controller
             'episodes' => $request->episodes ?? '',
             'url' => $request->url ?? '',
             'media' => $banner_filename ?? '',
+            'duration' => $request->duration ?? 0
         ]);
         $userActions->logUserActions($request->user()->user_id, 'Created a banner entitled ' . $request->title);
         return response()->json([
@@ -121,6 +123,7 @@ class BannersController extends Controller
             'highlight_text' => ['nullable', 'string'],
             'episodes' => ['nullable', 'string'],
             'url' => ['nullable', 'string'],
+            'duration' => ['required', 'string', 'numeric'],
         ]);
 
         try {
@@ -144,6 +147,7 @@ class BannersController extends Controller
             $banner->highlight_text = $request->highlight_text ?? '';
             $banner->episodes = $request->episodes ?? '';
             $banner->url = $request->url ?? '';
+            $banner->duration = $request->duration ?? 0;
             $banner->save();
             $userActions->logUserActions($request->user()->user_id, 'Updated a banner entitled ' . $request->title);
             DB::commit();

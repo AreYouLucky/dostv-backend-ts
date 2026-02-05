@@ -57,7 +57,7 @@ export function NavMain({ items = [] }: { items: NavItem[] }) {
             <SidebarGroupLabel className='mt-4 text-[12px] py-2 text-gray-400'>User Activity</SidebarGroupLabel>
             <SidebarMenu >
                 <SidebarMenuItem >
-                    {auth.user.role === 'admin' || auth.user.role === 'superadmin' && (
+                    {(auth.user.role === 'admin' || auth.user.role === 'superadmin') && (
                         <SidebarMenuButton
                             asChild
                             isActive={page.url.startsWith(
@@ -74,11 +74,11 @@ export function NavMain({ items = [] }: { items: NavItem[] }) {
                     <SidebarMenuButton
                         asChild
                         isActive={page.url.startsWith(
-                            resolveUrl('/activities'),
+                            resolveUrl('/view-activities'),
                         )}
                         tooltip={{ children: 'View Activities' }}
                     >
-                        <Link href='/activities' prefetch>
+                        <Link href='/view-activities' prefetch>
                             <LuSquareActivity />
                             <span className='text-[12.5px] inter-semibold'>Activities</span>
                         </Link>

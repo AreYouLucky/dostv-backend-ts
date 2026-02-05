@@ -158,9 +158,9 @@ function PaginatedSearchTableInner<T = unknown>({
   };
 
   return (
-    <div className="w-full rounded-lg text-gray-900 p-6">
+    <div className="w-full rounded-lg text-gray-900 px-6 pb-6">
       {hasSearch && (
-        <div className="w-full flex items-center mb-4 gap-1 z-50">
+        <div className="w-full flex items-center mb-4 gap-1 z-50 pt-6">
           <div className="flex relative items-center">
             <Input
               placeholder={searchPlaceholder}

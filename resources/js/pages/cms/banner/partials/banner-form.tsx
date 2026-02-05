@@ -46,6 +46,7 @@ function BannersForm() {
         description: banner?.description ?? '',
         url: banner?.url ?? '',
         type: banner?.type ?? null,
+        duration: banner?.duration ?? 0
     });
 
     const createFormData = () => {
@@ -59,6 +60,7 @@ function BannersForm() {
         formData.append("description", item.description);
         formData.append("url", item.url);
         formData.append("type", item.type?.toString() ?? '');
+        formData.append("duration", item.duration.toString() ?? 0);
         return formData
     }
 
@@ -146,7 +148,7 @@ function BannersForm() {
                                 </Select>
                                 <InputError message={errors.type as string} />
                             </div>
-                            <div className="grid gap-2 md:col-span-2">
+                            <div className="grid gap-2">
                                 <Label htmlFor="title" className="text-gray-700 poppins-semibold">Banner Title</Label>
                                 <Input
                                     id="title"
@@ -159,6 +161,22 @@ function BannersForm() {
                                 />
                                 <InputError message={errors.title as string} />
                             </div>
+                            {
+                                item.type &&
+                                <div className=" gap-2 h-full flex flex-col justify-start transition-all duration-300 ease-in-out mt-2">
+                                    <Label htmlFor="duration" className="text-gray-700 poppins-semibold">Duration (Seconds)</Label>
+                                    <Input
+                                        id="duration"
+                                        type="number"
+                                        name="duration"
+                                        required
+                                        onChange={handleChange}
+                                        value={item.duration ?? null}
+                                        className="text-gray-700 border-gray-300"
+                                    />
+                                    <InputError message={errors.duration as string} />
+                                </div>
+                            }
                         </div>
                         <div className="grid md:grid-cols-3 gap-4 mt-4 w-full">
                             {
@@ -323,6 +341,8 @@ function BannersForm() {
                                     <InputError message={errors.description} />
                                 </div>
                             }
+
+
                         </div>
                         <div className="mt-4">
                             <Button className="bg-teal-600 w-fit poppins-bold flex flex-row items-center justify-center"

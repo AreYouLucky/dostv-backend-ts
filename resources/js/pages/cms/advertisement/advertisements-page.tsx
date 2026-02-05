@@ -112,16 +112,40 @@ function AdvertisementsPage() {
                         <PaginatedSearchTable<AdvertisementModel>
                             items={data ?? []}
                             headers={[
+                                { name: "Order", position: "center" },
                                 { name: "Title", position: "center" },
                                 { name: "Thumbnail", position: "center" },
                                 { name: "url", position: "center" },
                                 { name: "Description", position: "center" },
-                                { name: "Order", position: "center" },
                                 { name: "Actions", position: "center" },
                             ]}
                             searchBy={(item) => `${item.title} ${item.description}`}
                             renderRow={(r) => (
                                 <tr key={r.advertisement_id} className="border-b  duration-300 hover:scale-101 cursor-pointer">
+                                    <td>
+                                        <div className='px-6 py-1.5 text-center poppins-bold text-xl text-teal-800 gap-1 flex relative'>
+                                            <Tooltip>
+                                                <TooltipTrigger asChild>
+                                                    <button className=' disabled:pointer-events-none disabled:opacity-50 bg-transparent shadow-none hover:bg-teal-100 p-0 rounded-lg duration-300  cursor-pointer text-lg' disabled={(data?.[0].order === r.order)} onClick={() => moveAdvertisementFn(r.advertisement_id as number, 1, r.order as number)}>
+                                                        <FaArrowUp className='text-teal-500 hover:scale-110 duration-300 text-[12px]' />
+                                                    </button>
+                                                </TooltipTrigger>
+                                                <TooltipContent>
+                                                    <p>Move Up</p>
+                                                </TooltipContent>
+                                            </Tooltip>
+                                            <Tooltip>
+                                                <TooltipTrigger asChild>
+                                                    <button className=' disabled:pointer-events-none disabled:opacity-50 bg-transparent shadow-none hover:bg-teal-100 p-0 text-lg rounded-lg duration-300  cursor-pointer' disabled={(data?.[data?.length - 1].order === r.order)} onClick={() => moveAdvertisementFn(r.advertisement_id as number, 2, r.order as number)}>
+                                                        <FaArrowDown className='text-teal-500 hover:scale-110  duration-300 text-[12px]' />
+                                                    </button>
+                                                </TooltipTrigger>
+                                                <TooltipContent>
+                                                    <p>Move Down</p>
+                                                </TooltipContent>
+                                            </Tooltip>
+                                        </div>
+                                    </td>
                                     <td className="px-6 py-1.5 text-start poppins-semibold text-teal-800 text-[12px]">{r.title}</td>
                                     <td >
                                         <div className='flex justify-center items-center relative h-full hover:scale-110 duration-300'>
@@ -134,30 +158,6 @@ function AdvertisementsPage() {
                                     </td>
                                     <td className="px-6 py-1.5 text-start poppins-regular text-[12px]">{r.url ? r.url : 'Not Set'}</td>
                                     <td className="px-6 py-1.5 poppins-regular  text-[11.2px] text-justify">{r.excerpt ? trimText(r.excerpt, 150) : 'Not Set'}</td>
-                                    <td>
-                                        <div className='px-6 py-1.5 text-center poppins-bold text-xl text-teal-800 gap-1 flex relative'>
-                                            <Tooltip>
-                                                <TooltipTrigger asChild>
-                                                    <button className=' disabled:pointer-events-none disabled:opacity-50 bg-transparent shadow-none hover:bg-teal-100 p-0 rounded-lg duration-300  cursor-pointer text-lg' disabled={(data?.[0].order === r.order)} onClick={() => moveAdvertisementFn(r.advertisement_id as number, 1, r.order as number)}>
-                                                        <FaArrowUp className='text-teal-500 hover:scale-110 duration-300' />
-                                                    </button>
-                                                </TooltipTrigger>
-                                                <TooltipContent>
-                                                    <p>Move Up</p>
-                                                </TooltipContent>
-                                            </Tooltip>
-                                            <Tooltip>
-                                                <TooltipTrigger asChild>
-                                                    <button className=' disabled:pointer-events-none disabled:opacity-50 bg-transparent shadow-none hover:bg-teal-100 p-0 text-lg rounded-lg duration-300  cursor-pointer' disabled={(data?.[data?.length - 1].order === r.order)} onClick={() => moveAdvertisementFn(r.advertisement_id as number, 2, r.order as number)}>
-                                                        <FaArrowDown className='text-teal-500 hover:scale-110  duration-300' />
-                                                    </button>
-                                                </TooltipTrigger>
-                                                <TooltipContent>
-                                                    <p>Move Down</p>
-                                                </TooltipContent>
-                                            </Tooltip>
-                                        </div>
-                                    </td>
                                     <td>
                                         <div className='px-6 py-1.5 text-center poppins-bold text-xl text-teal-800 gap-1 flex relative'>
                                             <Tooltip>

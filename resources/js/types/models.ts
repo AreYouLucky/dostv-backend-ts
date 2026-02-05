@@ -67,6 +67,7 @@ export interface BannerModel {
   type: number | null;
   is_banner: number | null;
   is_active: number | null;
+  duration?: number | null;
   [key: string | number]: unknown;
 }
 
@@ -170,5 +171,13 @@ export interface ProgramSeasonModel {
   thumbnail: string | null;
   season: number | null;
   [key: string | number]: unknown;
+}
+
+import { type User } from ".";
+export interface UserActionModel extends User {
+  user_id: number | null;
+  action: string | null;
+  created_at: string | null;
+  updated_at: string | null;
 }
 

@@ -85,7 +85,7 @@ function UsersPage() {
                             searchBy={(item) => `${item.email} ${item.name} ${item.avatar}`}
                             renderRow={(r) => (
                                 <tr key={r.user_id} className="border-b  duration-300 hover:scale-101 cursor-pointer">
-                                    <td className="px-8 py-1.5 flex justify-center items-center gap-4 poppins-semibold text-teal-700">
+                                    <td className="px-10 py-1.5 flex justify-start items-center gap-4 poppins-semibold text-teal-700">
                                         <Avatar className="h-10 w-10 border-3 border-teal-700">
                                             <AvatarImage src={r.avatar && `/storage/${r.avatar}`} alt={r.name} />
                                             <AvatarFallback className="rounded-full bg-neutral-200 text-black inter-bold text-xl">

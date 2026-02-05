@@ -112,24 +112,21 @@ function BannersPage() {
                         <PaginatedSearchTable<BannerModel>
                             items={data ?? []}
                             headers={[
+                                { name: "Order", position: "center" },
                                 { name: "Title", position: "center" },
                                 { name: "Description", position: "center" },
                                 { name: "Type", position: "center" },
-                                { name: "Order", position: "center" },
                                 { name: "Actions", position: "center" },
                             ]}
                             searchBy={(item) => `${item.title} ${item.description} ${item.agency}`}
                             renderRow={(r) => (
                                 <tr key={r.banner_id} className="border-b  duration-300 hover:scale-101 cursor-pointer">
-                                    <td className="px-6 py-1.5 text-start poppins-semibold text-teal-800 text-[12px]">{r.title}</td>
-                                    <td className="px-6 py-1.5 text-[11.2px] text-justify">{r.description !== '' ? trimText(r.description as string, 255) : 'Not Set'}</td>
-                                    <td className="px-6 py-1.5 text-start text-[11.2px]">{bannerTypes.find(b => b.code === r.type)?.label}</td>
                                     <td >
                                         <div className='px-6 py-1.5 text-center poppins-bold text-xl text-teal-800 gap-1 flex relative'>
                                             <Tooltip>
                                                 <TooltipTrigger asChild>
                                                     <button className=' disabled:pointer-events-none disabled:opacity-50 bg-transparent shadow-none hover:bg-teal-100 p-0 rounded-lg duration-300  cursor-pointer text-lg' disabled={(data?.[0].order === r.order)} onClick={() => moveBannerFn(r.banner_id as number, 1, r.order as number)}>
-                                                        <FaArrowUp className='text-teal-500 hover:scale-110 duration-300' />
+                                                        <FaArrowUp className='text-teal-500 hover:scale-110 duration-300 text-[12px]' />
                                                     </button>
                                                 </TooltipTrigger>
                                                 <TooltipContent>
@@ -139,7 +136,7 @@ function BannersPage() {
                                             <Tooltip>
                                                 <TooltipTrigger asChild>
                                                     <button className=' disabled:pointer-events-none disabled:opacity-50 bg-transparent shadow-none hover:bg-teal-100 p-0 text-lg rounded-lg duration-300  cursor-pointer' disabled={(data?.[data?.length - 1].order === r.order)} onClick={() => moveBannerFn(r.banner_id as number, 2, r.order as number)}>
-                                                        <FaArrowDown className='text-teal-500 hover:scale-110  duration-300' />
+                                                        <FaArrowDown className='text-teal-500 hover:scale-110  duration-300 text-[12px]' />
                                                     </button>
                                                 </TooltipTrigger>
                                                 <TooltipContent>
@@ -148,6 +145,9 @@ function BannersPage() {
                                             </Tooltip>
                                         </div>
                                     </td>
+                                    <td className="px-6 py-1.5 text-start poppins-semibold text-teal-800 text-[12px]">{r.title}</td>
+                                    <td className="px-6 py-1.5 text-[11.2px] text-justify">{r.description !== '' ? trimText(r.description as string, 255) : 'Not Set'}</td>
+                                    <td className="px-6 py-1.5 text-start text-[11.2px]">{bannerTypes.find(b => b.code === r.type)?.label}</td>
                                     <td>
                                         <div className='px-6 py-1.5 text-center poppins-bold text-xl text-teal-800 gap-1 flex relative'>
                                             <Tooltip>
