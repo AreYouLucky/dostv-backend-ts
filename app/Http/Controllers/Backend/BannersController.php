@@ -9,7 +9,7 @@ use App\Models\Program;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\DB;
 use App\Services\UserActions;
-use Illuminate\Support\Facades\Auth; 
+use Illuminate\Support\Facades\Auth;
 
 class BannersController extends Controller
 {
@@ -50,6 +50,8 @@ class BannersController extends Controller
             'description' => ['nullable', 'string'],
             'type' => ['required', 'string'],
             'media' => ['required', 'mimes:jpeg,png,jpg,gif,mp4,avi', 'max:25240'],
+            'icon' => ['nullable', 'mimes:jpeg,png,jpg,gif,mp4,avi', 'max:25240'],
+            'bg' => ['nullable', 'mimes:jpeg,png,jpg,gif,mp4,avi', 'max:25240'],
             'description' => ['nullable', 'string'],
             'code' => ['nullable', 'string'],
             'highlight_text' => ['nullable', 'string'],
@@ -61,9 +63,15 @@ class BannersController extends Controller
         if ($request->hasFile('media')) {
             if (in_array($request->type, [1, 2, 3])) {
                 $banner_filename = $this->uploadFile('/images/banners', $request, 'media');
-            }else {
+            } else {
                 $banner_filename = $this->uploadFile('/videos/banners', $request, 'media');
             }
+        }
+        if ($request->hasFile('bg')) {
+            $bg_filename = $this->uploadFile('/images/banners/bgs', $request, 'bg');
+        }
+        if ($request->hasFile('icon')) {
+            $icon_filename = $this->uploadFile('/images/banners/icons', $request, 'icon');
         }
         $banner = Banner::create([
             'title' => $request->title,
@@ -74,6 +82,8 @@ class BannersController extends Controller
             'episodes' => $request->episodes ?? '',
             'url' => $request->url ?? '',
             'media' => $banner_filename ?? '',
+            'icon' => $icon_filename ?? '',
+            'bg' => $bg_filename ?? '',
             'duration' => $request->duration ?? 0
         ]);
         $userActions->logUserActions($request->user()->user_id, 'Created a banner entitled ' . $request->title);
@@ -118,6 +128,8 @@ class BannersController extends Controller
             'description' => ['nullable', 'string'],
             'type' => ['required', 'string'],
             'media' => ['nullable', 'mimes:jpeg,png,jpg,gif,mp4,avi', 'max:25240'],
+            'icon' => ['nullable', 'mimes:jpeg,png,jpg,gif,mp4,avi', 'max:25240'],
+            'bg' => ['nullable', 'mimes:jpeg,png,jpg,gif,mp4,avi', 'max:25240'],
             'description' => ['nullable', 'string'],
             'code' => ['nullable', 'string'],
             'highlight_text' => ['nullable', 'string'],
@@ -132,12 +144,22 @@ class BannersController extends Controller
             $banner = Banner::find($id);
 
             if ($request->hasFile('media')) {
-                if ($request->type == [1, 2, 3]) {
+                if (in_array($request->type, [1, 2, 3])) {
                     $banner_filename = $this->uploadFile('/images/banners', $request, 'media');
                 } else {
                     $banner_filename = $this->uploadFile('/videos/banners', $request, 'media');
                 }
                 $banner->media = $banner_filename;
+            }
+
+            if ($request->hasFile('bg')) {
+                $bg_filename = $this->uploadFile('/images/banners/bgs', $request, 'bg');
+                $banner->bg = $bg_filename;
+            }
+
+            if ($request->hasFile('icon')) {
+                $icon_filename = $this->uploadFile('/images/banners/icons', $request, 'icon');
+                $banner->icon = $icon_filename;
             }
 
             $banner->title = $request->title;
@@ -169,14 +191,15 @@ class BannersController extends Controller
     public function destroy(string $id, UserActions $userActions)
     {
         $user =  Auth::user();
-        $banner = Banner::where('banner_id', $id)->update(['is_active'=>0]);
+        $banner = Banner::where('banner_id', $id)->update(['is_active' => 0]);
         $userActions->logUserActions($user->user_id, 'Deleted a banner entitled ' . $banner->title);
         return response()->json([
             'status' => 'Banner Successfully Deleted!'
         ]);
     }
 
-    public function toggleBanner(String $id, UserActions $userActions){
+    public function toggleBanner(String $id, UserActions $userActions)
+    {
         $user =  Auth::user();
         $banner = Banner::where('banner_id', $id)->first();
         $banner->is_banner = !$banner->is_banner;
@@ -187,22 +210,23 @@ class BannersController extends Controller
         ]);
     }
 
-    public function moveBanner(Request $req){
+    public function moveBanner(Request $req)
+    {
         $req->validate([
             'id' => 'required|string',
             'type' => 'required|string'
         ]);
 
         $first = Banner::where('banner_id', $req->id)->first();
-        if($req->type == 1){
-            $second =  Banner::where('order', '>', $first->order)->orderBy('order','asc')->first();
+        if ($req->type == 1) {
+            $second =  Banner::where('order', '>', $first->order)->orderBy('order', 'asc')->first();
+        } else {
+            $second = Banner::where('order', '<', $first->order)->orderBy('order', 'desc')->first();
         }
-        else{
-            $second = Banner::where('order', '<', $first->order)->orderBy('order','desc')->first();
-        }
-        if(!isset($second)){
+        if (!isset($second)) {
             return response()->json([
-                'status', 'Undefined Order'
+                'status',
+                'Undefined Order'
             ]);
         }
 
@@ -219,7 +243,8 @@ class BannersController extends Controller
         ]);
     }
 
-    public function toggleBannerVisibility(String $id){
+    public function toggleBannerVisibility(String $id)
+    {
         $banner = Banner::where('banner_id', $id)->first();
         $banner->is_banner = !$banner->is_banner;
         $banner->save();

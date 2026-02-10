@@ -12,6 +12,8 @@ export default function BackgroundImg({
   children,
 }: BackgroundImageProps) {
 
+  console.log(imageSrc)
+
   const effectiveSrc = imageSrc || fallbackSrc;
   return (
     <div className={`relative overflow-hidden ${className}`}>

@@ -59,6 +59,10 @@ export interface BannerModel {
   title: string | null;
   media?: string | null;
   media_file?: File | null;
+  icon?: string | null;
+  icon_file?: File | null;
+  bg?: string | null;
+  bg_file?: File | null;
   code?: string | null;
   highlight_text?: string | null;
   episodes?: string | null;

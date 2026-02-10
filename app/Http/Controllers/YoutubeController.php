@@ -32,7 +32,7 @@ class YoutubeController extends Controller
 
             $allVideos = collect();
             $pageToken = null;
-            $maxPages  = 10;
+            $maxPages  = 30;
             $pageCount = 0;
 
             do {
@@ -114,3 +114,5 @@ class YoutubeController extends Controller
         ]);
     }
 }
+
+

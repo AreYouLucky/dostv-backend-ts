@@ -40,6 +40,10 @@ function BannersForm() {
         title: banner?.title ?? '',
         media: banner?.media ?? '',
         media_file: "" as File | string,
+        icon: banner?.icon ?? '',
+        icon_file: "" as File | string,
+        bg: banner?.bg ?? '',
+        bg_file: "" as File | string,
         code: banner?.code ?? '',
         highlight_text: banner?.highlight_text ?? '',
         episodes: banner?.episodes ?? '',
@@ -53,7 +57,6 @@ function BannersForm() {
         const formData = new FormData();
         formData.append("banner_id", item.banner_id.toString());
         formData.append("title", item.title);
-        formData.append("media", item.media_file);
         formData.append("code", item.code);
         formData.append("highlight_text", item.highlight_text);
         formData.append("episodes", item.episodes);
@@ -61,6 +64,15 @@ function BannersForm() {
         formData.append("url", item.url);
         formData.append("type", item.type?.toString() ?? '');
         formData.append("duration", item.duration.toString() ?? 0);
+        if (item.icon_file instanceof File) {
+            formData.append("icon", item.icon_file);
+        }
+        if (item.media_file instanceof File) {
+            formData.append("media", item.media_file);
+        }
+        if (item.bg_file instanceof File) {
+            formData.append("bg", item.bg_file);
+        }
         return formData
     }
 
@@ -178,11 +190,44 @@ function BannersForm() {
                                 </div>
                             }
                         </div>
+                        {
+                            item.type && [2, 3, 4, 6].includes(item.type) &&
+                            <div className="w-full grid md:grid-cols-3 gap-4 mt-2">
+                                <div>
+                                    <Label htmlFor="icon_file" className="text-gray-700 poppins-semibold">Banner Icon </Label>
+                                    <FileUpload
+                                        type={2}
+                                        url={item?.icon ? `/storage/images/banners/icons/${item.icon}` : ''}
+                                        id="icon_file"
+                                        name="icon_file"
+                                        accept="image/png,image/jpeg"
+                                        text="Click to upload icon here (png)"
+                                        onChange={handleChange}
+                                        className="text-gray-600 border-gray-300 shadow p-4"
+                                    />
+                                    <InputError message={errors.icon as string} />
+                                </div>
+                                <div className="md:col-span-2">
+                                    <Label htmlFor="bg_file" className="text-gray-700 poppins-semibold">Banner Background <span className="poppins-regular text-gray-600">(Aspect-Ratio 16/6)</span> </Label>
+                                    <FileUpload
+                                        type={2}
+                                        url={item?.bg ? `/storage/images/banners/bgs/${item.bg}` : ''}
+                                        id="bg_file"
+                                        name="bg_file"
+                                        accept="image/png,image/jpeg"
+                                        text="Click to upload image banner"
+                                        onChange={handleChange}
+                                        className="text-gray-600 border-gray-300 shadow p-4"
+                                    />
+                                    <InputError message={errors.bg as string} />
+                                </div>
+                            </div>
+                        }
                         <div className="grid md:grid-cols-3 gap-4 mt-4 w-full">
                             {
                                 item.type && [1, 2, 3].includes(item.type) &&
                                 <div className=" gap-2 h-full flex flex-col justify-start transition-all duration-300 ease-in-out mt-2 md:col-span-3">
-                                    <Label htmlFor="media_file" className="text-gray-700 poppins-semibold">Banner Image <span className="poppins-regular text-gray-600">(Aspect-Ratio 4:5)</span> </Label>
+                                    <Label htmlFor="media_file" className="text-gray-700 poppins-semibold">Banner Image <span className="poppins-regular text-gray-600">(Aspect-Ratio {[1,5].includes(item.type) ? "4:5" : "16:6"})</span> </Label>
                                     <FileUpload
                                         type={2}
                                         url={item?.media ? `/storage/images/banners/${item.media}` : ''}

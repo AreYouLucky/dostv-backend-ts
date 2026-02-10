@@ -67,10 +67,10 @@ export const bannerTypes = [
         code: 4,
         label: 'Program Highlight – Video',
     },
-    {
-        code: 5,
-        label: 'Video Only',
-    },
+    // {
+    //     code: 5,
+    //     label: 'Video Only',
+    // },
     {
         code: 6,
         label: 'Video with Overlay Elements',

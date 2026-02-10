@@ -20,6 +20,8 @@ class Banner extends Model
         'is_banner',
         'is_active',
         'order',
-        'duration'
+        'duration',
+        'icon',
+        'bg'
     ];
 }

@@ -108,6 +108,7 @@ function BannersPage() {
                             <Link href="/banners/create" className='bg-teal-600 text-gray-50 inline-flex  h-9 px-4 py-2 has-[>svg]:px-3 items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-[color,box-shadow]'> <IoAddCircle /> Add Banner</Link>
                         </div>
                     </div>
+
                     <div className='w-full flex justify-between item-center  shadow-md border rounded-lg border-gray-400/50 overflow-auto p-2 bg-white'>
                         <PaginatedSearchTable<BannerModel>
                             items={data ?? []}

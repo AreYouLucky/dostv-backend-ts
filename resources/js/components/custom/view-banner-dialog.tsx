@@ -1,14 +1,14 @@
 import React from 'react'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog"
-import { MdPageview } from "react-icons/md";
-import { GiAerialSignal } from "react-icons/gi";
+import { FaCircleInfo } from "react-icons/fa6";
 import { MdPermMedia } from "react-icons/md";
 import { PiStarFourBold } from "react-icons/pi";
 import BackgroundImg from './background-img';
-import BackgroundVideo from './background-video';
 import { BsCollectionPlayFill } from "react-icons/bs";
+import { MdPageview } from "react-icons/md";
 import { Button } from '../ui/button';
 import { BannerModel } from '@/types/models';
+
 type ViewPostDialogProps = {
     show: boolean;
     onClose: () => void;
@@ -30,101 +30,85 @@ function ViewPostDialog(props: ViewPostDialogProps) {
                         <span className='sr-only'> This just show the post view </span>
                     </DialogDescription>
                 </DialogHeader>
-                <div className='max-h-[80vh] overflow-auto px-4 py-5 scroll-slim flex flex-col gap-4 mb-4 text-white'>
-                    {banner?.type && [1, 2, 3].includes(banner.type) ?
-                        <BackgroundImg imageSrc={`/storage/images/banners/${banner?.media}`} className='aspect-21/9'>
-                            {
-                                banner?.type == 3 &&
-                                <div className="bg-linear-to-t from-black/40 via-transparent to-black/40 aspect-21/9 " >
-                                    <div className="bg-linear-to-r from-black/80  to-transparent aspect-21/9 grid grid-cols-5">
-                                        <div className='p-16 flex items-end md:col-span-2'>
-                                            <div>
-                                                {banner.highlight_text &&
-                                                    <div className="text-white w-fit text-[8px] border rounded-lg px-2 py-0.5 poppins-semibold flex items-center gap-1">
-                                                        <GiAerialSignal />{banner.highlight_text.toUpperCase()}
-                                                    </div>
-                                                }
-                                                <div className="text-white inter-bold font-extrabold text-3xl mt-3">{banner.title}</div>
-                                                <div className='flex flex-row pt-1 pb-3'>
-                                                    {banner.episodes && <span className='text-[11.5px] poppins-semibold flex gap-2 pr-2 border-r items-center'> <MdPermMedia /> {banner.episodes} Episodes</span>}
-                                                    <span className='text-[11.5px] poppins-semibold flex gap-2 pr-2 ml-2 items-center'> <PiStarFourBold /> Featured Program </span>
+                <div className='max-h-[80vh] aspect-16/6 overflow-auto px-4 py-5 scroll-slim flex flex-col gap-4 mb-4 text-white'>
+                    <BackgroundImg
+                        imageSrc={`${banner?.bg && `/storage/images/banners/bgs/${banner?.bg}`}`}
+                        fallbackSrc={`/storage/images/banners/${banner?.media}`}
+                        className="aspect-16/6 w-full"
+                    >
+                        {
+                            banner?.type !== 1 &&
+                            <div className="grid grid-cols-5 gap-x-6 w-full h-full  aspect-16/6  p-8 bg-linear-to-b from-black/40 to-black">
+                                <div className="flex flex-col  col-span-2 justify-center gap-2">
+                                    <div className='h-fit  flex justify-start'>
+                                        {banner?.icon ? (
+                                            <img src={`/storage/images/banners/icons/${banner?.icon}`}
+                                                className='object-contain w-60'
+                                            />
+                                        ) : (
+                                            <h3 className='text-2xl poppins-bold'>{banner?.title}</h3>
+                                        )}
+                                    </div>
+                                    <div className='mt-2'>
+                                        <div className='flex flex-row pb-3 gap-2'>
+                                            {banner?.highlight_text &&
+                                                <div className='border-r px-2'>
+                                                    <span className='text-[11px] pr-2 border border-red-500 px-2 py-1 rounded-xl poppins-semibold flex gap-2 flex-row items-center bg-red-500/50'> <FaCircleInfo /> {banner.highlight_text}</span>
                                                 </div>
-                                                <div className='poppins-light text-white text-[10.5px] text-justify'> {banner.description}</div>
-                                                <Button className='text-white mt-6 bg-transparent border border-white text-sm inter-semibold'>
+                                            }
+                                            {
+                                                banner?.type && [3, 4].includes(banner?.type) && (
+                                                    <>
+                                                        {banner?.episodes && <span className='text-[11.5px] poppins-semibold flex gap-2 pr-2 border-r items-center'> <MdPermMedia /> {banner.episodes} Episodes</span>}
+                                                        <span className='text-[11.5px] poppins-semibold flex gap-2 pr-2 ml-2 items-center'> <PiStarFourBold /> Featured Program </span>
+                                                    </>
+                                                )
+                                            }
+                                        </div>
+                                        <div className='poppins-light text-white text-[10.5px] text-justify pr-2'> {banner?.description}</div>
+                                        <Button className='text-white mt-6  text-sm inter-semibold bg-[#00aeef]/90 rounded border-[#00aeef] border'>
+                                            {banner?.type && [3, 4].includes(banner?.type) ? (
+                                                <>
                                                     <BsCollectionPlayFill /> View Episodes
-                                                </Button>
+                                                </>
+                                            ) : (
+                                                <>
+                                                    <MdPageview/> Browse Now
+                                                </>
+                                            )}
+                                        </Button>
+                                    </div>
 
+
+                                </div>
+                                <div className="flex items-center justify-center col-span-3">
+                                    <div className=''>
+                                        {banner?.type && [2, 3].includes(banner?.type) ? (
+                                            <img src={`/storage/images/banners/${banner?.media}`}
+                                                className='aspect-21/9 object-cover rounded-lg overflow-hidden shadow-md shadow-[#00aeef] -mt-6 hover:shadow-xl hover:scale-105 duration-300'
+                                            />
+                                        ) : (
+
+                                            <div className='w-full h-full p-5'>
+                                                <video
+                                                    src={`/storage/videos/banners/${banner?.media}`}
+                                                    autoPlay={true}
+                                                    muted
+                                                    loop
+                                                    playsInline
+                                                    preload="metadata"
+                                                    className=" w-full h-full object-contain  rounded-lg overflow-hidden shadow-md shadow-[#000000] -mt-6 hover:shadow-xl hover:scale-105 duration-300 border-2 border-[#000000]"
+                                                />
                                             </div>
-                                        </div>
+                                        )
+                                        }
                                     </div>
                                 </div>
-                            }
-                            {
-                                banner?.type == 2 &&
-                                <div className="bg-linear-to-t from-black/40 via-transparent to-black/40 aspect-21/9 " >
-                                    <div className="bg-linear-to-r from-black/80  to-transparent aspect-21/9 grid grid-cols-5">
-                                        <div className='p-16 flex items-end md:col-span-2'>
-                                            <div>
-                                                <div className="text-white inter-bold font-extrabold text-3xl mt-3">{banner.title}</div>
-                                                {banner.highlight_text && <div className='flex flex-row pt-1 pb-2'>
-                                                    <span className='text-[11.5px] poppins-semibold flex gap-2 pr-2 items-center'>  <PiStarFourBold /> {banner.highlight_text.toUpperCase()}  <PiStarFourBold /> </span>
-                                                </div>}
-                                                <div className='poppins-light text-white text-[10.5px] text-justify'> {banner.description}</div>
-                                                <Button className='text-white mt-4 bg-transparent border border-white text-sm inter-semibold '><MdPageview /> BROWSE NOW </Button>
+                            </div>
+                        }
+                    </BackgroundImg>
 
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            }
-                        </BackgroundImg> :
-                        <BackgroundVideo videoSrc={`/storage/videos/banners/${banner?.media}`} className=' aspect-21/9 p-0 overflow-hidden'>
-                            {
-                                banner?.type == 4 &&
-                                <div className="bg-linear-to-t from-black/40 via-transparent to-black/40 aspect-21/9 " >
-                                    <div className="bg-linear-to-r from-black/90  to-transparent aspect-21/9 grid grid-cols-5">
-                                        <div className='p-16 flex items-end md:col-span-2'>
-                                            <div>
-                                                {banner.highlight_text &&
-                                                    <div className="text-white w-fit text-[8px] border rounded-lg px-2 py-0.5 poppins-semibold flex items-center gap-1">
-                                                        <GiAerialSignal />{banner.highlight_text.toUpperCase()}
-                                                    </div>
-                                                }
-                                                <div className="text-white inter-bold font-extrabold text-3xl mt-3">{banner.title}</div>
-                                                <div className='flex flex-row pt-1 pb-3'>
-                                                    {banner.episodes && <span className='text-[11.5px] poppins-semibold flex gap-2 pr-2 border-r items-center'> <MdPermMedia /> {banner.episodes} Episodes</span>}
-                                                    <span className='text-[11.5px] poppins-semibold flex gap-2 pr-2 ml-2 items-center'> <PiStarFourBold /> Featured Program </span>
-                                                </div>
-                                                <div className='poppins-light text-white text-[10.5px] text-justify'> {banner.description}</div>
-                                                <Button className='text-white mt-6 bg-transparent border border-white text-sm inter-semibold'>
-                                                    <BsCollectionPlayFill /> View Episodes
-                                                </Button>
 
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            }
-                            {
-                                banner?.type == 6 &&
-                                <div className="bg-linear-to-t from-black/40 via-transparent to-black/40 aspect-21/9 " >
-                                    <div className="bg-linear-to-r from-black/90  to-transparent aspect-21/9 grid grid-cols-5">
-                                        <div className='p-16 flex items-end md:col-span-2'>
-                                            <div>
-                                                <div className="text-white inter-bold font-extrabold text-3xl mt-3">{banner.title}</div>
-                                                {banner.highlight_text && <div className='flex flex-row pt-1 pb-2'>
-                                                    <span className='text-[11.5px] poppins-semibold flex gap-2 pr-2 items-center'>  <PiStarFourBold /> {banner.highlight_text.toUpperCase()}  <PiStarFourBold /> </span>
-                                                </div>}
-                                                <div className='poppins-light text-white text-[10.5px] text-justify'> {banner.description}</div>
-                                                <Button className='text-white mt-4 bg-transparent border border-white text-sm inter-semibold '><MdPageview /> BROWSE NOW </Button>
-
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            }
-                        </BackgroundVideo>
-                    }
                 </div>
             </DialogContent>
         </Dialog>
