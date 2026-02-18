@@ -146,25 +146,31 @@ class PostController extends Controller
             $categories = json_decode($request->categories, true);
 
             foreach ($categories as $category_id) {
+                $category = Category::where('category_id', $category_id)->first();
                 PostCategory::create([
                     'post_id' => $post->post_id,
-                    'category' => $category_id,
+                    'category' => $category->category_id,
+                    'category_name' => $category->title,
                 ]);
             }
 
             $agencies = json_decode($request->agencies, true);
             foreach ($agencies as $agency_id) {
+                $agency = Agency::where('id', $agency_id)->first();
                 PostAgency::create([
                     'post_id' => $post->post_id,
-                    'agency_id' => $agency_id
+                    'agency_id' => $agency->id,
+                    'agency_name' => $agency->name
                 ]);
             }
 
             $regions = json_decode($request->regions, true);
             foreach ($regions as $region_id) {
+                $region = Region::where('id', $region_id)->first();
                 PostRegion::create([
                     'post_id' => $post->post_id,
-                    'region_id' => $region_id
+                    'region_id' => $region_id,
+                    'region_name' => $region->name
                 ]);
             }
             $userActions->logUserActions($request->user()->user_id, 'Created a post entitled ' . $request->title);
@@ -267,25 +273,31 @@ class PostController extends Controller
             $categories = json_decode($request->categories, true);
             PostCategory::where('post_id', $post->post_id)->delete();
             foreach ($categories as $category_id) {
+                $category = Category::where('category_id', $category_id)->first();
                 PostCategory::create([
                     'post_id' => $post->post_id,
-                    'category' => $category_id,
+                    'category' => $category->category_id,
+                    'category_name' => $category->title,
                 ]);
             }
             PostAgency::where('post_id', $post->post_id)->delete();
             $agencies = json_decode($request->agencies, true);
             foreach ($agencies as $agency_id) {
+                $agency = Agency::where('id', $agency_id)->first();
                 PostAgency::create([
                     'post_id' => $post->post_id,
-                    'agency_id' => $agency_id
+                    'agency_id' => $agency->id,
+                    'agency_name' => $agency->name
                 ]);
             }
             PostRegion::where('post_id', $post->post_id)->delete();
             $regions = json_decode($request->regions, true);
             foreach ($regions as $region_id) {
+                $region = Region::where('id', $region_id)->first();
                 PostRegion::create([
                     'post_id' => $post->post_id,
-                    'region_id' => $region_id
+                    'region_id' => $region_id,
+                    'region_name' => $region->name
                 ]);
             }
             $userActions->logUserActions($request->user()->user_id, 'Updated a post entitled ' . $post->title);
@@ -302,10 +314,13 @@ class PostController extends Controller
         }
     }
 
-    public function destroy(string $code, UserActions $userActions )
+    public function destroy(string $code, UserActions $userActions)
     {
         $user = Auth::user();
-        $post = Post::where('slug', $code)->update(['status' => 'trashed']);
+        $post = Post::where('slug', $code)->first();
+        if ($post) {
+            $post->update(['status' => 'trashed']);
+        }
         $userActions->logUserActions($user->user_id, 'Deleted a post entitled ' . $post->title);
         return response()->json([
             'status' => 'Post Successfully Deleted!'
@@ -319,7 +334,7 @@ class PostController extends Controller
             'status' => 'required|string'
         ]);
         $post = Post::where('slug', $req->code)->update(['status' => $req->status]);
-        $userActions->logUserActions($req->user()->user_id, $req->code .' post entitled ' . $post->title);
+        $userActions->logUserActions($req->user()->user_id, $req->code . ' post entitled ' . $post->title);
         return response()->json([
             'status' => 'Post Status Successfully Updated!'
         ]);
@@ -341,7 +356,7 @@ class PostController extends Controller
         $post->is_featured = !$post->is_featured;
         $post->save();
         $program = Program::where('program_id', $post->program_id)->first();
-        $userActions->logUserActions($user->user_id, $post->is_featured ? 'Featured a post entitled ' . $post->title . ' on the program '. $program->title : 'Unfeatured a post entitled ' . $post->title . ' on the program '. $program->title);
+        $userActions->logUserActions($user->user_id, $post->is_featured ? 'Featured a post entitled ' . $post->title . ' on the program ' . $program->title : 'Unfeatured a post entitled ' . $post->title . ' on the program ' . $program->title);
         return response()->json([
             'status' => 'Post Featured Status Successfully Updated!'
         ]);

@@ -16,7 +16,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/move-program',[ProgramsController::class,'moveProgram']);
     Route::resource('/programs', ProgramsController::class)->only(['index','store','destroy', 'edit']);
     Route::post('/update-program/{id}',[ProgramsController::class,'update']);
-
+    Route::post('/toggle-program-visibility/{id}',[ProgramsController::class,'toggleProgramVisibility']);
 
     //Program Seasons
     Route::resource('/program-seasons', ProgramSeasonController::class)->only(['store', 'edit']);

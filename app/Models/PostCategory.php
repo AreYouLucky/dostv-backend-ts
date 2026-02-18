@@ -10,6 +10,7 @@ class PostCategory extends Model
     protected $primaryKey = 'post_category_id';
     protected $fillable = [
         'post_id',
-        'category'
+        'category',
+        'category_name'
     ];
 }

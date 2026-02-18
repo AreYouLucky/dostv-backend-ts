@@ -75,7 +75,8 @@ class CategoriesController extends Controller
     public function destroy(string $id, UserActions $userActions)
     {
         $user = Auth::user();
-        $cat =Category::where('category_id', $id)->update(['is_active'=>0]);
+        $cat = Category::where('category_id', $id)->first();
+        $cat->update(['is_active'=>0]);
         $userActions->logUserActions($user->user_id, 'Deleted a category entitled ' . $cat->title);
         return response()->json([
             'status' => 'Category Successfully Deleted!'

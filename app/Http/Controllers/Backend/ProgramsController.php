@@ -201,4 +201,16 @@ class ProgramsController extends Controller
             'status' => 'Order Successfully Toggled'
         ]);
     }
+
+    public function toggleProgramVisibility(String $id, UserActions $userActions){
+        $user = Auth::user();
+        $program = Program::where('program_id', $id)->first();
+        $program->is_banner = $program->is_banner == 1 ? 0 : 1;
+        $program->save();
+        $userActions->logUserActions($user->user_id, 'Toggled a program visibility entitled ' . $program->title);
+        return response()->json([
+            'status' => 'Program Visibility Successfully Toggled!'
+        ]);
+
+    }
 }

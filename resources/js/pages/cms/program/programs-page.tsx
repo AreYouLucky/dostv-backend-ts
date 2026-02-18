@@ -5,16 +5,17 @@ import { Head } from '@inertiajs/react';
 import { IoAddCircle } from "react-icons/io5";
 import { Button } from '@/components/ui/button';
 import PaginatedSearchTable from '@/components/custom/data-table';
-import { useFetchPrograms, useDeleteProgram, useMoveProgram } from './partials/programs-hooks';
+import { useFetchPrograms, useDeleteProgram, useMoveProgram, useToggleProgramVisibility } from './partials/programs-hooks';
 import { ProgramsModel } from '@/types/models';
 import { trimText, purifyDom } from '@/hooks/use-essential-functions';
 import ImageLoader from '@/components/custom/image-loader';
 import { MdPermMedia } from "react-icons/md";
 import { Tooltip, TooltipContent, TooltipTrigger, } from "@/components/ui/tooltip"
-import { FaTrash, FaEdit, FaArrowUp, FaArrowDown , FaEye} from "react-icons/fa";
+import { FaTrash, FaEdit, FaArrowUp, FaArrowDown, FaEye } from "react-icons/fa";
 import ConfirmationDialog from '@/components/custom/confirmation-dialog';
 import { toast } from 'sonner';
 import { useState } from 'react';
+import { TiStarFullOutline } from "react-icons/ti";
 
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -28,7 +29,19 @@ function ProgramsPage() {
 
     const deleteProgram = useDeleteProgram();
     const moveProgram = useMoveProgram();
+    const toggleVisibility = useToggleProgramVisibility()
 
+    const toggleVisibilityFn = (id: number) => {
+        toggleVisibility.mutate({ id }, {
+            onSuccess: () => {
+                refetch()
+            },
+            onError(error) {
+                if (error.message)
+                    toast.error(error.message);
+            },
+        });
+    }
     if (error) return alert('An error has occurred: ' + error.message);
 
     const openDeleteDialog = (id: number) => {
@@ -86,6 +99,8 @@ function ProgramsPage() {
             },
         });
     };
+
+
 
     return (
         <>
@@ -163,10 +178,20 @@ function ProgramsPage() {
                                     <td className="px-6 py-1.5 text-justify">{r.program_type}</td>
                                     <td className="px-6 py-1.5 text-center">{r.agency}</td>
                                     <td className="px-6 py-1.5 text-center text-gray-800 text-[12px]">
-                                        <Link className="bg-teal-500 text-[11px] poppins-bold text-white px-4 py-1.5 rounded-md shadow-sm uppercase flex items-center gap-2" href={`/program-seasons/${r.program_id}/edit`}> <FaEye/> view</Link>
+                                        <Link className="bg-teal-500 text-[11px] poppins-bold text-white px-4 py-1.5 w-fit rounded-md shadow-sm uppercase flex items-center gap-2" href={`/program-seasons/${r.program_id}/edit`}> <FaEye /> view</Link>
                                     </td>
                                     <td>
                                         <div className='px-6 py-1.5 text-center poppins-bold text-xl text-teal-800 gap-1 flex relative'>
+                                            <Tooltip>
+                                                <TooltipTrigger asChild>
+                                                    <Button className='bg-transparent shadow-none hover:bg-teal-100 px-0' onClick={() => toggleVisibilityFn(r.program_id as number)}>
+                                                        <TiStarFullOutline className={r.is_banner == 1 ? 'text-blue-500' : 'text-gray-400'} />
+                                                    </Button>
+                                                </TooltipTrigger>
+                                                <TooltipContent>
+                                                    <p>Banner Category</p>
+                                                </TooltipContent>
+                                            </Tooltip>
                                             <Tooltip>
                                                 <TooltipTrigger asChild>
                                                     <Link className='bg-transparent shadow-none hover:bg-teal-100 px-2 rounded-lg py-2 text-lg' href={`/program-form/${r.code}`}>

@@ -103,3 +103,15 @@ export function useMoveProgram() {
     },
   });
 }
+
+
+export function useToggleProgramVisibility(){
+  const queryClient = useQueryClient();
+  return useMutation<ApiOk, AxiosError<ApiOk>, { id: number }>({
+    mutationFn: ({ id }) =>
+      axios.post<ApiOk>(`/toggle-program-visibility/${id}`).then(res => res.data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["programs"] });
+    },
+  })
+}

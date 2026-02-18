@@ -191,7 +191,8 @@ class BannersController extends Controller
     public function destroy(string $id, UserActions $userActions)
     {
         $user =  Auth::user();
-        $banner = Banner::where('banner_id', $id)->update(['is_active' => 0]);
+        $banner = Banner::where('banner_id', $id)->first();
+        $banner->update(['is_active' => 0]);
         $userActions->logUserActions($user->user_id, 'Deleted a banner entitled ' . $banner->title);
         return response()->json([
             'status' => 'Banner Successfully Deleted!'

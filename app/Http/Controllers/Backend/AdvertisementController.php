@@ -108,7 +108,8 @@ class AdvertisementController extends Controller
     public function destroy(string $id, UserActions $userActions)
     {
         $user =  Auth::user();
-        $ads = Advertisement::where('advertisement_id', $id)->update(['is_active'=>0]);
+        $ads = Advertisement::where('advertisement_id', $id)->first();
+        $ads->update(['is_active'=>0]);
         $userActions->logUserActions($user->user_id, 'Deleted an advertisement entitled ' . $ads->title);
         return response()->json([
             'status' => 'Advertisement Successfully Deleted!'

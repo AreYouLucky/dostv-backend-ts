@@ -84,7 +84,8 @@ class UsersController extends Controller
     public function destroy(string $id, UserActions $userActions)
     {
         $user = Auth::user();
-        $u = User::where('user_id', $id)->update(['is_active'=>0]);
+        $u = User::where('user_id', $id)->first();
+        $u->update(['is_active'=>0]);
         $userActions->logUserActions($user->user_id, 'Deleted an account named ' . $u->name);
         return response()->json([
             'status' => 'Profile Successfully Deleted!'

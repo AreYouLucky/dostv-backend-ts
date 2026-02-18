@@ -8,6 +8,6 @@ class PostRegion extends Model
 {
     protected $table = 'post_regions';
     protected $fillable = [
-        'post_id', 'region_id'
+        'post_id', 'region_id', 'region_name'
     ];
 }
