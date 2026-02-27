@@ -57,7 +57,7 @@ class AdvertisementController extends Controller
         $advertisement->order = $advertisement->advertisement_id;
         $advertisement->save();
 
-        $userActions->logUserActions($request->user()->user_id, 'Created an advertisement entitled ' . $request->title);
+        $userActions->logUserActions($request->user()->user_id, 'Created an advertisement entitled ' . $request->title, 'Create', 'Advertisement');
 
         return response()->json([
             'advertisement' => $advertisement,
@@ -95,7 +95,7 @@ class AdvertisementController extends Controller
         $advertisement->is_redirect = $request->is_redirect;
         $advertisement->save();
 
-        $userActions->logUserActions($request->user()->user_id, 'Updated an advertisement entitled ' . $request->title);
+        $userActions->logUserActions($request->user()->user_id, 'Updated an advertisement entitled ' . $request->title, 'Update', 'Advertisement');
 
         return response()->json([
             'status' => 'Advertisement Successfully Updated!',
@@ -110,7 +110,7 @@ class AdvertisementController extends Controller
         $user =  Auth::user();
         $ads = Advertisement::where('advertisement_id', $id)->first();
         $ads->update(['is_active'=>0]);
-        $userActions->logUserActions($user->user_id, 'Deleted an advertisement entitled ' . $ads->title);
+        $userActions->logUserActions($user->user_id, 'Deleted an advertisement entitled ' . $ads->title, 'Delete', 'Advertisement');
         return response()->json([
             'status' => 'Advertisement Successfully Deleted!'
         ]);
@@ -164,7 +164,7 @@ class AdvertisementController extends Controller
         $advertisement = Advertisement::find($id);
         $advertisement->is_banner = !$advertisement->is_banner;
         $advertisement->save();
-        $userActions->logUserActions($user->user_id, $advertisement->is_banner ? 'Unhide the advertisement entitled ' . $advertisement->title : 'Hide the advertisement entitled ' . $advertisement->title);
+        $userActions->logUserActions($user->user_id, $advertisement->is_banner ? 'Unhide the advertisement entitled ' . $advertisement->title : 'Hide the advertisement entitled ' . $advertisement->title, 'Update', 'Advertisement');
         return response()->json([
             'status' => 'success',
             'message' => 'Advertisement visibility successfully toggled'

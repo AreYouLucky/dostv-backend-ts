@@ -10,6 +10,8 @@ class UserAction extends Model
     protected $primaryKey = 'id';
     protected $fillable = [
         'user_id',
-        'action'
+        'action',
+        'action_type',
+        'content_type'
     ];
 }

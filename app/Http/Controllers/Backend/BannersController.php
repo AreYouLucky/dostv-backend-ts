@@ -86,7 +86,8 @@ class BannersController extends Controller
             'bg' => $bg_filename ?? '',
             'duration' => $request->duration ?? 0
         ]);
-        $userActions->logUserActions($request->user()->user_id, 'Created a banner entitled ' . $request->title);
+        $banner->order = $banner->banner_id;
+        $userActions->logUserActions($request->user()->user_id, 'Created a banner entitled ' . $request->title, 'Create', 'Banner');
         return response()->json([
             'status' => 'Banner Successfully Added!',
             'banner' => $banner
@@ -171,7 +172,7 @@ class BannersController extends Controller
             $banner->url = $request->url ?? '';
             $banner->duration = $request->duration ?? 0;
             $banner->save();
-            $userActions->logUserActions($request->user()->user_id, 'Updated a banner entitled ' . $request->title);
+            $userActions->logUserActions($request->user()->user_id, 'Updated a banner entitled ' . $request->title, 'Update', 'Banner');
             DB::commit();
             return response()->json([
                 'status' => 'Banner Successfully Updated!',
@@ -193,7 +194,7 @@ class BannersController extends Controller
         $user =  Auth::user();
         $banner = Banner::where('banner_id', $id)->first();
         $banner->update(['is_active' => 0]);
-        $userActions->logUserActions($user->user_id, 'Deleted a banner entitled ' . $banner->title);
+        $userActions->logUserActions($user->user_id, 'Deleted a banner entitled ' . $banner->title, 'Delete', 'Banner');
         return response()->json([
             'status' => 'Banner Successfully Deleted!'
         ]);
@@ -205,7 +206,7 @@ class BannersController extends Controller
         $banner = Banner::where('banner_id', $id)->first();
         $banner->is_banner = !$banner->is_banner;
         $banner->save();
-        $userActions->logUserActions($user->user_id, $banner->is_banner ? 'Unhide the banner entitled ' . $banner->title : 'Hide the banner entitled ' . $banner->title);
+        $userActions->logUserActions($user->user_id, $banner->is_banner ? 'Unhide the banner entitled ' . $banner->title : 'Hide the banner entitled ' . $banner->title, 'Update', 'Banner');
         return response()->json([
             'status' => 'Banner Status Successfully Updated!'
         ]);

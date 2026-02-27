@@ -10,4 +10,5 @@ Route::middleware('auth')->group(function () {
     Route::post('/update-post-status',[PostController::class,'updatePostStatus']);
     Route::post('/toggle-post-featured/{id}',[PostController::class,'togglePostFeatured']);
     Route::post('/restore-post/{id}',[PostController::class,'restorePost']);
+
 });

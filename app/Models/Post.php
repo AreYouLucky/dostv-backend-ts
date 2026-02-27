@@ -11,7 +11,7 @@ class Post extends Model
     protected $fillable = [
         'title',
         'type',
-        'program',
+        'program_id',
         'description',
         'excerpt',
         'episode',
@@ -28,7 +28,9 @@ class Post extends Model
         'is_featured',
         'status',
         'slug',
-        'is_converted'
+        'is_converted',
+        'female',
+        'male'
     ];
 
     public function categories()

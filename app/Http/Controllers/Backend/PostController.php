@@ -133,7 +133,12 @@ class PostController extends Controller
                 'date_published' => $request->date_published,
                 'excerpt' => $request->excerpt,
                 'episode' => $request->episode,
+                'season' => $request->season,
+                'male' => $request->male,
+                'female' => $request->female,
                 'platform' => $request->platform,
+                'male' => $request->male ?? 0,
+                'female' => $request->female ?? 0,
                 'url' => $request->url,
                 'trailer' => $trailer_filename ?? null,
                 'thumbnail' => $thumbnail_filename ?? null,
@@ -173,7 +178,7 @@ class PostController extends Controller
                     'region_name' => $region->name
                 ]);
             }
-            $userActions->logUserActions($request->user()->user_id, 'Created a post entitled ' . $request->title);
+            $userActions->logUserActions($request->user()->user_id, 'Created a post entitled ' . $request->title, 'Create', 'Post');
 
             DB::commit();
 
@@ -250,7 +255,6 @@ class PostController extends Controller
                 $post->trailer = $this->uploadFile('/videos/post_videos/trailers', $request, 'trailer_file');
             }
 
-            $post->slug = Str::slug($request->title);
             $post->title = $request->title;
             $post->type = $request->type;
             $post->program_id = $request->program;
@@ -260,6 +264,9 @@ class PostController extends Controller
             $post->excerpt = $request->excerpt;
             $post->episode = $request->episode;
             $post->platform = $request->platform;
+            $post->season = $request->season;
+            $post->female = $request->female;
+            $post->male = $request->male;
             $post->url = $request->url;
             $post->trailer = $post->trailer ?? null;
             $post->thumbnail = $post->thumbnail ?? null;
@@ -300,7 +307,7 @@ class PostController extends Controller
                     'region_name' => $region->name
                 ]);
             }
-            $userActions->logUserActions($request->user()->user_id, 'Updated a post entitled ' . $post->title);
+            $userActions->logUserActions($request->user()->user_id, 'Updated a post entitled ' . $post->title,  'Update', 'Post');
             DB::commit();
             return response()->json([
                 'status' => 'Post Successfully Updated!',
@@ -321,7 +328,7 @@ class PostController extends Controller
         if ($post) {
             $post->update(['status' => 'trashed']);
         }
-        $userActions->logUserActions($user->user_id, 'Deleted a post entitled ' . $post->title);
+        $userActions->logUserActions($user->user_id, 'Deleted a post entitled ' . $post->title,  'Delete', 'Post');
         return response()->json([
             'status' => 'Post Successfully Deleted!'
         ]);
@@ -333,13 +340,19 @@ class PostController extends Controller
             'code' => 'required|string',
             'status' => 'required|string'
         ]);
-        $post = Post::where('slug', $req->code)->update(['status' => $req->status]);
-        $userActions->logUserActions($req->user()->user_id, $req->code . ' post entitled ' . $post->title);
+
+        $post = Post::where('slug', $req->code)->firstOrFail();
+
+        $post->update([
+            'status' => $req->status
+        ]);
+
+        $userActions->logUserActions( $req->user()->user_id, $req->code . ' post entitled ' . $post->title,  'Delete', 'Post');
+
         return response()->json([
             'status' => 'Post Status Successfully Updated!'
         ]);
     }
-
     public function viewPostPage()
     {
         $programs = Program::select('program_id', 'code', 'program_type', 'title', 'description', 'agency', 'image')->where('is_active', 1)->orderBy('title', 'asc')->get();
@@ -356,7 +369,7 @@ class PostController extends Controller
         $post->is_featured = !$post->is_featured;
         $post->save();
         $program = Program::where('program_id', $post->program_id)->first();
-        $userActions->logUserActions($user->user_id, $post->is_featured ? 'Featured a post entitled ' . $post->title . ' on the program ' . $program->title : 'Unfeatured a post entitled ' . $post->title . ' on the program ' . $program->title);
+        $userActions->logUserActions($user->user_id, $post->is_featured ? 'Featured a post entitled ' . $post->title . ' on the program ' . $program->title : 'Unfeatured a post entitled ' . $post->title . ' on the program ' . $program->title,  'Update', 'Post');
         return response()->json([
             'status' => 'Post Featured Status Successfully Updated!'
         ]);

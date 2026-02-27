@@ -45,7 +45,7 @@ class UsersController extends Controller
             'avatar' => $storagePath ?? null,
             'role' => 'encoder'
         ]);
-        $userActions->logUserActions($request->user()->user_id, 'Created a new account named ' . $request->name);
+        $userActions->logUserActions($request->user()->user_id, 'Created a new account named ' . $request->name, "Create", "Account");
 
         return response()->json([
             'status' => 'Profile Successfully Created!'
@@ -71,7 +71,7 @@ class UsersController extends Controller
 
         $user->save();
 
-        $userActions->logUserActions($request->user()->user_id, 'Updated an account named ' . $request->name);
+        $userActions->logUserActions($request->user()->user_id, 'Updated an account named ' . $request->name, "Update", "Account");
 
         return response()->json([
             'status' => 'Profile Successfully Updated!'
@@ -86,7 +86,7 @@ class UsersController extends Controller
         $user = Auth::user();
         $u = User::where('user_id', $id)->first();
         $u->update(['is_active'=>0]);
-        $userActions->logUserActions($user->user_id, 'Deleted an account named ' . $u->name);
+        $userActions->logUserActions($user->user_id, 'Deleted an account named ' . $u->name, "Delete", "Account");
         return response()->json([
             'status' => 'Profile Successfully Deleted!'
         ]);
@@ -100,7 +100,7 @@ class UsersController extends Controller
         $user = User::find($id);
         $user->password = Hash::make($request->password);
         $user->save();
-        $userActions->logUserActions($request->user()->user_id, 'Updated the password of an account named ' . $user->name);
+        $userActions->logUserActions($request->user()->user_id, 'Updated the password of an account named ' . $user->name, "Update", "Account");
         return response()->json([
             'status' => 'Password Successfully Updated!'
         ]);

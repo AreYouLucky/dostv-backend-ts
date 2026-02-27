@@ -30,7 +30,7 @@ class CategoriesController extends Controller
             'is_banner' => 0,
             'is_active' => 1
         ]);
-        $userActions->logUserActions($request->user()->user_id, 'Created a category entitled ' . $request->title);
+        $userActions->logUserActions($request->user()->user_id, 'Created a category entitled ' . $request->title, 'Create', 'Category');
         return response()->json([
             'status' => 'Category Successfully Added!'
         ]);
@@ -63,7 +63,7 @@ class CategoriesController extends Controller
             'title' => $request->title,
             'description' => $request->description,
         ]);
-        $userActions->logUserActions($request->user()->user_id, 'Updated a category entitled ' . $request->title);
+        $userActions->logUserActions($request->user()->user_id, 'Updated a category entitled ' . $request->title, 'Update', 'Category');
         return response()->json([
             'status' => 'Category Successfully Updated!'
         ]);
@@ -77,7 +77,7 @@ class CategoriesController extends Controller
         $user = Auth::user();
         $cat = Category::where('category_id', $id)->first();
         $cat->update(['is_active'=>0]);
-        $userActions->logUserActions($user->user_id, 'Deleted a category entitled ' . $cat->title);
+        $userActions->logUserActions($user->user_id, 'Deleted a category entitled ' . $cat->title, 'Delete', 'Category');
         return response()->json([
             'status' => 'Category Successfully Deleted!'
         ]);

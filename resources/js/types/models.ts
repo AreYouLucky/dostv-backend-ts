@@ -108,7 +108,9 @@ export interface PostModel {
   featured_guest: string | null;
   post_program: ProgramsModel;
   categories: CategoriesModel[];
-  season: number | null;
+  season: string | null;
+  female: number | null;
+  male: number | null;
   regions: RegionModel[];
 }
 

@@ -77,6 +77,8 @@ function PostForm() {
         trailer_file: "" as File | string,
         banner_image: "" as File | string,
         season: post?.season ?? '',
+        female: post?.female ?? '',
+        male: post?.male ?? '',
         categories: post?.categories
             ? post.categories.map((c) => Number(c.category)) : []
     });
@@ -112,6 +114,9 @@ function PostForm() {
         formData.append("featured_guest", String(item.featured_guest));
         formData.append("excerpt", String(item.excerpt));
         formData.append("episode", String(item.episode));
+        formData.append("season", String(item.season));
+        formData.append("female", String(item.female));
+        formData.append("male", String(item.male));
         formData.append("platform", String(item.platform));
         formData.append("url", String(item.url));
         formData.append("trailer", String(item.trailer));
@@ -127,9 +132,9 @@ function PostForm() {
         formData.append("date_published", String(item.date_published));
         formData.append("status", String(item.status));
         formData.append("tags", String(item.tags));
-        formData.append("categories",JSON.stringify(item.categories))
-        formData.append("agencies",JSON.stringify(item.agencies))
-        formData.append("regions",JSON.stringify(item.regions))
+        formData.append("categories", JSON.stringify(item.categories))
+        formData.append("agencies", JSON.stringify(item.agencies))
+        formData.append("regions", JSON.stringify(item.regions))
 
         return formData;
     }
@@ -193,11 +198,12 @@ function PostForm() {
                     <div className='bg-teal-600/90 w-full flex flex-col justify-between item-center  shadow-sm border rounded-lg border-gray-300/50  overflow-auto py-6 px-8'>
                         <div className="md:cols-span-2 text-gray-50 poppins-bold md:text-lg text-sm flex items-center justify-start gap-2 md:col-span-3 ">
                             <ImFilePicture /> Post Management Form
+                            here: {item.thumbnail}
                         </div>
                     </div>
                     <div className=" w-full flex flex-col justify-between item-center  shadow-sm border rounded-lg border-gray-400/50 bg-white  overflow-auto py-10 px-8">
-                        <div className="flex items-center pb-4">
-                            <span className="px-4 text-teal-600 poppins-bold text-[18px]  flex flex-row gap-2 items-center justify-center"><IoDocumentTextOutline /> Meta Section </span>
+                        <div className="flex items-center pb-4 text-white">
+                            <span className="px-4 text-teal-600 poppins-bold text-[18px]  flex flex-row gap-2 items-center justify-center"><IoDocumentTextOutline /> Meta Section </span>                
                         </div>
                         <div className="grid md:grid-cols-4  gap-6 text-[12px] ">
                             <div className="md:col-span-3 grid md:grid-cols-3 grid-cols-1 gap-4 border-r px-4">
@@ -240,10 +246,10 @@ function PostForm() {
                                     <Select
                                         value={String(item.program)}
                                         onValueChange={(value) => {
-                                                setItem((prev) => ({ ...prev, program: value }))
-                                                setErrors((prev) => ({ ...prev, program: '' }))
-                                                filteredSeasonsFn(Number(value))
-                                            }
+                                            setItem((prev) => ({ ...prev, program: value }))
+                                            setErrors((prev) => ({ ...prev, program: '' }))
+                                            filteredSeasonsFn(Number(value))
+                                        }
                                         }
                                     >
                                         <SelectTrigger className="border-gray-300">
@@ -307,9 +313,9 @@ function PostForm() {
                                                     <Tooltip key={season.id} >
                                                         <TooltipTrigger asChild>
                                                             <SelectItem
-                                                                value={String(season.id)}
+                                                                value={String(season.title)}
                                                             >
-                                                                {season.title}  - {season.season}
+                                                                {season.title} 
                                                             </SelectItem>
                                                         </TooltipTrigger>
                                                         <TooltipContent side="right" >
@@ -409,6 +415,34 @@ function PostForm() {
                                         className="text-gray-700 border-gray-300"
                                     />
                                     <InputError message={errors.date_published} />
+                                </div>
+                                <div className="grid grid-cols-2 gap-1 ">
+                                    <div className="grid gap-1">
+                                        <Label htmlFor="female" className="text-gray-600 poppins-semibold text-[13px]">Female</Label>
+                                        <Input
+                                            id="female"
+                                            type="number"
+                                            name="female"
+                                            required
+                                            onChange={handleChange}
+                                            value={String(item.female)}
+                                            className="text-gray-700 border-gray-300"
+                                        />
+                                        <InputError message={errors.female} />
+                                    </div>
+                                    <div className="grid gap-1">
+                                        <Label htmlFor="male" className="text-gray-600 poppins-semibold text-[13px]">Male</Label>
+                                        <Input
+                                            id="male"
+                                            type="number"
+                                            name="male"
+                                            required
+                                            onChange={handleChange}
+                                            value={String(item.male)}
+                                            className="text-gray-700 border-gray-300"
+                                        />
+                                        <InputError message={errors.male} />
+                                    </div>
                                 </div>
                                 <div className="grid gap-2 col-span-3">
                                     <Label htmlFor="tags" className="text-gray-600 poppins-semibold">

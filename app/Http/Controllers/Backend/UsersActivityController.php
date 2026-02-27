@@ -36,6 +36,10 @@ class UsersActivityController extends Controller
             $query->where('user_actions.user_id', $request->user()->user_id);
         }
 
+        if($request->filled('user')){
+
+        }
+
         return $query
             ->orderBy('user_actions.created_at', 'desc')
             ->get();

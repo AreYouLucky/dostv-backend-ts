@@ -52,7 +52,7 @@ class TestimonialController extends Controller
             'guest' => $request->guest,
             'date_published' => $request->date_published
         ]);
-        $userActions->logUserActions($request->user()->user_id, 'Created a testimonial entitled ' . $request->title);
+        $userActions->logUserActions($request->user()->user_id, 'Created a testimonial entitled ' . $request->title, "Create", "Testimonial");
 
         return response()->json([
             'status' => 'Testimonial Successfully Created!',
@@ -89,7 +89,7 @@ class TestimonialController extends Controller
         $testimonial->date_published = $request->date_published;
         $testimonial->save();
 
-        $userActions->logUserActions($request->user()->user_id, 'Updated a testimonial entitled ' . $request->title);
+        $userActions->logUserActions($request->user()->user_id, 'Updated a testimonial entitled ' . $request->title, "Update", "Testimonial");
         return response()->json([
             'status' => 'Testimonial Successfully Updated!',
             'testimonial' => $testimonial
@@ -113,7 +113,7 @@ class TestimonialController extends Controller
         $testimonial = Testimonial::where('testimonial_id', $id)->first();
         $testimonial->is_banner = !$testimonial->is_banner;
         $testimonial->save();
-        $userActions->logUserActions($user->user_id, $testimonial->is_banner ? 'Unhide a testimonial entitled ' . $testimonial->title : 'Hide a testimonial entitled ' . $testimonial->title);
+        $userActions->logUserActions($user->user_id, $testimonial->is_banner ? 'Unhide a testimonial entitled ' . $testimonial->title : 'Hide a testimonial entitled ' . $testimonial->title, "Delete", "Testimonial");
         return response()->json([
             'status' => 'Testimonial Status Successfully Updated!'
         ]);

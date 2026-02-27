@@ -125,7 +125,7 @@ class ProgramSeasonController extends Controller
             }
             $season->delete();
         }
-        $userActions->logUserActions($request->user()->user_id, 'Updated the list of seasons of ' . $program->title);
+        $userActions->logUserActions($request->user()->user_id, 'Updated the list of seasons of ' . $program->title, "Update", "Program");
 
         return response()->json(['status' => 'Seasons Successfully Updated!']);
     }

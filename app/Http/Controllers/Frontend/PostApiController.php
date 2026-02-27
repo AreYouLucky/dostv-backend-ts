@@ -66,7 +66,6 @@ class PostApiController extends Controller
     public function loadRecentPosts(Request $request)
     {
         return Post::where('status', 'published')
-            ->where('status', 'published')
             ->with('post_program')
             ->orderByDesc('date_published')
             ->take(10)
@@ -75,13 +74,31 @@ class PostApiController extends Controller
 
 
 
-    public function getPosts(String $code)
+    public function getPost(string $code)
     {
+        $post = Post::with(['post_program' => function ($q) {
+            $q->select('title', 'code', 'program_id');
+        }])
+            ->where('slug', $code)
+            ->firstOrFail();
 
-        $post = Post::where('code', $code)->first();
-        $related = Post::where('cat.category', $post->cat->category)
-            ->join('post_categories as cat', 'cat.post_id', '=', 'posts.post_id')
-            ->where('posts.post_id', '!=', $post->post_id)->take(20)->get();
+        $searchText = trim(
+            $post->title . ' ' .
+                ($post->excerpt ?? '') . ' ' .
+                ($post->description ?? '')
+        );
+
+        $related = Post::selectRaw("
+            posts.*,
+            MATCH(posts.title, posts.excerpt, posts.description)
+            AGAINST (? IN NATURAL LANGUAGE MODE) as relevance
+        ", [$searchText])
+            ->where('posts.post_id', '!=', $post->post_id)
+            ->where('posts.status', 'published')
+            ->having('relevance', '>', 0)
+            ->orderByDesc('relevance')
+            ->take(7)
+            ->get();
 
         return response()->json([
             'post' => $post,

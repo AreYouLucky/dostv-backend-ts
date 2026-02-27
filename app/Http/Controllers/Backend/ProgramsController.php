@@ -81,7 +81,7 @@ class ProgramsController extends Controller
 
             DB::commit();
 
-            $userActions->logUserActions($request->user()->user_id, 'Created a program entitled ' . $request->title);
+            $userActions->logUserActions($request->user()->user_id, 'Created a program entitled ' . $request->title, 'Create', 'Program');
 
             return response()->json([
                 'status' => 'Program Successfully Saved!',
@@ -139,7 +139,7 @@ class ProgramsController extends Controller
             $program->program_type = $request->program_type;
             $program->save();
             DB::commit();
-            $userActions->logUserActions($request->user()->user_id, 'Created a program entitled ' . $request->title);
+            $userActions->logUserActions($request->user()->user_id, 'Created a program entitled ' . $request->title, 'Update', 'Program');
 
 
             return response()->json([
@@ -164,7 +164,7 @@ class ProgramsController extends Controller
         $program = Program::where('program_id', $id)->first();
         $program->is_active = $program->is_active == 1 ? 0 : 1;
         $program->save();
-        $userActions->logUserActions($user->user_id, 'Deleted a program entitled ' . $program->title);
+        $userActions->logUserActions($user->user_id, 'Deleted a program entitled ' . $program->title, 'Delete', 'Program');
         return response()->json([
             'status' => 'Program Successfully Deleted!'
         ]);
@@ -207,7 +207,7 @@ class ProgramsController extends Controller
         $program = Program::where('program_id', $id)->first();
         $program->is_banner = $program->is_banner == 1 ? 0 : 1;
         $program->save();
-        $userActions->logUserActions($user->user_id, 'Toggled a program visibility entitled ' . $program->title);
+        $userActions->logUserActions($user->user_id, 'Toggled a program visibility entitled ' . $program->title, 'Update', 'Program');
         return response()->json([
             'status' => 'Program Visibility Successfully Toggled!'
         ]);

@@ -2,6 +2,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import { PostModel } from "@/types/models";
 import { AxiosError } from "axios";
+import { useEffect } from "react";
 
 type ApiValidationErrors = Record<string, string[]>;
 
@@ -33,15 +34,17 @@ type PostFilters = {
   status: string | '';
 }
 
+
 export function useFetchPosts(
   page: number,
   filters: PostFilters
 ) {
-  return useQuery<PaginatedResponse<PostModel>>({
-    queryKey: ['posts', page, filters],
+  const queryClient = useQueryClient();
 
+  const query = useQuery<PaginatedResponse<PostModel>>({
+    queryKey: ["posts", page, filters],
     queryFn: async () => {
-      const res = await axios.get('/posts', {
+      const res = await axios.get("/posts", {
         params: {
           page,
           ...filters,
@@ -49,12 +52,33 @@ export function useFetchPosts(
       });
       return res.data;
     },
+
     staleTime: 60 * 1000,
     refetchOnWindowFocus: false,
   });
+
+  /* -------------------- PREFETCH NEXT PAGE -------------------- */
+  useEffect(() => {
+    const nextPage = page + 1;
+
+    if (!query.data?.next_page_url) return;
+
+    queryClient.prefetchQuery({
+      queryKey: ["posts", nextPage, filters],
+      queryFn: async () => {
+        const res = await axios.get("/posts", {
+          params: {
+            page: nextPage,
+            ...filters,
+          },
+        });
+        return res.data;
+      },
+    });
+  }, [query.data, page, filters, queryClient]);
+
+  return query;
 }
-
-
 
 export function useCreatePost() {
   const queryClient = useQueryClient();
