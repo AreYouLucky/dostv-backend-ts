@@ -365,9 +365,10 @@ class PostController extends Controller
     {
         $user = Auth::user();
         $post = Post::where('slug', $post)->first();
-        Post::where('program_id', $post->program_id)->update(['is_featured' => 0]);
+        // Post::where('program_id', $post->program_id)->update(['is_featured' => 0]);
         $post->is_featured = !$post->is_featured;
         $post->save();
+
         $program = Program::where('program_id', $post->program_id)->first();
         $userActions->logUserActions($user->user_id, $post->is_featured ? 'Featured a post entitled ' . $post->title . ' on the program ' . $program->title : 'Unfeatured a post entitled ' . $post->title . ' on the program ' . $program->title,  'Update', 'Post');
         return response()->json([

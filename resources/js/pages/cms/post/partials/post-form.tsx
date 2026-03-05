@@ -1,4 +1,4 @@
-import { ReactNode, useState } from "react";
+import { ReactNode, useState, useMemo } from "react";
 import AppLayout from "@/layouts/app-layout";
 import { ImFilePicture } from "react-icons/im";
 import { useHandleChange } from "@/hooks/use-handle-change";
@@ -52,7 +52,7 @@ function PostForm() {
     const categories = props.categories ?? [];
     const [message, setMessage] = useState('')
     const [successDialog, setSuccessDialog] = useState(false)
-    const [filteredSeasons, setFilteredSeasons] = useState<ProgramSeasonModel[] | null>()
+    // const [filteredSeasons, setFilteredSeasons] = useState<ProgramSeasonModel[] | null>()
     const { item, errors, setItem, handleChange, setErrors } = useHandleChange({
         post_id: post?.post_id ?? 0,
         slug: post?.slug ?? '',
@@ -83,7 +83,16 @@ function PostForm() {
             ? post.categories.map((c) => Number(c.category)) : []
     });
 
-
+    // const filteredSeasonsFn = (program_id: number) => {
+    //     console.log(props.seasons)
+    //     setFilteredSeasons(props.seasons?.filter((season) => season.program_id === program_id))
+    // }
+const filteredSeasons = useMemo(() => {
+    if (!props.seasons || !item.program) return [];
+    return props.seasons.filter(
+        (season) => season.program_id === Number(item.program)
+    );
+}, [props.seasons, item.program]);
     const toggleCategory = (categoryId: number, checked: boolean) => {
         setItem((prev) => ({
             ...prev,
@@ -93,10 +102,6 @@ function PostForm() {
         }))
     }
 
-    const filteredSeasonsFn = (program_id: number) => {
-        console.log(props.seasons)
-        setFilteredSeasons(props.seasons?.filter((season) => season.program_id === program_id))
-    }
 
 
     const isChecked = (categoryId: number) => {
@@ -189,7 +194,6 @@ function PostForm() {
 
     }
 
-
     return (
         <>
             <Head title="Program Form" />
@@ -203,7 +207,7 @@ function PostForm() {
                     </div>
                     <div className=" w-full flex flex-col justify-between item-center  shadow-sm border rounded-lg border-gray-400/50 bg-white  overflow-auto py-10 px-8">
                         <div className="flex items-center pb-4 text-white">
-                            <span className="px-4 text-teal-600 poppins-bold text-[18px]  flex flex-row gap-2 items-center justify-center"><IoDocumentTextOutline /> Meta Section </span>                
+                            <span className="px-4 text-teal-600 poppins-bold text-[18px]  flex flex-row gap-2 items-center justify-center"><IoDocumentTextOutline /> Meta Section </span>
                         </div>
                         <div className="grid md:grid-cols-4  gap-6 text-[12px] ">
                             <div className="md:col-span-3 grid md:grid-cols-3 grid-cols-1 gap-4 border-r px-4">
@@ -248,7 +252,6 @@ function PostForm() {
                                         onValueChange={(value) => {
                                             setItem((prev) => ({ ...prev, program: value }))
                                             setErrors((prev) => ({ ...prev, program: '' }))
-                                            filteredSeasonsFn(Number(value))
                                         }
                                         }
                                     >
@@ -315,7 +318,7 @@ function PostForm() {
                                                             <SelectItem
                                                                 value={String(season.title)}
                                                             >
-                                                                {season.title} 
+                                                                {season.title}
                                                             </SelectItem>
                                                         </TooltipTrigger>
                                                         <TooltipContent side="right" >
