@@ -5,24 +5,16 @@ namespace App\Http\Controllers\Frontend;
 use App\Http\Controllers\Controller;
 use App\Models\Post;
 use App\Models\Program;
+use App\Models\ProgramSeason;
 
 class ProgramApiController extends Controller
 {
-    public function getRelatedPostByProgram(String $code)
-    {
-        return Post::select('posts.*', 'programs.title as program_title')
-            ->join('programs', 'posts.program_id', '=', 'programs.program_id')
-            ->where('programs.code', $code)
-            ->where('status', 'published')
-            ->inRandomOrder()
-            ->take(6)
-            ->get();
-    }
-
     public function getProgramInfo(string $program_slug)
     {
         $program = Program::where('code', $program_slug)->firstOrFail();
         $featured_post = Post::where('program_id', $program->program_id)
+            ->with('post_program')
+            ->with('categories')
             ->where('is_featured', 1)
             ->where('status', '!=', 'trashed')
             ->where('status', 'published')
@@ -38,30 +30,56 @@ class ProgramApiController extends Controller
         ]);
     }
 
-    public function getProgramRecentPosts(String $code)
+    public function getProgramSeasonsPosts(string $program_slug)
     {
-        return Post::select('posts.*', 'programs.title as program_title')
-            ->join('programs', 'posts.program_id', '=', 'programs.program_id')
-            ->where('programs.code', $code)
-            ->where('status', 'published')
-            ->take(6)
+        $program = Program::where('code', $program_slug)->firstOrFail();
+
+        $seasons = ProgramSeason::where('program_id', $program->program_id)
+            ->with([
+                'posts' => function ($query) {
+                    $query->select(
+                        'post_id',
+                        'program_id',
+                        'season',
+                        'title',
+                        'slug',
+                        'date_published',
+                        'thumbnail',
+                        'banner',
+                        'trailer',
+                        'type',
+                        'excerpt'
+                    )
+                        ->where('status', 'published')
+                        ->orderByDesc('date_published')
+                        ->with([
+                            'categories' => function ($q) {
+                                $q->select('post_id', 'category', 'category_name', 'post_category_id');
+                            }
+                        ]);
+                }
+            ])->orderBy('season', 'desc')
             ->get();
+
+        return response()->json([
+            'seasons' => $seasons,
+            'program' => $program
+        ]);
     }
 
-    public function getProgramOlderPosts(String $code)
+    public function getProgramPosts(String $string)
     {
-        $recentIds = Post::join('programs', 'posts.program_id', '=', 'programs.program_id')
-            ->where('programs.code', $code)
+        $program = Program::where('code', $string)->firstOrFail();
+        $posts = Post::where('program_id', $program->program_id)
+            ->where('season', null)
+            ->where('status', 'published')
+            ->with('categories')
             ->orderBy('date_published', 'desc')
-            ->take(6)
-            ->pluck('posts.id');
+            ->paginate(6);
 
-        return Post::select('posts.*', 'programs.title as program_title')
-            ->join('programs', 'posts.program_id', '=', 'programs.program_id')
-            ->where('programs.code', $code)
-            ->whereNotIn('posts.id', $recentIds)
-            ->orderBy('date_published', 'desc')
-            ->paginate(8);
+        return response()->json([
+            'posts' => $posts,
+            'program' => $program
+        ]);
     }
-
 }

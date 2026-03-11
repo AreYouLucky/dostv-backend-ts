@@ -6,6 +6,7 @@ use App\Http\Controllers\Frontend\PostApiController;
 use App\Http\Controllers\YoutubeController;
 use App\Http\Controllers\Frontend\ProgramApiController;
 use App\Http\Controllers\Frontend\HomeApiController;
+use App\Http\Controllers\Frontend\PartnersApiController;
 
 Route::get('/load-home-page-mounts', [HomeApiController::class, 'loadHomePageMounts']);
 Route::middleware('api.token')->group(function () {
@@ -20,19 +21,23 @@ Route::middleware('api.token')->group(function () {
     Route::get('/get-featured-posts', [HomeApiController::class, 'getFeaturedPosts']);
     Route::get('/youtube/top-videos/{year}', [YoutubeController::class, 'topVideos']);
     Route::get('/get-featured-programs', [HomeApiController::class, 'getFeaturedPrograms']);
+    Route::get('/get-featured-programs-posts', [HomeApiController::class, 'getFeaturedProgramsPosts']);
 
+    //Program related post
+    Route::get('/get-program-info/{code}', [ProgramApiController::class, 'getProgramInfo']);
+    Route::get('/get-program-seasons-posts/{code}', [ProgramApiController::class, 'getProgramSeasonsPosts']);
+    Route::get('/get-program-posts/{code}', [ProgramApiController::class, 'getProgramPosts']);
 
+    //Partners
+    Route::get('/load-partners', [PartnersApiController::class, 'loadPartners']);
 
     Route::get('/load-advertisements', [InitialAPIController::class, 'loadAdvertisements']);
     Route::get('/get-dashboard-posts', [PostApiController::class, 'getDashboardPost']);
 
     //Posts
-    Route::get('/recent-posts', [PostApiController::class, 'loadRecentPosts']);
+    // Route::get('/recent-posts', [PostApiController::class, 'loadRecentPosts']);
     Route::get('/get-post/{slug}', [PostApiController::class, 'getPost']);
+    Route::get('/get-related-post-by-program/{program_id}', [PostApiController::class, 'getRelatedPostByProgram']);
 
-    //Program related post
-    Route::get('/get-related-post-by-program/{program_id}', [ProgramApiController::class, 'getRelatedPostByProgram']);
-    Route::get('/get-program-info/{code}', [ProgramApiController::class, 'getPRogramInfo']);
-    Route::get('/program-recent-posts/{code}', [ProgramApiController::class, 'getProgramRecentPosts']);
-    Route::get('/program-older-posts/{code}', [ProgramApiController::class, 'getProgramOlderPosts']);
+
 });

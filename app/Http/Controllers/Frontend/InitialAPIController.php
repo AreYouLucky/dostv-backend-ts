@@ -11,7 +11,7 @@ class InitialApiController extends Controller
 {
     public function loadPrograms()
     {
-        return Program::select('code', 'title', 'description', 'image', 'program_type',)->where('is_active', 1)->where('is_banner', 1)->orderBy('order', 'desc')->get();
+        return Program::select('code', 'title', 'description', 'image', 'program_type',)->where('is_active', 1)->orderBy('order', 'desc')->get();
     }
 
     public function loadCategories(){
@@ -27,6 +27,7 @@ class InitialApiController extends Controller
         return [
             'programs' => $this->loadPrograms(),
             'categories' => $this->loadCategories(),
+            'advertisements' => $this->loadAdvertisements(),
         ];
     }
 }

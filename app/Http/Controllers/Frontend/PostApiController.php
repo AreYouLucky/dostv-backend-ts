@@ -10,70 +10,6 @@ use Illuminate\Support\Facades\Cache;
 
 class PostApiController extends Controller
 {
-    public function getDashboardPost(Request $request)
-    {
-        $categoryIds = $request->categories ?? [];
-        $cacheKey = 'dashboard_posts_' . md5(json_encode($categoryIds));
-
-        return Cache::remember($cacheKey, 60, function () use ($categoryIds) {
-            return Program::query()
-                ->select('program_id', 'title', 'code')
-                ->where('is_banner', 1)
-                ->where('is_active', 1)
-                ->whereHas('episodes.categories', function ($q) use ($categoryIds) {
-                    if (!empty($categoryIds)) {
-                        $q->whereIn('category', $categoryIds);
-                    }
-                })
-                ->with([
-                    'episodes' => function ($query) use ($categoryIds) {
-                        $query->select(
-                            'post_id',
-                            'program_id',
-                            'title',
-                            'slug',
-                            'date_published',
-                            'thumbnail',
-                            'banner',
-                            'trailer',
-                            'type',
-                            'excerpt'
-                        )
-                            ->where('status', 'published')
-                            ->orderByDesc('date_published')
-                            ->take(6)
-                            ->whereHas('categories', function ($q) use ($categoryIds) {
-                                if (!empty($categoryIds)) {
-                                    $q->whereIn('category', $categoryIds);
-                                }
-                            })
-                            ->with([
-                                'categories' => function ($q) use ($categoryIds) {
-                                    $q->select('post_id', 'category', 'category_name');
-
-                                    if (!empty($categoryIds)) {
-                                        $q->whereIn('category', $categoryIds);
-                                    }
-                                }
-                            ]);
-                    }
-                ])
-                ->orderByDesc('order')
-                ->get();
-        });
-    }
-
-    public function loadRecentPosts(Request $request)
-    {
-        return Post::where('status', 'published')
-            ->with('post_program')
-            ->orderByDesc('date_published')
-            ->take(10)
-            ->get();
-    }
-
-
-
     public function getPost(string $code)
     {
         $post = Post::with(['post_program' => function ($q) {
@@ -92,7 +28,7 @@ class PostApiController extends Controller
             posts.*,
             MATCH(posts.title, posts.excerpt, posts.description)
             AGAINST (? IN NATURAL LANGUAGE MODE) as relevance
-        ", [$searchText])
+        ", [$searchText])->with('post_program')->with('categories')
             ->where('posts.post_id', '!=', $post->post_id)
             ->where('posts.status', 'published')
             ->having('relevance', '>', 0)
@@ -106,18 +42,15 @@ class PostApiController extends Controller
         ]);
     }
 
-    public function searchPost(Request $request)
+    public function getRelatedPostByProgram(String $code)
     {
-        $query = Post::where('is_active', 1);
-        if ($request->filled('title')) {
-            $query->where('title', 'like', '%' . $request->title . '%');
-        }
-        if ($request->filled('program_id')) {
-            $query->where('program_id', $request->program_id);
-        }
-        if ($request->filled('category')) {
-            $query->where('category', $request->category);
-        }
-        return $query->take(20)->get();
+        return Post::select('posts.*', 'programs.title as program_title')->with('post_program')
+            ->with('categories')
+            ->join('programs', 'posts.program_id', '=', 'programs.program_id')
+            ->where('programs.code', $code)
+            ->where('status', 'published')
+            ->inRandomOrder()
+            ->take(6)
+            ->get();
     }
 }

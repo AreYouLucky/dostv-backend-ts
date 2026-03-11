@@ -122,7 +122,7 @@ class PostController extends Controller
             if ($request->hasFile('trailer_file')) {
                 $trailer_filename = $this->uploadFile('/videos/post_videos/trailers', $request, 'trailer_file');
             }
-
+            $status = Auth::user()->role == 'admin' ? 'published' : 'drafted';
             $post = Post::create([
                 'slug' => Str::slug($request->title),
                 'title' => $request->title,
@@ -145,7 +145,7 @@ class PostController extends Controller
                 'banner_image' => $banner_filename ?? null,
                 'tags' => $request->tags,
                 'description' => $this->stripHtml($request->content),
-                'status'   => 'published',
+                'status'   => $status,
             ]);
 
             $categories = json_decode($request->categories, true);
@@ -255,6 +255,7 @@ class PostController extends Controller
                 $post->trailer = $this->uploadFile('/videos/post_videos/trailers', $request, 'trailer_file');
             }
 
+
             $post->title = $request->title;
             $post->type = $request->type;
             $post->program_id = $request->program;
@@ -273,7 +274,7 @@ class PostController extends Controller
             $post->banner = $post->banner ?? null;
             $post->tags = $request->tags;
             $post->description = $this->stripHtml($request->content);
-            $post->status = 'published';
+            $post->status =  Auth::user()->role == 'admin' ? 'published' : 'drafted';
             $post->save();
 
 

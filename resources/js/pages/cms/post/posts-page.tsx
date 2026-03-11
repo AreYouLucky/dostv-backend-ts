@@ -1,7 +1,7 @@
 import { ReactNode } from "react";
 import { useDebounce } from "@/hooks/use-debounce";
 import AppLayout from "@/layouts/app-layout";
-import { BreadcrumbItem } from "@/types";
+import { type BreadcrumbItem, type User, type SharedData } from "@/types";
 import { Head, Link, usePage } from "@inertiajs/react";
 import PaginatedSearchTable from '@/components/custom/data-table-server';
 import { IoAddCircle } from "react-icons/io5";
@@ -37,6 +37,9 @@ const breadcrumbs: BreadcrumbItem[] = [
 
 function Posts() {
     const { props } = usePage<{ programs?: ProgramsModel[] }>();
+    const { auth } = usePage<SharedData>().props;
+    const user: User = auth.user;
+    console.log(user.role)
     const programs = props.programs ?? [];
     const [page, setPage] = useState(1);
     const [post, setPost] = useState<PostModel>();
@@ -325,31 +328,38 @@ function Posts() {
 
                                         </td>
                                         <td className="px-6 py-3 text-center text-xs">
-                                            <Select
-                                                value={post.status as string}
-                                                onValueChange={(value) => updatePostStatusFn(value, post.slug as string)}
-                                            >
-                                                <SelectTrigger className="px-2 py-2 h-fit text-[10px] border-gray-100   shadow-2xs">
-                                                    {loadingSlug === post.slug ? (
-                                                        <span className="animate-pulse text-gray-400">Updating…</span>
-                                                    ) : (
-                                                        <SelectValue placeholder="Select Post Status" className="text-[10px] text-white" />
-                                                    )}
-                                                </SelectTrigger>
-                                                <SelectContent >
+                                            {
+                                                user.role !== 'encoder' ?
+                                                    (
+                                                        <Select
+                                                            value={post.status as string}
+                                                            onValueChange={(value) => updatePostStatusFn(value, post.slug as string)}
+                                                        >
+                                                            <SelectTrigger className="px-2 py-2 h-fit text-[10px] border-gray-100   shadow-2xs">
+                                                                {loadingSlug === post.slug ? (
+                                                                    <span className="animate-pulse text-gray-400">Updating…</span>
+                                                                ) : (
+                                                                    <SelectValue placeholder="Select Post Status" className="text-[10px] text-white" />
+                                                                )}
+                                                            </SelectTrigger>
+                                                            <SelectContent >
 
-                                                    {item.status === 'trashed' ? <SelectItem value={'trashed'}>
-                                                        trashed
-                                                    </SelectItem> : <>
-                                                        <SelectItem value={'published'}>
-                                                            published
-                                                        </SelectItem>
-                                                        <SelectItem value={'drafted'}>
-                                                            drafted
-                                                        </SelectItem>
-                                                    </>}
-                                                </SelectContent>
-                                            </Select>
+                                                                {item.status === 'trashed' ? <SelectItem value={'trashed'}>
+                                                                    trashed
+                                                                </SelectItem> : <>
+                                                                    <SelectItem value={'published'}>
+                                                                        published
+                                                                    </SelectItem>
+                                                                    <SelectItem value={'drafted'}>
+                                                                        drafted
+                                                                    </SelectItem>
+                                                                </>}
+                                                            </SelectContent>
+                                                        </Select>
+                                                    ) : (
+                                                        <p className="">{post.status}</p>
+                                                    )
+                                            }
                                         </td>
                                         {item.status === 'trashed' ?
                                             <td className="px-6 py-3 text-center">
@@ -366,16 +376,18 @@ function Posts() {
                                                         <p>View Post</p>
                                                     </TooltipContent>
                                                 </Tooltip>
-                                                <Tooltip>
-                                                    <TooltipTrigger asChild>
-                                                        <Button className='bg-transparent shadow-none hover:bg-teal-100 px-0' onClick={() => toggleFeatured(post.slug as string)}>
-                                                            <TiStarFullOutline className={post.is_featured == 1 ? 'text-yellow-500' : 'text-gray-400'} />
-                                                        </Button>
-                                                    </TooltipTrigger>
-                                                    <TooltipContent>
-                                                        <p>{post.is_featured == 1 ? 'Remove Featured' : 'Featured Post'}</p>
-                                                    </TooltipContent>
-                                                </Tooltip>
+                                                {user.role !== 'encoder' && 
+                                                    <Tooltip>
+                                                        <TooltipTrigger asChild>
+                                                            <Button className='bg-transparent shadow-none hover:bg-teal-100 px-0' onClick={() => toggleFeatured(post.slug as string)}>
+                                                                <TiStarFullOutline className={post.is_featured == 1 ? 'text-yellow-500' : 'text-gray-400'} />
+                                                            </Button>
+                                                        </TooltipTrigger>
+                                                        <TooltipContent>
+                                                            <p>{post.is_featured == 1 ? 'Remove Featured' : 'Featured Post'}</p>
+                                                        </TooltipContent>
+                                                    </Tooltip>
+                                                }
                                                 <Tooltip></Tooltip>
                                                 <Tooltip>
                                                     <TooltipTrigger asChild>
@@ -388,16 +400,18 @@ function Posts() {
                                                         <p>Edit Post</p>
                                                     </TooltipContent>
                                                 </Tooltip>
-                                                <Tooltip>
-                                                    <TooltipTrigger asChild>
-                                                        <Button className='bg-transparent shadow-none hover:bg-teal-100 px-0' onClick={() => showDeleteDialog(post.slug as string)}>
-                                                            <FaTrash className='text-red-500' />
-                                                        </Button>
-                                                    </TooltipTrigger>
-                                                    <TooltipContent>
-                                                        <p>Delete Post</p>
-                                                    </TooltipContent>
-                                                </Tooltip>
+                                                {user.role !== 'encoder' &&
+                                                    <Tooltip>
+                                                        <TooltipTrigger asChild>
+                                                            <Button className='bg-transparent shadow-none hover:bg-teal-100 px-0' onClick={() => showDeleteDialog(post.slug as string)}>
+                                                                <FaTrash className='text-red-500' />
+                                                            </Button>
+                                                        </TooltipTrigger>
+                                                        <TooltipContent>
+                                                            <p>Delete Post</p>
+                                                        </TooltipContent>
+                                                    </Tooltip>
+                                                }
                                             </td>
                                         }
                                     </tr>

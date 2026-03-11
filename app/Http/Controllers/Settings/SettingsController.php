@@ -19,7 +19,7 @@ class SettingsController extends Controller
             'password' => $validated['password'],
         ]);
 
-        $userActions->logUserActions($request->user()->user_id, 'Updated his/her account password');
+        $userActions->logUserActions($request->user()->user_id, 'Updated his/her account password', "Update", "Account");
 
         return response()->json([
             'status' => 'Password successfully updated!'
@@ -39,7 +39,7 @@ class SettingsController extends Controller
             'username' => $validated['name'],
         ]);
 
-        $userActions->logUserActions($request->user()->user_id, 'Updated his/her account account details');
+        $userActions->logUserActions($request->user()->user_id, 'Updated his/her account account details', "Update", "Account");
 
         return response()->json([
             'status' => 'Password successfully updated!'
@@ -62,7 +62,7 @@ class SettingsController extends Controller
             'avatar' => $storagePath ?? null
         ]);
 
-        $userActions->logUserActions($request->user()->user_id, 'Updated his/her account profile picture');
+        $userActions->logUserActions($request->user()->user_id, 'Updated his/her account profile picture', "Update", "Account");
 
         return response()->json([
             'status' => 'Profile Picture successfully updated!'

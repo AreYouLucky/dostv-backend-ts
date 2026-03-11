@@ -29,7 +29,7 @@ class UsersController extends Controller
             'name' => ['required', 'string', 'max:255', 'unique:users,name,NULL,id,is_active,1',],
             'email' => ['required', 'string', 'email', 'max:255',  'unique:users,email,NULL,id,is_active,1'],
             'password' => ['required', 'string', 'min:8', 'confirmed', Password::default()],
-            'avatar' => ['nullable', 'image', 'mimes:jpg,png,jpeg']
+            'avatar' => ['nullable', 'image']
         ]);
 
         if ($request->hasFile("avatar")) {

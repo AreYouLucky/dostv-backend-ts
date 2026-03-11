@@ -7,8 +7,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/view-posts', [PostController::class,'viewPostPage']);
     Route::resource('/posts', PostController::class)->only(['index', 'store', 'destroy', 'edit','create']);
     Route::post('/update-post/{id}',[PostController::class,'update']);
-    Route::post('/update-post-status',[PostController::class,'updatePostStatus']);
-    Route::post('/toggle-post-featured/{id}',[PostController::class,'togglePostFeatured']);
+    Route::post('/update-post-status',[PostController::class,'updatePostStatus'])->middleware('admin');
+    Route::post('/toggle-post-featured/{id}',[PostController::class,'togglePostFeatured'])->middleware('admin');
     Route::post('/restore-post/{id}',[PostController::class,'restorePost']);
 
 });
